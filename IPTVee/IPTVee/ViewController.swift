@@ -35,11 +35,11 @@ class ViewController: UIViewController {
             
         rest.getRequest(endpoint: endpoint) {  (categories) in
             guard let categories = categories else {
-                self.asyncRan = true
+                self.await = true
                 return
             }
             self.cats = try? self.decoder.decode(Categories.self, from: categories)
-            self.asyncRan = true
+            self.await = true
         }
     }
     
@@ -50,26 +50,26 @@ class ViewController: UIViewController {
         rest.getRequest(endpoint: endpoint) { (config) in
 
             guard let config = config else {
-                self.asyncRan = true
+                self.await = true
                 return
             }
             
             self.conf = try? self.decoder.decode(Configuration.self, from: config)
-            self.asyncRan = true
+            self.await = true
         }
     }
     
-    var asyncRan = false
+    var await = false
     
-    func awaitRan(action: String) {
+    func async(action: String) {
         DispatchQueue.global().async { [unowned self] in
-            while !self.asyncRan {}
+            while !self.await {}
             if action == Actions.getLiveCategoriesAction.rawValue {
                 print("1")
                 print(self.conf as Any)
                 getCategories()
-                asyncRan = false
-                awaitRan(action: "")
+                self.await = false
+                async(action: "")
             } else if action.isEmpty {
                 print("2")
                 print(self.cats as Any)
@@ -78,9 +78,9 @@ class ViewController: UIViewController {
     }
     
     @IBAction func Login(_ sender: Any) {
-        asyncRan = false
+        self.await = false
         getConfig()
-        awaitRan(action: Actions.getLiveCategoriesAction.rawValue)
+        async(action: Actions.getLiveCategoriesAction.rawValue)
 
     }
     
