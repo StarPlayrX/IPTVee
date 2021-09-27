@@ -10,57 +10,60 @@ import iptvKit
 
 class ViewController: UIViewController {
     
+    let api = Api()
     
-    func getCategories(_ api: Api, _ creds: Creds, _ iptv: IPTV, _ rest: Rest) async {
+    let creds = Creds(
+        username: "toddbruss90",
+        password: "zzeH7C0xdw"
+    )
+    
+    let iptv = IPTV(
+        scheme: "https",
+        host: "primestreams.tv",
+        path: "/player_api.php",
+        port: 29971)
+    
+    let rest = Rest()
+    let decoder = JSONDecoder()
+
+    var cats: Categories? = nil
+    var conf: Configuration? = nil
+
+    func getCategories() {
         let getCats = Actions.getLiveCategoriesAction.rawValue
         let endpoint = api.getEndpoint(creds, iptv, getCats)
         
-        rest.getRequest(endpoint: endpoint) { (categories) in
-            guard let categories = categories else {
-                return
-            }
-            
-            let decoder = JSONDecoder()
-            let cats = try? decoder.decode(Categories.self, from: categories)
-            print(cats)
+        rest.getRequest(endpoint: endpoint) {  (categories) in
+            guard let categories = categories else { return }
+            self.cats = try? self.decoder.decode(Categories.self, from: categories)
+            print(self.cats)
         }
     }
     
-    func getConfig(_ api: Api, _ creds: Creds, _ iptv: IPTV, _ rest: Rest) {
-        let getCats = Actions.configAction.rawValue
-        let endpoint = api.getEndpoint(creds, iptv, getCats)
+    func getConfig() {
+        let getConfig = Actions.configAction.rawValue
+        let endpoint = api.getEndpoint(creds, iptv, getConfig)
         
-        rest.getRequest(endpoint: endpoint) { (categories) in
-            guard let categories = categories else {
-                return
-            }
+        rest.getRequest(endpoint: endpoint) { (config) in
+            guard let config = config else { return }
             
             let decoder = JSONDecoder()
-            let config = try? decoder.decode(Configuration.self, from: categories)
-            print(config)
+            self.conf = try? decoder.decode(Configuration.self, from: config)
+            print(self.conf)
         }
     }
+    
+ 
+    
+    @IBAction func Login(_ sender: Any) {
+        getConfig()
+        getCategories()
+    }
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let api = Api()
-
-        let creds = Creds(
-            username: "toddbruss90",
-            password: "zzeH7C0xdw"
-        )
-        
-        let iptv = IPTV(
-            scheme: "https",
-            host: "primestreams.tv",
-            path: "/player_api.php",
-            port: 29971)
-        
-        let rest = Rest()
-
-        getConfig(api, creds, iptv, rest)
-        getCategories(api, creds, iptv, rest)
     }
 }
-
