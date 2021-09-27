@@ -66,13 +66,13 @@ class ViewController: UIViewController {
             while !self.asyncRan {}
             if action == Actions.getLiveCategoriesAction.rawValue {
                 print("1")
-                print(self.conf)
+                print(self.conf as Any)
                 getCategories()
                 asyncRan = false
                 awaitRan(action: "")
             } else if action.isEmpty {
                 print("2")
-                print(self.cats)
+                print(self.cats as Any)
             }
         }
     }
