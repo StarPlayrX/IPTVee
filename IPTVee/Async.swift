@@ -14,9 +14,7 @@ class Async {
             while !awaitDone {}
             if action == Actions.getLiveCategoriesAction.rawValue {
                 //1
-                print(conf as Any)
                 getCategories()
-                
                 //2
                 awaitDone = false
                 self.await(action: "")

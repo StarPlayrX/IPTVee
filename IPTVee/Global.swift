@@ -27,3 +27,8 @@ let decoder = JSONDecoder()
 var cats: Categories? = nil
 var conf: Configuration? = nil
 var awaitDone = false
+
+class Status: ObservableObject {
+    static var status = Status()
+    @Published var success: String = "test"
+}

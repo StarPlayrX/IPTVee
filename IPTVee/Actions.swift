@@ -8,18 +8,7 @@
 import Foundation
 import iptvKit
 
-func login(_ user: String,_ pass: String,_ host: String,_ port: String) {
-    awaitDone = false
-    
-    guard let port = Int(port) else { return }
-    creds.username = user
-    creds.password = pass
-    iptv.host = host
-    iptv.port = port
-    
-    getConfig()
-    Async().await(action: Actions.getLiveCategoriesAction.rawValue)
-}
+
 
 func getCategories() {
     let getCats = Actions.getLiveCategoriesAction.rawValue
