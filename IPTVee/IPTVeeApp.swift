@@ -11,7 +11,7 @@ import SwiftUI
 struct IPTVeeApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(observable: LoginViewObservable())
+            ContentView(observable: LoginObservable.lgo)
         }
     }
 }
