@@ -41,82 +41,85 @@ struct ContentView: View {
     @ObservedObject var observable = LoginObservable.lgo
     @State var userName: String = "toddbruss90"
     @State var passWord: String = "zzeH7C0xdw"
-    @State var service: String = ""
-    @State var port: String = ""
-    @State var showOneLevelIn: Bool = false
+    @State var service: String = "primestreams.tv"
+    @State var port: String = "826"
+    @State var https: Bool = false
 
+    @State var showOneLevelIn: Bool = false
+    
     var body: some View {
+
         NavigationView {
-              
-   
-        Form {
-            
-           
-            Section {
-                Text("Login Info")
-                    .foregroundColor(Color.white)
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }
-            
-            Section {
-                TextField("Username", text: $userName)
-                SecureField("Password", text: $passWord)
-                TextField("iptvService.tv", text: $service)
-                TextField("port #", text: $port)
+
+            Form {
+
+               
+                Section(header: Text("Credentials")) {
+                    TextField("Username", text: $userName)
+                    SecureField("Password", text: $passWord)
+                    TextField("iptvService.tv", text: $service)
+                    TextField("port #", text: $port)
+                    Toggle(isOn: $https) {
+                        Text("use https")
+                    }
+                    Button(action: {login(userName,passWord,service,port) }) {
+                        Text("Login")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                }
                 
-                Button(action: {login(userName,passWord,service,port) }) {
-                    Text("Login")
+                Section(header: Text("UPDATE")) {
+                    Text("Status")
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    Text(observable.status)
+                        .font(.body)
+                        .fontWeight(.regular)
+                        .foregroundColor(Color.gray)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
-            }
-            
-            Section {
-                Text("Status")
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                
-                Text(observable.status)
-                    .font(.body)
-                    .fontWeight(.regular)
-                    .foregroundColor(Color.gray)
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }
-            
-            Section {
-                
-                NavigationLink("Categories",destination: CategoriesView(), isActive: $showOneLevelIn)
-                
-            }
-            
-            Section {
-                Text("Copyright © 2021 Todd Bruss")
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }
-        }
-        .disableAutocorrection(true)
-        .autocapitalization(UITextAutocapitalizationType.none)
-        .padding(.bottom, 0.0)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                HStack {
-                    //Image(systemName: "sun.min.fill")
-                    Text("IPTVee").font(.largeTitle)
+                Section(header: Text("VIDEO")) {
+                    
+                    NavigationLink("Categories",destination: CategoriesView(), isActive: $showOneLevelIn)
                         .foregroundColor(.blue)
-                        .fontWeight(.semibold)
+                    
+                }
+                
+                Section(header: Text("COPYRIGHT")) {
+                    Text("© 2021 Todd Bruss")
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+                
+                
+            }
+            .disableAutocorrection(true)
+            .autocapitalization(UITextAutocapitalizationType.none)
+            .padding(.bottom, 0.0)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack {
+                        //Image(systemName: "sun.min.fill")
+                        Text("IPTVee").font(.largeTitle)
+                            .foregroundColor(.blue)
+                            .fontWeight(.semibold)
+                        
+                    }
                 }
             }
+
         }
+        
+        Spacer()
 
     }
-    
-    
-    }
-
-    
 }
+
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
