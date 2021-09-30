@@ -8,10 +8,17 @@
 import SwiftUI
 import iptvKit
 
+extension RangeReplaceableCollection where Self: StringProtocol {
+    var digits: Self { filter(\.isWholeNumber) }
+}
+
 class LoginObservable: ObservableObject {
     static var lgo = LoginObservable()
-    @Published var status: String = "test"
+    @Published var status: String = "Update"
+    @Published var port: String = "826"
+
     @Published var loggedIn: Bool = false
+   
 }
 
 class CategoriesObservable: ObservableObject {
@@ -20,21 +27,25 @@ class CategoriesObservable: ObservableObject {
     @Published var loggedIn: Bool = false
 }
 
-extension ContentView {
-    func login(_ user: String,_ pass: String,_ host: String,_ port: String) {
-        awaitDone = false
-        observable.status = "Logged in"
-        
-        guard let port = Int(port) else { return }
-        creds.username = user
-        creds.password = pass
-        iptv.host = host
-        iptv.port = port
-        getConfig()
-        Async().await(action: Actions.getLiveCategoriesAction.rawValue)
-        
-    }
+
+
+func login(_ user: String,_ pass: String,_ host: String,_ port: String) {
+    LoginObservable.lgo.status = ""
+    LoginObservable.lgo.port = port.digits
+
+    guard let port = Int(LoginObservable.lgo.port) else { return }
+    
+    awaitDone = false
+    LoginObservable.lgo.status = "Logging In..."
+    
+    creds.username = user
+    creds.password = pass
+    iptv.host = host
+    iptv.port = port
+    
+    setCurrentStep = .config
 }
+
 
 struct ContentView: View {
     
@@ -42,27 +53,28 @@ struct ContentView: View {
     @State var userName: String = "toddbruss90"
     @State var passWord: String = "zzeH7C0xdw"
     @State var service: String = "primestreams.tv"
-    @State var port: String = "826"
     @State var https: Bool = false
+    @State var port: String = "826"
 
     @State var showOneLevelIn: Bool = false
     
     var body: some View {
-
+        
         NavigationView {
-
+            
             Form {
-
-               
-                Section(header: Text("Credentials")) {
+                
+                Section(header: Text("CREDENTIALS")) {
                     TextField("Username", text: $userName)
                     SecureField("Password", text: $passWord)
                     TextField("iptvService.tv", text: $service)
-                    TextField("port #", text: $port)
+                    TextField("port #", text: $observable.port)
+                        .keyboardType(.numberPad)
+                    
                     Toggle(isOn: $https) {
                         Text("use https")
                     }
-                    Button(action: {login(userName,passWord,service,port) }) {
+                    Button(action: {login(userName,passWord,service,observable.port) }) {
                         Text("Login")
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
@@ -81,7 +93,6 @@ struct ContentView: View {
                 }
                 
                 Section(header: Text("VIDEO")) {
-                    
                     NavigationLink("Categories",destination: CategoriesView(), isActive: $showOneLevelIn)
                         .foregroundColor(.blue)
                     
@@ -92,8 +103,6 @@ struct ContentView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
-                
-                
             }
             .disableAutocorrection(true)
             .autocapitalization(UITextAutocapitalizationType.none)
@@ -110,20 +119,14 @@ struct ContentView: View {
                     }
                 }
             }
-
         }
         
         Spacer()
-
     }
 }
-
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView(observable: LoginObservable.lgo)
     }
 }
-

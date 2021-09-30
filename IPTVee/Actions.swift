@@ -8,15 +8,18 @@
 import Foundation
 import iptvKit
 
-
-
 func getCategories() {
     let getCats = Actions.getLiveCategoriesAction.rawValue
     let endpoint = api.getEndpoint(creds, iptv, getCats)
         
     rest.getRequest(endpoint: endpoint) {  (categories) in
+        print(categories)
         guard let categories = categories else {
-            awaitDone = true
+            print("HELLO")
+            LoginObservable.lgo.status = "Categories Error"
+            print(LoginObservable.lgo.status)
+            setCurrentStep = .CategoriesError
+            awaitDone = false
             return
         }
         cats = try? decoder.decode(Categories.self, from: categories)
@@ -29,9 +32,15 @@ func getConfig() {
     let endpoint = api.getEndpoint(creds, iptv, getConfig)
     
     rest.getRequest(endpoint: endpoint) { (config) in
+        print(config)
 
         guard let config = config else {
-            awaitDone = true
+            print("HELLO2")
+
+            LoginObservable.lgo.status = "Configuration Error"
+            print(LoginObservable.lgo.status)
+            setCurrentStep = .ConfigurationError
+            awaitDone = false
             return
         }
         

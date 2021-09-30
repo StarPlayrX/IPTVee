@@ -8,23 +8,54 @@
 import Foundation
 import iptvKit
 
-class Async {
-    func await(action: String) {
-        DispatchQueue.global().async {
-            while !awaitDone {}
-            if action == Actions.getLiveCategoriesAction.rawValue {
-                //1
-                getCategories()
-                //2
-                awaitDone = false
-                self.await(action: "")
-                
-            } else if action.isEmpty {
-                
-                //3
-                print(cats as Any)
+
+enum Stepper {
+    case start
+    case config
+    case categories
+    case channels
+    case CategoriesError
+    case LoginError
+    case ConfigurationError
+    case unknown
+}
+
+var setCurrentStep: Stepper = .start {
+    didSet {
+        
+        // MARK: - Step 1
+        if setCurrentStep == .config {
+            
+            getConfig()
+            LoginObservable.lgo.status = "Login"
+            awaitDone = false
+            
+            // MARK: - Step 2
+        } else if setCurrentStep == .categories {
+
+            getCategories()
+            LoginObservable.lgo.status = "Configuration"
+            awaitDone = false
+            
+            // MARK: - Step 3
+        } else if setCurrentStep == .channels {
+            
+           // getCategories()
+            LoginObservable.lgo.status = "Categories"
+            awaitDone = false
+            
+        }
+    }
+}
+
+var awaitDone: Bool = false {
+    didSet {
+        if awaitDone {
+            if setCurrentStep == .config {
+                setCurrentStep = .categories
+            } else if setCurrentStep == .categories {
+                setCurrentStep = .channels
             }
         }
     }
-
 }
