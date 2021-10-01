@@ -2,7 +2,7 @@
 //  IPTVeeApp.swift
 //  IPTVee
 //
-//  Created by M1 on 9/27/21.
+//  Created by Todd Bruss on 9/27/21.
 //
 
 import SwiftUI
@@ -11,7 +11,8 @@ import SwiftUI
 struct IPTVeeApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(observable: LoginObservable.lgo)
+          ContentView(obs: LoginObservable.shared)
+               
         }
     }
 }

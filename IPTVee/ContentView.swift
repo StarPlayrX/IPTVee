@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  IPTVee
 //
-//  Created by M1 on 9/27/21.
+//  Created by Todd Bruss on 9/27/21.
 //
 
 import SwiftUI
@@ -12,44 +12,10 @@ extension RangeReplaceableCollection where Self: StringProtocol {
     var digits: Self { filter(\.isWholeNumber) }
 }
 
-class LoginObservable: ObservableObject {
-    static var lgo = LoginObservable()
-    @Published var status: String = "Update"
-    @Published var port: String = "826"
-
-    @Published var loggedIn: Bool = false
-   
-}
-
-class CategoriesObservable: ObservableObject {
-    static var cto = CategoriesObservable()
-    @Published var status: String = "test"
-    @Published var loggedIn: Bool = false
-}
-
-
-
-func login(_ user: String,_ pass: String,_ host: String,_ port: String) {
-    LoginObservable.lgo.status = ""
-    LoginObservable.lgo.port = port.digits
-
-    guard let port = Int(LoginObservable.lgo.port) else { return }
-    
-    awaitDone = false
-    LoginObservable.lgo.status = "Logging In..."
-    
-    creds.username = user
-    creds.password = pass
-    iptv.host = host
-    iptv.port = port
-    
-    setCurrentStep = .config
-}
-
 
 struct ContentView: View {
     
-    @ObservedObject var observable = LoginObservable.lgo
+    @ObservedObject var obs = LoginObservable.shared
     @State var userName: String = "toddbruss90"
     @State var passWord: String = "zzeH7C0xdw"
     @State var service: String = "primestreams.tv"
@@ -68,13 +34,13 @@ struct ContentView: View {
                     TextField("Username", text: $userName)
                     SecureField("Password", text: $passWord)
                     TextField("iptvService.tv", text: $service)
-                    TextField("port #", text: $observable.port)
+                    TextField("port #", text: $obs.port)
                         .keyboardType(.numberPad)
                     
                     Toggle(isOn: $https) {
                         Text("use https")
                     }
-                    Button(action: {login(userName,passWord,service,observable.port) }) {
+                    Button(action: {login(userName, passWord, service, obs.port) }) {
                         Text("Login")
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
@@ -85,7 +51,7 @@ struct ContentView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity, alignment: .center)
                     
-                    Text(observable.status)
+                    Text(obs.status)
                         .font(.body)
                         .fontWeight(.regular)
                         .foregroundColor(Color.gray)
@@ -111,7 +77,6 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     HStack {
-                        //Image(systemName: "sun.min.fill")
                         Text("IPTVee").font(.largeTitle)
                             .foregroundColor(.blue)
                             .fontWeight(.semibold)
@@ -127,6 +92,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(observable: LoginObservable.lgo)
+        ContentView(obs: LoginObservable.shared)
     }
 }

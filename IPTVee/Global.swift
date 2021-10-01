@@ -2,7 +2,7 @@
 //  Global.swift
 //  IPTVee
 //
-//  Created by M1 on 9/27/21.
+//  Created by Todd Bruss on 9/27/21.
 //
 
 import Foundation
@@ -10,12 +10,12 @@ import iptvKit
 
 let api = Api()
 
-var creds = Creds(
+var creds = Creds (
     username: "toddbruss90",
     password: "zzeH7C0xdw"
 )
 
-var iptv = IPTV(
+var iptv = IPTV (
     scheme: "http",
     host: "",
     path: "/player_api.php",
@@ -24,12 +24,8 @@ var iptv = IPTV(
 let rest = Rest()
 let decoder = JSONDecoder()
 
-var cats: Categories? = nil
+var cats: Categories = Categories()
 var conf: Configuration? = nil
+var chan: Channels? = nil
 
 
-
-class Status: ObservableObject {
-    static var status = Status()
-    @Published var success: String = "test"
-}
