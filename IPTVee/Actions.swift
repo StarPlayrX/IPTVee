@@ -21,7 +21,6 @@ func getCategories() {
             return
         }
         
-        
         if let catz = try? decoder.decode(Categories.self, from: categories) {
             cats = catz
             for (i,cat) in catz.enumerated() {
@@ -32,31 +31,22 @@ func getCategories() {
                 
                 for x in nam {
                     if x.count > 5 {
-                        
                         catName.append(contentsOf: x.localizedCapitalized)
                     } else {
                         catName.append(contentsOf: x)
-
                     }
                     
-                        catName += " "
-                   
+                    catName += " "
                 }
                 
                 cats[i].categoryName = catName
-                
-                print(catName)
-                
+                cats[i].categoryName.removeLast()
                 
             }
-            
         }
-        
-        
-        
-        print(cats)
+        cats.removeLast()
 
-       
+       print(cats)
       
         
         awaitDone = true
@@ -66,19 +56,26 @@ func getCategories() {
 func getConfig() {
     let action = Actions.configAction.rawValue
     let endpoint = api.getEndpoint(creds, iptv, action)
-    
-    rest.getRequest(endpoint: endpoint) { (config) in
+        
+    func loginError() {
+        LoginObservable.shared.status = "Login Error"
+        print(LoginObservable.shared.status)
+        setCurrentStep = .ConfigurationError
+        awaitDone = false
+    }
 
-        guard let config = config else {
-
-            LoginObservable.shared.status = "Get Configuration Error"
-            print(LoginObservable.shared.status)
-            setCurrentStep = .ConfigurationError
-            awaitDone = false
+    rest.getRequest(endpoint: endpoint) { (login) in
+        guard let login = login else {
+            loginError()
             return
         }
+       
+        if let config = try? decoder.decode(Configuration.self, from: login) {
+            LoginObservable.shared.config = config
+        } else {
+            loginError()
+        }
         
-        conf = try? decoder.decode(Configuration.self, from: config)
         awaitDone = true
     }
 }
@@ -98,8 +95,10 @@ func getChannels() {
             return
         }
         
-        chan = try? decoder.decode(Channels.self, from: config)
-        print(chan)
+        if let channels = try? decoder.decode(Channels.self, from: config) {
+            chan = channels
+        }
+        
         awaitDone = true
     }
 }

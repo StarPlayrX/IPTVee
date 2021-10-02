@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F74A0DE2707B5B5000171B5 /* ChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */; };
+		6F74A0E02707C38D000171B5 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F74A0DF2707C38D000171B5 /* PlayerView.swift */; };
 		6F87E9242702A31700434C6E /* IPTVeeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F87E9232702A31700434C6E /* IPTVeeApp.swift */; };
 		6F87E9262702A31700434C6E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F87E9252702A31700434C6E /* ContentView.swift */; };
 		6F87E9282702A31800434C6E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F87E9272702A31800434C6E /* Assets.xcassets */; };
@@ -39,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsView.swift; sourceTree = "<group>"; };
+		6F74A0DF2707C38D000171B5 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		6F87E9202702A31700434C6E /* IPTVee.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IPTVee.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F87E9232702A31700434C6E /* IPTVeeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPTVeeApp.swift; sourceTree = "<group>"; };
 		6F87E9252702A31700434C6E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -85,6 +89,7 @@
 		6F87E9172702A31700434C6E = {
 			isa = PBXGroup;
 			children = (
+				6F74A0DF2707C38D000171B5 /* PlayerView.swift */,
 				6F87E9222702A31700434C6E /* IPTVee */,
 				6F87E9332702A31800434C6E /* IPTVeeTests */,
 				6F87E93D2702A31800434C6E /* IPTVeeUITests */,
@@ -110,6 +115,7 @@
 				6F87E9232702A31700434C6E /* IPTVeeApp.swift */,
 				6F87E9252702A31700434C6E /* ContentView.swift */,
 				6FAFD738270416C900D49704 /* CategoriesView.swift */,
+				6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */,
 				6F87E97B2702ADA600434C6E /* Actions.swift */,
 				6F87E97A2702ADA600434C6E /* Login.swift */,
 				6F87E97C2702ADA600434C6E /* Global.swift */,
@@ -285,7 +291,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				6F87E9262702A31700434C6E /* ContentView.swift in Sources */,
+				6F74A0DE2707B5B5000171B5 /* ChannelsView.swift in Sources */,
 				6F87E97E2702ADA600434C6E /* Actions.swift in Sources */,
+				6F74A0E02707C38D000171B5 /* PlayerView.swift in Sources */,
 				6FAFD739270416C900D49704 /* CategoriesView.swift in Sources */,
 				6F87E97D2702ADA600434C6E /* Login.swift in Sources */,
 				6F87E97F2702ADA600434C6E /* Global.swift in Sources */,
@@ -377,7 +385,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -432,7 +440,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -457,9 +465,11 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -488,9 +498,11 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

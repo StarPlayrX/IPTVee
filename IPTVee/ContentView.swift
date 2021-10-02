@@ -12,7 +12,6 @@ extension RangeReplaceableCollection where Self: StringProtocol {
     var digits: Self { filter(\.isWholeNumber) }
 }
 
-
 struct ContentView: View {
     
     @ObservedObject var obs = LoginObservable.shared
@@ -21,7 +20,6 @@ struct ContentView: View {
     @State var service: String = "primestreams.tv"
     @State var https: Bool = false
     @State var port: String = "826"
-
     @State var showOneLevelIn: Bool = false
     
     var body: some View {
@@ -50,7 +48,6 @@ struct ContentView: View {
                     Text("Status")
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity, alignment: .center)
-                    
                     Text(obs.status)
                         .font(.body)
                         .fontWeight(.regular)
@@ -59,11 +56,13 @@ struct ContentView: View {
                 }
                 
                 Section(header: Text("VIDEO")) {
-                    NavigationLink("Categories",destination: CategoriesView(), isActive: $showOneLevelIn)
-                        .foregroundColor(.blue)
-                    
+                    HStack {
+                        NavigationLink("Categories",destination: CategoriesView(), isActive: $obs.isAutoSwitchCat)
+                            .foregroundColor(.blue)
+                    }
+                    .disabled(!obs.isLoggedIn)
                 }
-                
+
                 Section(header: Text("COPYRIGHT")) {
                     Text("© 2021 Todd Bruss")
                         .foregroundColor(.white)
@@ -75,18 +74,17 @@ struct ContentView: View {
             .padding(.bottom, 0.0)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                
                 ToolbarItem(placement: .principal) {
                     HStack {
                         Text("IPTVee").font(.largeTitle)
                             .foregroundColor(.blue)
                             .fontWeight(.semibold)
-                        
                     }
                 }
             }
         }
         
-        Spacer()
     }
 }
 

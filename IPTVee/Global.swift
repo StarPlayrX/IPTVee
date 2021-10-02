@@ -26,6 +26,6 @@ let decoder = JSONDecoder()
 
 var cats: Categories = Categories()
 var conf: Configuration? = nil
-var chan: Channels? = nil
+var chan: Channels = Channels()
 
 

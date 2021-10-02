@@ -13,7 +13,9 @@ class LoginObservable: ObservableObject {
     static var shared = LoginObservable()
     @Published var status: String = "Update"
     @Published var port: String = "826"
-    @Published var loggedIn: Bool = false
+    @Published var isLoggedIn: Bool = false
+    @Published var isAutoSwitchCat: Bool = false
+    @Published var config: Config = nil
    
 }
 
@@ -72,6 +74,8 @@ var setCurrentStep: Stepper = .start {
         case .finish:
             //done
             LoginObservable.shared.status = Status.Channels.rawValue
+            LoginObservable.shared.isAutoSwitchCat = true
+            LoginObservable.shared.isLoggedIn = true
         default:
             ()
         }
