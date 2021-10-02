@@ -10,16 +10,12 @@ import SwiftUI
 
 class ChannelsObservable: ObservableObject {
     static var shared = ChannelsObservable()
-    var isAutoSwitchCat: Bool = false
-
 }
 
 struct ChannelsView: View {
     @ObservedObject var cos = ChannelsObservable.shared
-    
-    func resignActive() {
-        cos.isAutoSwitchCat.toggle()
-    }
+    @ObservedObject var plo = PlayerObservable.plo
+ 
     
     var body: some View {
         
@@ -29,13 +25,13 @@ struct ChannelsView: View {
                 ForEach(Array(chan),id: \.name) { ch in
                     
                     HStack {
-                        NavigationLink(String(ch.num) + " " + ch.name,destination: PlayerView())
+                        NavigationLink(String(ch.num) + " " + ch.name,destination: PlayerView( url: "http://primestreams.tv:826/live/toddbruss90/zzeH7C0xdw/\(ch.streamID).m3u8"))
                             .foregroundColor(.white)
                     }
                 }
             }.navigationTitle("Channels")
             
-        }.onAppear(perform: { resignActive() })
+        }.onAppear(perform: { AppDelegate.orientationLock = UIInterfaceOrientationMask.portrait })
     }
 }
 

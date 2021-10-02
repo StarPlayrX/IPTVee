@@ -32,7 +32,7 @@ struct CategoriesView: View {
                     }
                 }.navigationTitle("Categories")
                 
-            }
+            }.onAppear(perform: { AppDelegate.orientationLock = UIInterfaceOrientationMask.portrait })
     }
 }
 
