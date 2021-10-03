@@ -73,16 +73,7 @@ struct ContentView: View {
             .autocapitalization(UITextAutocapitalizationType.none)
             .padding(.bottom, 0.0)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                
-                ToolbarItem(placement: .principal) {
-                    HStack {
-                        Text("IPTVee").font(.largeTitle)
-                            .foregroundColor(.blue)
-                            .fontWeight(.semibold)
-                    }
-                }
-            }
+            .navigationTitle("IPTVee")
         }
         
     }

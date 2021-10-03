@@ -37,30 +37,60 @@ struct PlayerView: View {
     @ObservedObject var plo = PlayerObservable.plo
     
     var body: some View {
+        
+        GeometryReader { geometry in
+                
+                AVPlayerView(videoURL: URL(string: url)).edgesIgnoringSafeArea([.bottom,.leading,.trailing])
+                .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625, alignment: .topLeading)
+                
+               
+        }
+        
+        
+
         VStack {
-            AVPlayerView(videoURL: URL(string: url)).edgesIgnoringSafeArea(.all)
+            
+
+            Spacer()
+                
         }.onAppear(perform: {
-            AppDelegate.orientationLock = UIInterfaceOrientationMask.landscape
+            AppDelegate.orientationLock = UIInterfaceOrientationMask.portrait
         })
+        
+        Spacer()
     }
 }
 
 
-struct AVPlayerView: UIViewControllerRepresentable {
+var player = AVPlayer()
 
+var AVPVC = AVPlayerViewController()
+
+struct AVPlayerView: UIViewControllerRepresentable {
+    
     var videoURL: URL?
 
-    private var player: AVPlayer {
-        return AVPlayer(url: videoURL!)
-    }
+    func updateUIViewController(_ pvc: AVPlayerViewController, context: Context) {
+        pvc.entersFullScreenWhenPlaybackBegins = true
+        pvc.allowsPictureInPicturePlayback = true
+        pvc.canStartPictureInPictureAutomaticallyFromInline = true
+        pvc.requiresLinearPlayback = false
+        pvc.exitsFullScreenWhenPlaybackEnds = false
+        pvc.showsPlaybackControls = true
+        pvc.showsTimecodes = true
+        pvc.updatesNowPlayingInfoCenter = true
+        player = AVPlayer(url: videoURL!)
+        pvc.player = player
+        if #available(iOS 15.0, *) {
+            pvc.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+        }
+  
+        pvc.player?.automaticallyWaitsToMinimizeStalling = true
 
-    func updateUIViewController(_ playerController: AVPlayerViewController, context: Context) {
-       // playerController.modalPresentationStyle = .pageSheet
-        playerController.player = player
-        playerController.player?.play()
     }
 
     func makeUIViewController(context: Context) -> AVPlayerViewController {
-        return AVPlayerViewController()
+        AVPVC = AVPlayerViewController()
+        return AVPVC
     }
 }

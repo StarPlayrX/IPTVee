@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 @main
 struct IPTVapp: App {
@@ -17,12 +18,31 @@ struct IPTVapp: App {
     }
 }
 
+let audioSession = AVAudioSession.sharedInstance()
+
+
 class AppDelegate: NSObject, UIApplicationDelegate {
     
     static var orientationLock = UIInterfaceOrientationMask.portrait
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        // something to do
+        
+        // Get the singleton instance.
+        do {
+            // Set the audio session category, mode, and options.
+            try audioSession.setCategory(.playAndRecord, mode: .moviePlayback, options: [.allowBluetooth, .allowAirPlay, .defaultToSpeaker])
+            try audioSession.setActive(true)
+            
+
+        } catch {
+            print("Failed to set audio session category.")
+        }
+        
+   
+        // Other post-launch configuration.
+        return true
+        
+        
         return true
     }
     
