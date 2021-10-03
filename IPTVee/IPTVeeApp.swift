@@ -18,8 +18,8 @@ struct IPTVapp: App {
     }
 }
 
-let audioSession = AVAudioSession.sharedInstance()
 
+let avSession = AVAudioSession.sharedInstance()
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     
@@ -30,23 +30,22 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Get the singleton instance.
         do {
             // Set the audio session category, mode, and options.
-            try audioSession.setCategory(.playAndRecord, mode: .moviePlayback, options: [.allowBluetooth, .allowAirPlay, .defaultToSpeaker])
-            try audioSession.setActive(true)
+            try avSession.setPreferredIOBufferDuration(0)
+            try avSession.setCategory(.playback, mode: .moviePlayback, policy: .longFormVideo, options: [])
+            try avSession.setActive(true)
             
-
         } catch {
-            print("Failed to set audio session category.")
+            print(error.localizedDescription)
         }
         
-   
         // Other post-launch configuration.
         return true
-        
-        
-        return true
+                
     }
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window:UIWindow?) -> UIInterfaceOrientationMask {
+        
+
         return AppDelegate.orientationLock
     }
 }

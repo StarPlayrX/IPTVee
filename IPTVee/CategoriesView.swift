@@ -17,7 +17,6 @@ class CategoriesObservable: ObservableObject {
 struct CategoriesView: View {
     @ObservedObject var obs = LoginObservable.shared
 
-    
     var body: some View {
 
             Form {
@@ -26,7 +25,7 @@ struct CategoriesView: View {
                     ForEach(Array(cats),id: \.categoryName) { cat in
                         
                         HStack {
-                            NavigationLink(cat.categoryName,destination: ChannelsView())
+                            NavigationLink(cat.categoryName,destination: ChannelsView(categoryID: cat.categoryID))
                                 .foregroundColor(.white)
                         }
                     }
@@ -35,4 +34,3 @@ struct CategoriesView: View {
             }.onAppear(perform: { AppDelegate.orientationLock = UIInterfaceOrientationMask.portrait })
     }
 }
-

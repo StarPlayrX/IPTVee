@@ -1,6 +1,7 @@
 import SwiftUI
 import WebKit
 
+// This is on the back burner - Using AVPlayerViewController directly instead
 struct Webview : UIViewRepresentable {
     @ObservedObject var plo = PlayerObservable.plo
     

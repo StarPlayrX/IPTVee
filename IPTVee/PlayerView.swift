@@ -15,82 +15,68 @@ class PlayerObservable: ObservableObject {
     static var plo = PlayerObservable()
     @Published var loadingMsg = "Loading..."
     @Published var isLoading = true
-    @Published var isPlayingURL = "http://primestreams.tv:826/live/toddbruss90/zzeH7C0xdw/36593.m3u8"
-
+    @Published var isPlayingURL = ""
+    
 }
 
-
 struct PlayerView: View {
-    internal init(url: String) {
-        self.url = url
+    internal init(streamId: String, channelName: String) {
+        self.streamId = streamId
+        self.channelName = channelName
     }
     
-    let player = AVPlayer()
-    let url: String
+    let streamId: String
+    let channelName: String
+    @State var playPauseLabel = "Toggle"
     
-    
-    func getPlayer() -> AVPlayer {
-        let player = AVPlayer(url: URL(string: url)!)
-        player.play()
-        return player
-    }
     @ObservedObject var plo = PlayerObservable.plo
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
+    
+    func backgroundPlayerSeam() {
+        AVPVC.player?.playImmediately(atRate: 0.9)
+        AVPVC.player?.play()
+    }
     
     var body: some View {
-        
+        let playerView = AVPlayerView(streamID: streamId)
         GeometryReader { geometry in
-                
-                AVPlayerView(videoURL: URL(string: url)).edgesIgnoringSafeArea([.bottom,.leading,.trailing])
-                .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625, alignment: .topLeading)
-                
-               
-        }
-        
-        
-
-        VStack {
             
-
-            Spacer()
+            Group {
+                playerView
+                    .edgesIgnoringSafeArea([.bottom, .trailing, .leading])
                 
+                    //MARK: - This is 16:9 aspect ratio
+                    .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625, alignment: .topLeading)
+                
+                    //MARK: - Basically allowing background playback & maintaining playback / pause on lock screen
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                        DispatchQueue.background(delay: 1.75, background: {
+                            AVPVC.player = AVPlayer()
+                            backgroundPlayerSeam()
+                        }, completion: {
+                            AVPVC.player = player
+                            backgroundPlayerSeam()
+                        })
+                    }
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                        AVPVC.player = AVPVC.player != player ? player : AVPVC.player
+                        backgroundPlayerSeam()
+                    }
+            }
+            
+        }//
+        .navigationTitle(channelName)
+        .navigationBarItems(trailing: Button(playPauseLabel) {
+            playPauseLabel = AVPVC.player?.rate == 0.0 ? "Pause" : "Play"
+            AVPVC.player?.rate == 0.0 ? AVPVC.player?.play() : AVPVC.player?.pause()
+        })
+        
+        VStack {
+            Spacer()
         }.onAppear(perform: {
-            AppDelegate.orientationLock = UIInterfaceOrientationMask.portrait
+            AppDelegate.orientationLock = [.portrait, .landscapeLeft, .landscapeRight]
         })
         
         Spacer()
-    }
-}
-
-
-var player = AVPlayer()
-
-var AVPVC = AVPlayerViewController()
-
-struct AVPlayerView: UIViewControllerRepresentable {
-    
-    var videoURL: URL?
-
-    func updateUIViewController(_ pvc: AVPlayerViewController, context: Context) {
-        pvc.entersFullScreenWhenPlaybackBegins = true
-        pvc.allowsPictureInPicturePlayback = true
-        pvc.canStartPictureInPictureAutomaticallyFromInline = true
-        pvc.requiresLinearPlayback = false
-        pvc.exitsFullScreenWhenPlaybackEnds = false
-        pvc.showsPlaybackControls = true
-        pvc.showsTimecodes = true
-        pvc.updatesNowPlayingInfoCenter = true
-        player = AVPlayer(url: videoURL!)
-        pvc.player = player
-        if #available(iOS 15.0, *) {
-            pvc.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-        }
-  
-        pvc.player?.automaticallyWaitsToMinimizeStalling = true
-
-    }
-
-    func makeUIViewController(context: Context) -> AVPlayerViewController {
-        AVPVC = AVPlayerViewController()
-        return AVPVC
     }
 }

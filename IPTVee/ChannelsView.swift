@@ -15,23 +15,31 @@ class ChannelsObservable: ObservableObject {
 struct ChannelsView: View {
     @ObservedObject var cos = ChannelsObservable.shared
     @ObservedObject var plo = PlayerObservable.plo
- 
+    
+    let categoryID: String
     
     var body: some View {
-        
+    
         Form {
             Section(header: Text("CHANNELS")) {
                 
-                ForEach(Array(chan),id: \.name) { ch in
+                //MARK: Todo - Add a search bar and work the filter in with it
+                let category = chan.filter({ $0.categoryID == categoryID })
+                
+                ForEach(Array(category),id: \.name) { ch in
                     
                     HStack {
-                        NavigationLink(String(ch.num) + " " + ch.name,destination: PlayerView( url: "http://primestreams.tv:826/live/toddbruss90/zzeH7C0xdw/\(ch.streamID).m3u8"))
-                            .foregroundColor(.white)
+                        //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
+                        //MARK: - Todo Electronic Program Guide, EPG - Now Playing { filter }
+                        NavigationLink(String(ch.num) + " " + ch.name,destination: PlayerView(streamId: String(ch.streamID), channelName: ch.name))
                     }
+                    .foregroundColor(.white)
+
                 }
-            }.navigationTitle("Channels")
+            }
+            .navigationTitle("Channels")
             
-        }.onAppear(perform: { AppDelegate.orientationLock = UIInterfaceOrientationMask.portrait })
+        }
+        .onAppear(perform: { AppDelegate.orientationLock = UIInterfaceOrientationMask.portrait })
     }
 }
-

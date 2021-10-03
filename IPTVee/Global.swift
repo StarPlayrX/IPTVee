@@ -7,6 +7,7 @@
 
 import Foundation
 import iptvKit
+import AVKit
 
 let api = Api()
 
@@ -28,4 +29,6 @@ var cats: Categories = Categories()
 var conf: Configuration? = nil
 var chan: Channels = Channels()
 
-
+//MARK: - Player Controls
+var player = AVPlayer()
+var AVPVC = AVPlayerViewController()
