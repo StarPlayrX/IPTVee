@@ -15,9 +15,8 @@ struct AVPlayerView: UIViewControllerRepresentable {
     }
     
     func makeUIViewController(context: Context) -> AVPlayerViewController {
-        
         //MARK: Todo - Build this dynamically from the user's data and/or configuration using URL Components()
-        player = AVPlayer(url: URL(string:"http://primestreams.tv:826/live/toddbruss90/zzeH7C0xdw/\(streamID).m3u8")!)
+        player.replaceCurrentItem(with: AVPlayerItem(url: URL(string:"http://primestreams.tv:826/live/toddbruss90/zzeH7C0xdw/\(streamID).m3u8")!))
         player.play()
         
         let pvc = AVPlayerViewController()

@@ -64,7 +64,7 @@ struct PlayerView: View {
                     }
             }
             
-        }//
+        }
         .navigationTitle(channelName)
         .navigationBarItems(trailing: Button(playPauseLabel) {
             playPauseLabel = AVPVC.player?.rate == 0.0 ? "Pause" : "Play"
