@@ -38,13 +38,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             print(error.localizedDescription)
         }
         
-        // Other post-launch configuration.
         return true
-                
     }
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window:UIWindow?) -> UIInterfaceOrientationMask {
-        
+
 
         return AppDelegate.orientationLock
     }

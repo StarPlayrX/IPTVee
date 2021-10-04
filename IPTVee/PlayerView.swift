@@ -32,7 +32,7 @@ struct PlayerView: View {
     @ObservedObject var plo = PlayerObservable.plo
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     
-    func backgroundPlayerSeam() {
+    func backgroundPlaybackSeam() {
         AVPVC.player?.playImmediately(atRate: 0.9)
         AVPVC.player?.play()
     }
@@ -52,15 +52,15 @@ struct PlayerView: View {
                     .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                         DispatchQueue.background(delay: 1.75, background: {
                             AVPVC.player = AVPlayer()
-                            backgroundPlayerSeam()
+                            backgroundPlaybackSeam()
                         }, completion: {
                             AVPVC.player = player
-                            backgroundPlayerSeam()
+                            backgroundPlaybackSeam()
                         })
                     }
                     .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                         AVPVC.player = AVPVC.player != player ? player : AVPVC.player
-                        backgroundPlayerSeam()
+                        backgroundPlaybackSeam()
                     }
             }
             
@@ -74,7 +74,13 @@ struct PlayerView: View {
         VStack {
             Spacer()
         }.onAppear(perform: {
-            AppDelegate.orientationLock = [.portrait, .landscapeLeft, .landscapeRight]
+            AppDelegate.orientationLock = [.all]
+            
+        })
+        .onDisappear(perform: {
+            AppDelegate.orientationLock = UIInterfaceOrientationMask.portrait
+            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+            UIViewController.attemptRotationToDeviceOrientation()
         })
         
         Spacer()
