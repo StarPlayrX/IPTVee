@@ -18,7 +18,8 @@ struct ChannelsView: View {
     
     
     let categoryID: String
-    
+    @ObservedObject var plo = PlayerObservable.plo
+
     
     var body: some View {
         
@@ -35,6 +36,7 @@ struct ChannelsView: View {
                         //MARK: the ID EVENTS 42: occurs multiple times within the collection, this will give undefined results!
                         NavigationLink(String(ch.num) + " " + ch.name,destination: PlayerView(streamId: String(ch.streamID), channelName: ch.name))
                         
+                        
                     }
                 }
             }
@@ -42,9 +44,14 @@ struct ChannelsView: View {
             .navigationTitle("Channels")
             .frame(width: geometry.size.width)
         }
-        
+        .onAppear {
+            plo.fullScreenTriggered = true
+            AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
+        }
+        .onDisappear {
+            plo.fullScreenTriggered = false
+        }
     }
 }
-
 
 

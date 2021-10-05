@@ -20,7 +20,6 @@ struct IPTVapp: App {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
         let avSession = AVAudioSession.sharedInstance()
@@ -39,7 +38,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
         
+    static var interfaceMask = UIInterfaceOrientationMask.portrait
+    
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window:UIWindow?) -> UIInterfaceOrientationMask {
-        return UIInterfaceOrientationMask.portrait
+        return AppDelegate.interfaceMask
     }
 }

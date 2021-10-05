@@ -29,5 +29,11 @@ struct CategoriesView: View {
                 }
             }.navigationTitle("Categories")
         }
+        .onAppear {
+            AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
+        }
     }
 }
+
+
+    

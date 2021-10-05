@@ -9,19 +9,25 @@ import AVKit
 import SwiftUI
 
 struct AVPlayerView: UIViewControllerRepresentable {
-    
+    @ObservedObject var plo = PlayerObservable.plo
+
     let streamID: String
     
     func updateUIViewController(_ playerViewController: AVPlayerViewController, context: Context) {
-      
-      //  enterFullscreen(playerViewController)
-
+        if plo.disableVideoController { return }
+        
+        if !plo.fullScreenTriggered {
+            plo.fullScreenTriggered = true
+            enterFullscreen(AVPVC)
+        }
     }
 
 
     func makeUIViewController(context: Context) -> AVPlayerViewController {
-        
+        if plo.disableVideoController { return AVPlayerViewController() }
+     
         guard let conf = LoginObservable.shared.config else { return AVPlayerViewController() }
+        
         let user = conf.userInfo.username
         let pass = conf.userInfo.password
         let url = conf.serverInfo.url
@@ -56,9 +62,11 @@ struct AVPlayerView: UIViewControllerRepresentable {
         
         AVPVC = pvc
         
-        enterFullscreen(AVPVC)
+        if !plo.fullScreenTriggered {
+            plo.fullScreenTriggered = true
+            enterFullscreen(AVPVC)
+        }
 
-        
         return AVPVC
     }
 }
@@ -67,7 +75,6 @@ struct AVPlayerView: UIViewControllerRepresentable {
 private func enterFullscreen(_ playerViewController: AVPlayerViewController) {
 
     if playerViewController.entersFullScreenWhenPlaybackBegins {
-        AVPVC.entersFullScreenWhenPlaybackBegins = false
         
         let selectorName: String = {
             return "_transitionToFullScreenAnimated:interactive:completionHandler:"

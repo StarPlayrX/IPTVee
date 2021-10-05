@@ -15,6 +15,8 @@ class LoginObservable: ObservableObject {
     @Published var port: String = "826"
     @Published var isLoggedIn: Bool = false
     @Published var isAutoSwitchCat: Bool = false
+    @Published var isCatActive: Bool = false
+
     @Published var config: Config = nil
    
 }
