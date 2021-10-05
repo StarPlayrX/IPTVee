@@ -5,7 +5,6 @@
 //  Created by Todd Bruss on 10/1/21.
 //
 
-import Foundation
 import SwiftUI
 
 class ChannelsObservable: ObservableObject {
@@ -13,33 +12,39 @@ class ChannelsObservable: ObservableObject {
 }
 
 struct ChannelsView: View {
-    @ObservedObject var cos = ChannelsObservable.shared
-    @ObservedObject var plo = PlayerObservable.plo
+    internal init(categoryID: String) {
+        self.categoryID = categoryID
+    }
+    
     
     let categoryID: String
     
-    var body: some View {
     
-        Form {
-            Section(header: Text("CHANNELS")) {
-                
-                //MARK: Todo - Add a search bar and work the filter in with it
-                let category = chan.filter({ $0.categoryID == categoryID })
-                
-                ForEach(Array(category),id: \.name) { ch in
+    var body: some View {
+        
+        let category = chan.filter({ $0.categoryID == categoryID })
+        GeometryReader { geometry in
+            List {
+                Section(header: Text("CATEGORIES")) {
                     
-                    HStack {
+                    ForEach(Array(category),id: \.streamID) { ch in
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG - Now Playing { filter }
+                        
+                        //MARK: - To Fix: ForEach<Array<Channel>, String, NavigationLink<Text, PlayerView>>:
+                        //MARK: the ID EVENTS 42: occurs multiple times within the collection, this will give undefined results!
                         NavigationLink(String(ch.num) + " " + ch.name,destination: PlayerView(streamId: String(ch.streamID), channelName: ch.name))
+                        
                     }
-                    .foregroundColor(.white)
-
                 }
             }
-            .navigationTitle("Channels")
             
+            .navigationTitle("Channels")
+            .frame(width: geometry.size.width)
         }
-        .onAppear(perform: { AppDelegate.orientationLock = UIInterfaceOrientationMask.portrait })
+        
     }
 }
+
+
+

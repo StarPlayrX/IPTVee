@@ -35,9 +35,9 @@ struct ContentView: View {
                     TextField("port #", text: $obs.port)
                         .keyboardType(.numberPad)
                     
-                    Toggle(isOn: $https) {
-                        Text("use https")
-                    }
+                    //Toggle(isOn: $https) {
+                    //    Text("use https")
+                    //}
                     Button(action: {login(userName, passWord, service, obs.port) }) {
                         Text("Login")
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -75,12 +75,11 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("IPTVee")
         }
-        .onAppear(perform: { AppDelegate.orientationLock = UIInterfaceOrientationMask.portrait })
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(obs: LoginObservable.shared)
+        ContentView()
     }
 }

@@ -9,41 +9,74 @@ import AVKit
 import SwiftUI
 
 struct AVPlayerView: UIViewControllerRepresentable {
-    var streamID: String
-    func updateUIViewController(_ uiViewController: AVPlayerViewController, context: Context) {
-        AVPVC.requiresLinearPlayback = false
-    }
     
+    let streamID: String
+    
+    func updateUIViewController(_ playerViewController: AVPlayerViewController, context: Context) {
+      
+      //  enterFullscreen(playerViewController)
+
+    }
+
+
     func makeUIViewController(context: Context) -> AVPlayerViewController {
-        //MARK: Todo - Build this dynamically from the user's data and/or configuration using URL Components()
-        player.replaceCurrentItem(with: AVPlayerItem(url: URL(string:"http://primestreams.tv:826/live/toddbruss90/zzeH7C0xdw/\(streamID).m3u8")!))
-        player.play()
+        
+        guard let conf = LoginObservable.shared.config else { return AVPlayerViewController() }
+        let user = conf.userInfo.username
+        let pass = conf.userInfo.password
+        let url = conf.serverInfo.url
+        let port = conf.serverInfo.port
+ 
+        //MARK: Todo - Build this dynamically using URL Components()
+        guard let url = URL(string:"http://\(url):\(port)/live/\(user)/\(pass)/\(streamID).m3u8") else { return AVPlayerViewController() }
+                
+        player.replaceCurrentItem(with: AVPlayerItem(url: url))
+        player.playImmediately(atRate: 1.0)
+        player.preventsDisplaySleepDuringVideoPlayback = true
+        player.allowsExternalPlayback = true
+        player.externalPlaybackVideoGravity = .resizeAspectFill
+        player.actionAtItemEnd = .pause
+        player.automaticallyWaitsToMinimizeStalling = true
         
         let pvc = AVPlayerViewController()
-        
+     
         pvc.player = player
-        pvc.player?.preventsDisplaySleepDuringVideoPlayback = true
-        pvc.player?.allowsExternalPlayback = true
-        pvc.player?.automaticallyWaitsToMinimizeStalling = true
-        pvc.player?.externalPlaybackVideoGravity = .resizeAspectFill
-        pvc.player?.actionAtItemEnd = .pause
         pvc.entersFullScreenWhenPlaybackBegins = true
-        pvc.exitsFullScreenWhenPlaybackEnds = true
+        pvc.exitsFullScreenWhenPlaybackEnds = false
         pvc.allowsPictureInPicturePlayback = true
-        pvc.canStartPictureInPictureAutomaticallyFromInline = true
-        pvc.requiresLinearPlayback = true
+        pvc.canStartPictureInPictureAutomaticallyFromInline = false
         pvc.updatesNowPlayingInfoCenter = true
         pvc.showsTimecodes = true
+        pvc.showsPlaybackControls = true
         pvc.updatesNowPlayingInfoCenter = true
         pvc.requiresLinearPlayback = false
-        
         if #available(iOS 15.0, *) {
             pvc.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
         }
         
         AVPVC = pvc
+        
+        enterFullscreen(AVPVC)
+
+        
         return AVPVC
     }
 }
 
 
+private func enterFullscreen(_ playerViewController: AVPlayerViewController) {
+
+    if playerViewController.entersFullScreenWhenPlaybackBegins {
+        AVPVC.entersFullScreenWhenPlaybackBegins = false
+        
+        let selectorName: String = {
+            return "_transitionToFullScreenAnimated:interactive:completionHandler:"
+
+        }()
+        let selectorToForceFullScreenMode = NSSelectorFromString(selectorName)
+
+        if playerViewController.responds(to: selectorToForceFullScreenMode) {
+            playerViewController.perform(selectorToForceFullScreenMode, with: true, with: nil)
+        }
+    }
+}

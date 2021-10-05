@@ -5,7 +5,6 @@
 //  Created by Todd Bruss on 9/28/21.
 //
 
-import Foundation
 import SwiftUI
 
 class CategoriesObservable: ObservableObject {
@@ -16,21 +15,19 @@ class CategoriesObservable: ObservableObject {
 
 struct CategoriesView: View {
     @ObservedObject var obs = LoginObservable.shared
-
+    
     var body: some View {
-
-            Form {
-                Section(header: Text("CATEGORIES")) {
-                    
-                    ForEach(Array(cats),id: \.categoryName) { cat in
-                        
-                        HStack {
-                            NavigationLink(cat.categoryName,destination: ChannelsView(categoryID: cat.categoryID))
-                                .foregroundColor(.white)
-                        }
-                    }
-                }.navigationTitle("Categories")
+        
+        List {
+            Section(header: Text("CATEGORIES")) {
                 
-            }.onAppear(perform: { AppDelegate.orientationLock = UIInterfaceOrientationMask.portrait })
+                ForEach(Array(cats),id: \.categoryName) { cat in
+                    
+                    HStack {
+                        NavigationLink(cat.categoryName,destination: ChannelsView(categoryID: cat.categoryID))
+                    }
+                }
+            }.navigationTitle("Categories")
+        }
     }
 }

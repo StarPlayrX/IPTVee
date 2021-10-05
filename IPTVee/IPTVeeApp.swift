@@ -18,15 +18,13 @@ struct IPTVapp: App {
     }
 }
 
-
-let avSession = AVAudioSession.sharedInstance()
-
 class AppDelegate: NSObject, UIApplicationDelegate {
     
-    static var orientationLock = UIInterfaceOrientationMask.portrait
-    
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
+        let avSession = AVAudioSession.sharedInstance()
+
         // Get the singleton instance.
         do {
             // Set the audio session category, mode, and options.
@@ -40,10 +38,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         return true
     }
-    
+        
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window:UIWindow?) -> UIInterfaceOrientationMask {
-
-
-        return AppDelegate.orientationLock
+        return UIInterfaceOrientationMask.portrait
     }
 }
