@@ -89,7 +89,7 @@ struct ContentView: View {
             
             .disableAutocorrection(true)
             .autocapitalization(UITextAutocapitalizationType.none)
-            .padding(.bottom, 0.0)
+            .padding(0.0)
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(title)
             .onAppear {

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import iptvKit
 
 class CategoriesObservable: ObservableObject {
     static var cto = CategoriesObservable()
@@ -16,24 +17,32 @@ class CategoriesObservable: ObservableObject {
 struct CategoriesView: View {
     @ObservedObject var obs = LoginObservable.shared
     
+    @State var searchText: String = ""
+    @State var isActive: Bool = false
+
+    // This is our search filter
+    var categorySearchResults: Categories {
+        cats.filter({"\($0.categoryName)"
+            .lowercased()
+            .contains(searchText.lowercased()) || searchText.isEmpty})
+    }
+    
     var body: some View {
         
         Form {
             Section(header: Text("CATEGORIES")) {
                 
-                ForEach(Array(cats),id: \.categoryName) { cat in
-                    
+                ForEach(Array(categorySearchResults),id: \.categoryName) { cat in
                     HStack {
                         NavigationLink(cat.categoryName,destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName))
                     }
                 }
             }.navigationTitle("Categories")
         }
+        .searchable(text: $searchText, placement: .automatic, prompt: "Search Categories")
+
         .onAppear {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
         }
     }
 }
-
-
-    

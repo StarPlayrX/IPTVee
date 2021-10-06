@@ -18,14 +18,12 @@ class PlayerObservable: ObservableObject {
     @Published var isPlayingURL = ""
     @Published var fullScreenTriggered: Bool = false
     @Published var disableVideoController: Bool = false
-
 }
 
 struct PlayerView: View {
     internal init(streamId: String, channelName: String) {
         self.streamId = streamId
         self.channelName = channelName
-        
     }
     
     let streamId: String
@@ -102,4 +100,3 @@ struct PlayerView: View {
         }
     }
 }
-
