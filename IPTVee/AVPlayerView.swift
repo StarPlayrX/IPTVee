@@ -23,7 +23,6 @@ struct AVPlayerView: UIViewControllerRepresentable {
     }
 
     func makeUIViewController(context: Context) -> AVPlayerViewController {
-        if plo.disableVideoController { return AVPlayerViewController() }
        // if plo.disableVideoController { return AVPlayerViewController() }
         print("NO UPDATE")
 
