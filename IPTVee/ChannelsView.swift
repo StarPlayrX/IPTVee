@@ -64,10 +64,12 @@ struct ChannelsView: View {
             .frame(width: geometry.size.width)
         }
         .onAppear {
+            plo.isOkayToPlay = false
             plo.fullScreenTriggered = true
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
         }
         .onDisappear {
+            plo.isOkayToPlay = true
             plo.fullScreenTriggered = false
         }
     }

@@ -37,7 +37,11 @@ struct AVPlayerView: UIViewControllerRepresentable {
         guard let url = URL(string:"http://\(url):\(port)/live/\(user)/\(pass)/\(streamID).m3u8") else { return AVPlayerViewController() }
                 
         player.replaceCurrentItem(with: AVPlayerItem(url: url))
-        player.playImmediately(atRate: 1.0)
+        
+        if plo.isOkayToPlay {
+            player.playImmediately(atRate: 1.0)
+        }
+        
         player.preventsDisplaySleepDuringVideoPlayback = true
         player.allowsExternalPlayback = true
         player.externalPlaybackVideoGravity = .resizeAspectFill
@@ -77,7 +81,8 @@ struct AVPlayerView: UIViewControllerRepresentable {
     if playerViewController.entersFullScreenWhenPlaybackBegins {
         
         playerViewController.showsPlaybackControls = true
-
+        PlayerObservable.plo.isOkayToPlay = true
+        playerViewController.player?.playImmediately(atRate: 1.0)
         let selectorName: String = {
             return "_transitionToFullScreenAnimated:interactive:completionHandler:"
 

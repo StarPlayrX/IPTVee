@@ -18,6 +18,8 @@ class PlayerObservable: ObservableObject {
     @Published var isPlayingURL = ""
     @Published var fullScreenTriggered: Bool = false
     @Published var disableVideoController: Bool = false
+    @Published var isOkayToPlay: Bool = false
+
 }
 
 struct PlayerView: View {
@@ -33,13 +35,15 @@ struct PlayerView: View {
     @ObservedObject var plo = PlayerObservable.plo
     
     var body: some View {
-        
+
         Spacer()
 
         HStack {
             GeometryReader { geometry in
                 
                 HStack {
+                    
+
                     AVPlayerView(streamID: streamId)
                         .onTapGesture {
                             AVPVC.showsPlaybackControls = false
@@ -48,6 +52,8 @@ struct PlayerView: View {
                                 enterFullscreen(AVPVC)
                             } else {
                                 AVPVC.player?.rate == 0 ? AVPVC.player?.play() : AVPVC.player?.pause()
+                                plo.isOkayToPlay = AVPVC.player?.rate == 0 ? false : true
+
                             }
                         }
                         .edgesIgnoringSafeArea([.bottom, .trailing, .leading])
