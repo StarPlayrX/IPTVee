@@ -28,7 +28,3 @@ let decoder = JSONDecoder()
 var cats: Categories = Categories()
 var conf: Configuration? = nil
 var chan: Channels = Channels()
-
-//MARK: - Player Controls
-var player = AVPlayer(playerItem: nil)
-var AVPVC = AVPlayerViewController()

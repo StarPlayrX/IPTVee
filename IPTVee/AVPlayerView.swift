@@ -12,20 +12,11 @@ struct AVPlayerView: UIViewControllerRepresentable {
     @ObservedObject var plo = PlayerObservable.plo
 
     let streamID: String
-    
-    func updateUIViewController(_ playerViewController: AVPlayerViewController, context: Context) {
-       // if plo.disableVideoController { return }
-    print("UPDATE")
-        if !plo.fullScreenTriggered {
-            plo.fullScreenTriggered = true
-            enterFullscreen(AVPVC)
-        }
-    }
+    let videoController: AVPlayerViewController
+    let player: AVPlayer
+    func updateUIViewController(_ playerViewController: AVPlayerViewController, context: Context) {}
 
     func makeUIViewController(context: Context) -> AVPlayerViewController {
-       // if plo.disableVideoController { return AVPlayerViewController() }
-        print("NO UPDATE")
-
         guard let conf = LoginObservable.shared.config else { return AVPlayerViewController() }
         
         let user = conf.userInfo.username
@@ -34,61 +25,40 @@ struct AVPlayerView: UIViewControllerRepresentable {
         let port = conf.serverInfo.port
  
         //MARK: Todo - Build this dynamically using URL Components()
-        guard let url = URL(string:"http://\(url):\(port)/live/\(user)/\(pass)/\(streamID).m3u8") else { return AVPlayerViewController() }
-                
+        guard let url = URL(string:"http://\(url):\(port)/live/\(user)/\(pass)/\(streamID).m3u8") else { return videoController }
         player.replaceCurrentItem(with: AVPlayerItem(url: url))
+        videoController.player = player
+        videoController.player?.currentItem?.preferredMaximumResolutionForExpensiveNetworks = CGSize(width: 1920, height: 1080)
+        videoController.player?.currentItem?.preferredPeakBitRateForExpensiveNetworks = .infinity
+        videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
+        videoController.player?.currentItem?.startsOnFirstEligibleVariant = true
+        videoController.player?.playImmediately(atRate: 0.0)
+        videoController.player?.preventsDisplaySleepDuringVideoPlayback = true
+        videoController.player?.allowsExternalPlayback = true
+        videoController.player?.externalPlaybackVideoGravity = .resizeAspectFill
+        videoController.player?.actionAtItemEnd = .pause
+        videoController.player?.automaticallyWaitsToMinimizeStalling = true
+        videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+        videoController.entersFullScreenWhenPlaybackBegins = false
+        videoController.exitsFullScreenWhenPlaybackEnds = false
+        videoController.allowsPictureInPicturePlayback = true
+        videoController.canStartPictureInPictureAutomaticallyFromInline = true
+        videoController.updatesNowPlayingInfoCenter = true
+        videoController.showsTimecodes = true
+        videoController.showsPlaybackControls = true
+        videoController.updatesNowPlayingInfoCenter = true
+        videoController.requiresLinearPlayback = false
+        videoController.player?.playImmediately(atRate: 1.0)
+       
+        return videoController
         
-        if plo.isOkayToPlay {
-            player.playImmediately(atRate: 1.0)
-        }
-        
-        player.preventsDisplaySleepDuringVideoPlayback = true
-        player.allowsExternalPlayback = true
-        player.externalPlaybackVideoGravity = .resizeAspectFill
-        player.actionAtItemEnd = .pause
-        player.automaticallyWaitsToMinimizeStalling = true
-        
-        let pvc = AVPlayerViewController()
-     
-        pvc.player = player
-        pvc.entersFullScreenWhenPlaybackBegins = true
-        pvc.exitsFullScreenWhenPlaybackEnds = false
-        pvc.allowsPictureInPicturePlayback = true
-        pvc.canStartPictureInPictureAutomaticallyFromInline = false
-        pvc.updatesNowPlayingInfoCenter = true
-        pvc.showsTimecodes = true
-        pvc.showsPlaybackControls = false
-        pvc.updatesNowPlayingInfoCenter = true
-        pvc.requiresLinearPlayback = false
-        if #available(iOS 15.0, *) {
-            pvc.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-        }
-        
-        AVPVC = pvc
-        
-        if !plo.fullScreenTriggered {
-            plo.fullScreenTriggered = true
-            enterFullscreen(AVPVC)
-        }
-
-        return AVPVC
     }
 }
-
 
  func enterFullscreen(_ playerViewController: AVPlayerViewController) {
 
     if playerViewController.entersFullScreenWhenPlaybackBegins {
-        
-        playerViewController.showsPlaybackControls = true
-        PlayerObservable.plo.isOkayToPlay = true
-        playerViewController.player?.playImmediately(atRate: 1.0)
-        let selectorName: String = {
-            return "_transitionToFullScreenAnimated:interactive:completionHandler:"
-
-        }()
-        let selectorToForceFullScreenMode = NSSelectorFromString(selectorName)
-
+        let selectorToForceFullScreenMode = NSSelectorFromString("_transitionToFullScreenAnimated:interactive:completionHandler:")
         if playerViewController.responds(to: selectorToForceFullScreenMode) {
             playerViewController.perform(selectorToForceFullScreenMode, with: true, with: nil)
         }

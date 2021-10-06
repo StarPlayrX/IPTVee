@@ -7,6 +7,7 @@
 
 import SwiftUI
 import iptvKit
+import AVKit
 
 class ChannelsObservable: ObservableObject {
     static var shared = ChannelsObservable()
@@ -48,13 +49,10 @@ struct ChannelsView: View {
 
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG -> Now Playing { add to filter }
-                        NavigationLink(channelItem,destination: PlayerView(streamId: String(ch.streamID), channelName: ch.name))
-                            //.onTapGesture {
-                            //    selectedChannel = channelItem
-                            //}
-                            //.listRowBackground(selectedChannel == channelItem ? Color(UIColor.systemBlue) : Color(UIColor.systemGray6))
-
-                        
+                        NavigationLink(channelItem,
+                                       destination: PlayerView(
+                                        channelName: ch.name,
+                                        playerView: AVPlayerView(streamID: String(ch.streamID), videoController: AVPlayerViewController(), player: AVPlayer() )))
                     }
                     
                 }
@@ -62,26 +60,8 @@ struct ChannelsView: View {
             .searchable(text: $searchText, placement: .automatic, prompt: "Search Channels")
             .navigationTitle(categoryName)
             .frame(width: geometry.size.width)
-        }
-        .onAppear {
-            plo.isOkayToPlay = false
-            plo.fullScreenTriggered = true
-            AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
-        }
-        .onDisappear {
-            plo.isOkayToPlay = true
-            plo.fullScreenTriggered = false
+            
+        
         }
     }
 }
-
-/*
- 
- Button(action: {
- self.selectedGroup = group
- }, label: {
- Text(group.name)
- })
- .listRowBackground(self.selectedGroup == group ? Color.gray : Color(UIColor.systemGroupedBackground))
- 
- */

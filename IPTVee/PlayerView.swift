@@ -19,97 +19,55 @@ class PlayerObservable: ObservableObject {
     @Published var fullScreenTriggered: Bool = false
     @Published var disableVideoController: Bool = false
     @Published var isOkayToPlay: Bool = false
-
+    
 }
 
 struct PlayerView: View {
-    internal init(streamId: String, channelName: String) {
-        self.streamId = streamId
+    internal init(channelName: String, playerView: AVPlayerView) {
         self.channelName = channelName
+        self.playerView = playerView
     }
     
-    let streamId: String
     let channelName: String
-
-    //@State var playPauseLabel = "Toggle"
+    let playerView: AVPlayerView
     @ObservedObject var plo = PlayerObservable.plo
     
     var body: some View {
-
-        Spacer()
-
-        HStack {
-            GeometryReader { geometry in
+        
+        
+        GeometryReader { geometry in
+            
+            Group {
                 
-                HStack {
-                    
-
-                    AVPlayerView(streamID: streamId)
-                        .onTapGesture {
-                            AVPVC.showsPlaybackControls = false
-                            
-                            if player.rate == 1 {
-                                enterFullscreen(AVPVC)
-                            } else {
-                                AVPVC.player?.rate == 0 ? AVPVC.player?.play() : AVPVC.player?.pause()
-                                plo.isOkayToPlay = AVPVC.player?.rate == 0 ? false : true
-
-                            }
-                        }
-                        .edgesIgnoringSafeArea([.bottom, .trailing, .leading])
-                    
-                    //MARK: - This is 16:9 aspect ratio
-                        .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625, alignment: .topLeading)
-                    
-                    //MARK: - Basically allowing background playback & maintaining playback / pause on lock screen
-                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
-                            
-                            // Creates a seamless background audio user experience
-                            DispatchQueue.background(delay: 1.0, background: {
-                                AVPVC.player = nil
-                            }, completion: {
-                                AVPVC.player = player
-                            })
-                        }
-                    
-                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                            
-                            // Ensures our player is reattached to the VC
-                            AVPVC.player = AVPVC.player != player ? player : AVPVC.player
-                        }
-                        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                            
-                            //Ensures we will not run our full screen startup again within the same session
-                            plo.fullScreenTriggered = true
-                            
-                            // If our full screen viewer is in portrait or landscape, update the UI underneath
-                            if UIDevice.current.orientation.isPortrait {
-                                AppDelegate.interfaceMask = UIInterfaceOrientationMask.portrait
-                            } else if UIDevice.current.orientation.isLandscape {
-                                AppDelegate.interfaceMask = UIInterfaceOrientationMask.landscape
-                            }
-                        }
-                }
+                playerView
+                    .edgesIgnoringSafeArea([.bottom, .trailing, .leading])
                 
-                Spacer()
-                
+                //MARK: - This is 16:9 aspect ratio
+                    .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625)
+                    .offset(y: UIApplication.shared.statusBarOrientation.isPortrait  ? 30 : 0)
+                //MARK: - Basically allowing background playback & maintaining playback / pause on lock screen
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                        // Save Config
+                    }
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                        // Load Config
+                    }
+                    .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                        // If our full screen viewer is in portrait or landscape, update the UI underneath
+                        if UIApplication.shared.statusBarOrientation.isPortrait {
+                            AppDelegate.interfaceMask = UIInterfaceOrientationMask.portrait
+                        } else if UIApplication.shared.statusBarOrientation.isLandscape {
+                            AppDelegate.interfaceMask = UIInterfaceOrientationMask.landscape
+                        }
+                    }
             }
             .navigationTitle(channelName)
-            //MARK: Put the favorites button here instead
-            /*.navigationBarItems(trailing: Button(playPauseLabel) {
-             playPauseLabel = AVPVC.player?.rate == 0.0 ? "Pause" : "Play"
-             AVPVC.player?.rate == 0.0 ? AVPVC.player?.play() : AVPVC.player?.pause()
-             })*/
-            
-           
-        }
-        .onAppear {
-            AVPVC.showsPlaybackControls = false
-            AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
-        }
-        .onDisappear {
-            AVPVC.showsPlaybackControls = true
-            AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
+            .onAppear {
+                AppDelegate.interfaceMask = UIInterfaceOrientationMask.all
+            }
+            .onDisappear {
+                plo.fullScreenTriggered = true
+            }
         }
     }
 }
