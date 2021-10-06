@@ -28,17 +28,28 @@ struct PlayerView: View {
     
     let streamId: String
     let channelName: String
+
     //@State var playPauseLabel = "Toggle"
     @ObservedObject var plo = PlayerObservable.plo
     
     var body: some View {
-        let playerView = AVPlayerView(streamID: streamId)
         
-        VStack {
+        Spacer()
+
+        HStack {
             GeometryReader { geometry in
                 
-                Group {
-                    playerView
+                HStack {
+                    AVPlayerView(streamID: streamId)
+                        .onTapGesture {
+                            AVPVC.showsPlaybackControls = false
+                            
+                            if player.rate == 1 {
+                                enterFullscreen(AVPVC)
+                            } else {
+                                AVPVC.player?.rate == 0 ? AVPVC.player?.play() : AVPVC.player?.pause()
+                            }
+                        }
                         .edgesIgnoringSafeArea([.bottom, .trailing, .leading])
                     
                     //MARK: - This is 16:9 aspect ratio
@@ -74,6 +85,8 @@ struct PlayerView: View {
                         }
                 }
                 
+                Spacer()
+                
             }
             .navigationTitle(channelName)
             //MARK: Put the favorites button here instead
@@ -82,20 +95,14 @@ struct PlayerView: View {
              AVPVC.player?.rate == 0.0 ? AVPVC.player?.play() : AVPVC.player?.pause()
              })*/
             
-            VStack {
-                Spacer()
-            }
-            
-            Spacer()
+           
         }
         .onAppear {
+            AVPVC.showsPlaybackControls = false
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
         }
         .onDisappear {
-            if AVPVC.player?.rate == 0 || player.rate == 0 {
-                AVPVC.player = nil
-                player = AVPlayer()
-            }
+            AVPVC.showsPlaybackControls = true
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
         }
     }

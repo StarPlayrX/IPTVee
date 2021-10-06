@@ -14,8 +14,8 @@ struct AVPlayerView: UIViewControllerRepresentable {
     let streamID: String
     
     func updateUIViewController(_ playerViewController: AVPlayerViewController, context: Context) {
-        if plo.disableVideoController { return }
-        
+       // if plo.disableVideoController { return }
+    print("UPDATE")
         if !plo.fullScreenTriggered {
             plo.fullScreenTriggered = true
             enterFullscreen(AVPVC)
@@ -24,7 +24,9 @@ struct AVPlayerView: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> AVPlayerViewController {
         if plo.disableVideoController { return AVPlayerViewController() }
-     
+       // if plo.disableVideoController { return AVPlayerViewController() }
+        print("NO UPDATE")
+
         guard let conf = LoginObservable.shared.config else { return AVPlayerViewController() }
         
         let user = conf.userInfo.username
@@ -52,7 +54,7 @@ struct AVPlayerView: UIViewControllerRepresentable {
         pvc.canStartPictureInPictureAutomaticallyFromInline = false
         pvc.updatesNowPlayingInfoCenter = true
         pvc.showsTimecodes = true
-        pvc.showsPlaybackControls = true
+        pvc.showsPlaybackControls = false
         pvc.updatesNowPlayingInfoCenter = true
         pvc.requiresLinearPlayback = false
         if #available(iOS 15.0, *) {
@@ -71,10 +73,12 @@ struct AVPlayerView: UIViewControllerRepresentable {
 }
 
 
-private func enterFullscreen(_ playerViewController: AVPlayerViewController) {
+ func enterFullscreen(_ playerViewController: AVPlayerViewController) {
 
     if playerViewController.entersFullScreenWhenPlaybackBegins {
         
+        playerViewController.showsPlaybackControls = true
+
         let selectorName: String = {
             return "_transitionToFullScreenAnimated:interactive:completionHandler:"
 
