@@ -94,6 +94,10 @@ struct PlayerView: View {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
         }
         .onDisappear {
+            if AVPVC.player?.rate == 0 || player.rate == 0 {
+                AVPVC.player = nil
+                player = AVPlayer()
+            }
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
         }
     }

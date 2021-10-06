@@ -18,13 +18,13 @@ struct CategoriesView: View {
     
     var body: some View {
         
-        List {
+        Form {
             Section(header: Text("CATEGORIES")) {
                 
                 ForEach(Array(cats),id: \.categoryName) { cat in
                     
                     HStack {
-                        NavigationLink(cat.categoryName,destination: ChannelsView(categoryID: cat.categoryID))
+                        NavigationLink(cat.categoryName,destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName))
                     }
                 }
             }.navigationTitle("Categories")
