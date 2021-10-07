@@ -15,7 +15,6 @@ func getCategories() {
     rest.getRequest(endpoint: endpoint) {  (categories) in
         guard let categories = categories else {
             LoginObservable.shared.status = "Get Categories Error"
-            print(LoginObservable.shared.status)
             setCurrentStep = .CategoriesError
             awaitDone = false
             return
@@ -26,7 +25,6 @@ func getCategories() {
             for (i,cat) in catz.enumerated() {
                 
                 let nam = cat.categoryName.components(separatedBy: " ")
-                print(nam)
                 var catName = ""
                 
                 for x in nam {
@@ -45,9 +43,6 @@ func getCategories() {
             }
         }
         cats.removeLast()
-
-       print(cats)
-      
         
         awaitDone = true
     }
@@ -59,7 +54,6 @@ func getConfig() {
         
     func loginError() {
         LoginObservable.shared.status = "Login Error"
-        print(LoginObservable.shared.status)
         setCurrentStep = .ConfigurationError
         awaitDone = false
     }
@@ -89,7 +83,6 @@ func getChannels() {
         guard let config = config else {
 
             LoginObservable.shared.status = "Get Live Streams Error"
-            print(LoginObservable.shared.status)
             setCurrentStep = .ConfigurationError
             awaitDone = false
             return
@@ -107,19 +100,13 @@ func getShortEpg(streamId: String) {
     let action = Actions.getshortEpg.rawValue
     let endpoint = api.getEpgEndpoint(creds, iptv, action, streamId)
     
-    print(endpoint.url?.absoluteString)
-    rest.getRequest(endpoint: endpoint) { (gotEpg) in
-
-        guard let gotEpg = gotEpg else {
-            
+    rest.getRequest(endpoint: endpoint) { (programguide) in
+        guard let programguide = programguide else {
             LoginObservable.shared.status = "Get Short EPG Error"
-            print(LoginObservable.shared.status)
             return
         }
         
-        print(gotEpg)
-        if let epg = try? decoder.decode(ShortIPTVEpg.self, from: gotEpg) {
-            
+        if let epg = try? decoder.decode(ShortIPTVEpg.self, from: programguide) {
             shortEpg = epg
         }
     }

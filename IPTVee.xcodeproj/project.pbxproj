@@ -10,6 +10,7 @@
 		6F307AA9270924FD009A6EF9 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F307AA8270924FD009A6EF9 /* WebView.swift */; };
 		6F307AAB270A7519009A6EF9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F307AAA270A7519009A6EF9 /* Extensions.swift */; };
 		6F307AAD270A754C009A6EF9 /* AVPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F307AAC270A754C009A6EF9 /* AVPlayerView.swift */; };
+		6F523284270F376500D2883D /* iptvKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6F523283270F376500D2883D /* iptvKit */; };
 		6F74A0DE2707B5B5000171B5 /* ChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */; };
 		6F74A0E02707C38D000171B5 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F74A0DF2707C38D000171B5 /* PlayerView.swift */; };
 		6F87E9242702A31700434C6E /* IPTVeeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F87E9232702A31700434C6E /* IPTVeeApp.swift */; };
@@ -22,7 +23,6 @@
 		6F87E97D2702ADA600434C6E /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F87E97A2702ADA600434C6E /* Login.swift */; };
 		6F87E97E2702ADA600434C6E /* Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F87E97B2702ADA600434C6E /* Actions.swift */; };
 		6F87E97F2702ADA600434C6E /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F87E97C2702ADA600434C6E /* Global.swift */; };
-		6F87E9822702ADFD00434C6E /* iptvKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6F87E9812702ADFD00434C6E /* iptvKit */; };
 		6FAFD739270416C900D49704 /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAFD738270416C900D49704 /* CategoriesView.swift */; };
 /* End PBXBuildFile section */
 
@@ -71,7 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F87E9822702ADFD00434C6E /* iptvKit in Frameworks */,
+				6F523284270F376500D2883D /* iptvKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,7 +183,7 @@
 			);
 			name = IPTVee;
 			packageProductDependencies = (
-				6F87E9812702ADFD00434C6E /* iptvKit */,
+				6F523283270F376500D2883D /* iptvKit */,
 			);
 			productName = IPTVee;
 			productReference = 6F87E9202702A31700434C6E /* IPTVee.app */;
@@ -668,7 +668,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6F87E9812702ADFD00434C6E /* iptvKit */ = {
+		6F523283270F376500D2883D /* iptvKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = iptvKit;
 		};

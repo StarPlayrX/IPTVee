@@ -29,7 +29,7 @@ struct PlayerView: View {
         self.playerView = playerView
     }
     
-  
+    
     let channelName: String
     let streamId: String
     
@@ -38,9 +38,12 @@ struct PlayerView: View {
     @ObservedObject var plo = PlayerObservable.plo
     
     var portrait: Bool {
-        return UIApplication.shared.windows.first{$0.isKeyWindow}?.windowScene?.interfaceOrientation.isPortrait ?? false
+        guard
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        else { return false }
+        
+        return windowScene.interfaceOrientation.isPortrait
     }
-    
     
     var body: some View {
         
@@ -84,7 +87,6 @@ struct PlayerView: View {
                 }
         }
         .onAppear {
-            print("On Appear")
             getShortEpg(streamId: streamId)
         }
     }

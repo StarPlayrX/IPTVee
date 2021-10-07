@@ -23,7 +23,6 @@ struct AVPlayerView: UIViewControllerRepresentable {
     
     func updateUIViewController(_ playerViewController: AVPlayerViewController, context: Context) {
         playerViewController.player?.rate == 1 ? shouldEnterFullScreen(videoController) : shouldExitFullScreen(videoController)
-        print("updateUIViewController")
     }
 
     func makeUIViewController(context: Context) -> AVPlayerViewController {
@@ -40,8 +39,11 @@ struct AVPlayerView: UIViewControllerRepresentable {
         if streamId == "HWS" {
             let stub = URL(string:"https://bit.ly/swswift")!
             player.replaceCurrentItem(with: AVPlayerItem(url: stub))
+            player.playImmediately(atRate: 0.0)
+
         } else {
             player.replaceCurrentItem(with: AVPlayerItem(url: url))
+            player.playImmediately(atRate: 0.0)
         }
         
         videoController.player = player
@@ -64,12 +66,10 @@ struct AVPlayerView: UIViewControllerRepresentable {
         videoController.loadViewIfNeeded()
         videoController.setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
         
-        videoController.entersFullScreenWhenPlaybackBegins = true
+        videoController.entersFullScreenWhenPlaybackBegins = false
         videoController.exitsFullScreenWhenPlaybackEnds = false
-        videoController.player?.play()
-        videoController.player?.automaticallyWaitsToMinimizeStalling = true
-
-        print("makeUIViewController")
+        videoController.player?.playImmediately(atRate: 1.0)
+        videoController.player?.automaticallyWaitsToMinimizeStalling = false
 
         return videoController
     }
