@@ -103,3 +103,25 @@ func getChannels() {
     }
 }
 
+func getShortEpg(streamId: String) {
+    let action = Actions.getshortEpg.rawValue
+    let endpoint = api.getEpgEndpoint(creds, iptv, action, streamId)
+    
+    print(endpoint.url?.absoluteString)
+    rest.getRequest(endpoint: endpoint) { (gotEpg) in
+
+        guard let gotEpg = gotEpg else {
+            
+            LoginObservable.shared.status = "Get Short EPG Error"
+            print(LoginObservable.shared.status)
+            return
+        }
+        
+        print(gotEpg)
+        if let epg = try? decoder.decode(ShortIPTVEpg.self, from: gotEpg) {
+            
+            shortEpg = epg
+        }
+    }
+}
+

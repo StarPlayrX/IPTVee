@@ -23,51 +23,69 @@ class PlayerObservable: ObservableObject {
 }
 
 struct PlayerView: View {
-    internal init(channelName: String, playerView: AVPlayerView) {
+    internal init(channelName: String, streamId: String, playerView: AVPlayerView) {
         self.channelName = channelName
+        self.streamId = streamId
         self.playerView = playerView
     }
     
+  
     let channelName: String
+    let streamId: String
+    
     let playerView: AVPlayerView
+    
     @ObservedObject var plo = PlayerObservable.plo
+    
+    var portrait: Bool {
+        return UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?.interfaceOrientation.isPortrait ?? false
+    }
+    
     
     var body: some View {
         
-        
         GeometryReader { geometry in
             
-            Group {
-                
-                playerView
-                    .edgesIgnoringSafeArea([.bottom, .trailing, .leading])
-                
-                //MARK: - This is 16:9 aspect ratio
-                    .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625)
-                    .offset(y: UIApplication.shared.statusBarOrientation.isPortrait  ? 30 : 0)
-                //MARK: - Basically allowing background playback & maintaining playback / pause on lock screen
-                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
-                        // Save Config
-                    }
-                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                        // Load Config
-                    }
-                    .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                        // If our full screen viewer is in portrait or landscape, update the UI underneath
-                        if UIApplication.shared.statusBarOrientation.isPortrait {
-                            AppDelegate.interfaceMask = UIInterfaceOrientationMask.portrait
-                        } else if UIApplication.shared.statusBarOrientation.isLandscape {
-                            AppDelegate.interfaceMask = UIInterfaceOrientationMask.landscape
-                        }
-                    }
+            if portrait {
+                Text("IPTVee")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.blue)
+                    .frame(width: geometry.size.width, alignment: .center)
             }
-            .navigationTitle(channelName)
-            .onAppear {
-                AppDelegate.interfaceMask = UIInterfaceOrientationMask.all
-            }
-            .onDisappear {
-                plo.fullScreenTriggered = true
-            }
+            
+            playerView
+                .edgesIgnoringSafeArea([.bottom, .trailing, .leading])
+            
+            //MARK: - This is 16:9 aspect ratio
+                .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625)
+                .offset(y: portrait ? 43 : 0)
+            //MARK: - Basically allowing background playback & maintaining playback / pause on lock screen
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                    // Save Config
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    // Load Config
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                    // If our full screen viewer is in portrait or landscape, update the UI underneath
+                    if portrait {
+                        AppDelegate.interfaceMask = UIInterfaceOrientationMask.portrait
+                    } else {
+                        AppDelegate.interfaceMask = UIInterfaceOrientationMask.landscape
+                    }
+                }
+                .navigationTitle(channelName)
+                .onAppear {
+                    AppDelegate.interfaceMask = UIInterfaceOrientationMask.all
+                }
+                .onDisappear {
+                    plo.fullScreenTriggered = true
+                }
+        }
+        .onAppear {
+            print("On Appear")
+            getShortEpg(streamId: streamId)
         }
     }
 }

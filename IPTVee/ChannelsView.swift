@@ -30,7 +30,7 @@ struct ChannelsView: View {
     @ObservedObject var plo = PlayerObservable.plo
     
     //It's a long one line but it works
-    var channelSearchResults: [Channel] {
+    var channelSearchResults: [iptvChannel] {
         chan.filter({ $0.categoryID == categoryID })
             .filter({"\($0.num)\($0.name)"
             .lowercased()
@@ -40,28 +40,27 @@ struct ChannelsView: View {
     var body: some View {
         
         GeometryReader { geometry in
-            Form {
+            List {
+                
+                // DEMO VIDEO
+                Section(header: Text("HACKING WITH SWIFT")) {
+                    NavigationLink("A NEW HOPE USING SWIFTUI", destination: PlayerView(channelName: "HACKING WITH SWIFT", streamId: String("HWS"), playerView: AVPlayerView(streamId: String("HWS") )))
+                }
+                
                 Section(header: Text("CHANNELS")) {
-                    
                     ForEach(Array(channelSearchResults),id: \.streamID) { ch in
-                        
                         let channelItem = "\(ch.num) \(ch.name)"
 
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG -> Now Playing { add to filter }
-                        NavigationLink(channelItem,
-                                       destination: PlayerView(
-                                        channelName: ch.name,
-                                        playerView: AVPlayerView(streamID: String(ch.streamID), videoController: AVPlayerViewController(), player: AVPlayer() )))
+                        NavigationLink(channelItem, destination: PlayerView(channelName: ch.name, streamId: String(ch.streamID), playerView: AVPlayerView(streamId: String(ch.streamID) )))
                     }
-                    
                 }
+
             }
             .searchable(text: $searchText, placement: .automatic, prompt: "Search Channels")
             .navigationTitle(categoryName)
             .frame(width: geometry.size.width)
-            
-        
         }
     }
 }
