@@ -58,7 +58,7 @@ struct ChannelsView: View {
                 }
 
             }
-            .searchable(text: $searchText, placement: .automatic, prompt: "Search Channels")
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
             .navigationTitle(categoryName)
             .frame(width: geometry.size.width)
         }

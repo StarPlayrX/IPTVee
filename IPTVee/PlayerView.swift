@@ -38,7 +38,7 @@ struct PlayerView: View {
     @ObservedObject var plo = PlayerObservable.plo
     
     var portrait: Bool {
-        return UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?.interfaceOrientation.isPortrait ?? false
+        return UIApplication.shared.windows.first{$0.isKeyWindow}?.windowScene?.interfaceOrientation.isPortrait ?? false
     }
     
     
@@ -50,7 +50,7 @@ struct PlayerView: View {
                 Text("IPTVee")
                     .font(.headline)
                     .fontWeight(.bold)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.accentColor)
                     .frame(width: geometry.size.width, alignment: .center)
             }
             
@@ -59,7 +59,7 @@ struct PlayerView: View {
             
             //MARK: - This is 16:9 aspect ratio
                 .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625)
-                .offset(y: portrait ? 43 : 0)
+                .offset(y: portrait ? 40 : 0)
             //MARK: - Basically allowing background playback & maintaining playback / pause on lock screen
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                     // Save Config

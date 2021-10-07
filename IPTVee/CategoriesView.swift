@@ -39,7 +39,7 @@ struct CategoriesView: View {
                 }
             }.navigationTitle("Categories")
         }
-        .searchable(text: $searchText, placement: .automatic, prompt: "Search Categories")
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
 
         .onAppear {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
