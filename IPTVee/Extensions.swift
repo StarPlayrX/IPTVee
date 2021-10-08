@@ -22,14 +22,44 @@ extension DispatchQueue {
     }
 }
 
-extension String {
-    func base64Encoded() -> String? {
-        return data(using: .utf8)?.base64EncodedString()
-    }
-
-    func base64Decoded() -> String? {
-        guard let data = Data(base64Encoded: self) else { return nil }
-        return String(data: data, encoding: .utf8)
+public extension String {
+    var base64Decoded: String? {
+         String(data: Data(base64Encoded: self) ?? Data(), encoding: .utf8)
     }
 }
 
+public extension String {
+    func removingLeadingSpaces() -> String {
+        guard let index = firstIndex(where: { !CharacterSet(charactersIn: String($0)).isSubset(of: .whitespaces) }) else {
+            return self
+        }
+        return String(self[index...])
+    }
+}
+
+public extension String {
+
+    func toDate(withFormat format: String = "yyyy-MM-dd HH:mm:ss")-> Date?{
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = .current
+        dateFormatter.locale = .current
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
+        dateFormatter.dateFormat = format
+        let date = dateFormatter.date(from: self)
+        return date
+
+    }
+}
+
+public extension Date {
+    func toString(withFormat format: String = "MMM dd yyyy h:mm a") -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = .current
+        dateFormatter.timeZone = .current
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
+        dateFormatter.dateFormat = format
+        let str = dateFormatter.string(from: self)
+        return str
+    }
+}

@@ -108,6 +108,8 @@ func getShortEpg(streamId: String) {
         
         if let epg = try? decoder.decode(ShortIPTVEpg.self, from: programguide) {
             shortEpg = epg
+            print(shortEpg?.epgListings)
+            PlayerObservable.plo.miniEpg = shortEpg?.epgListings ?? []
         }
     }
 }

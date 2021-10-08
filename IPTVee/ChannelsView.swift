@@ -42,11 +42,7 @@ struct ChannelsView: View {
         GeometryReader { geometry in
             List {
                 
-                // DEMO VIDEO
-                Section(header: Text("HACKING WITH SWIFT")) {
-                    NavigationLink("A NEW HOPE USING SWIFTUI", destination: PlayerView(channelName: "HACKING WITH SWIFT", streamId: String("HWS"), playerView: AVPlayerView(streamId: String("HWS") )))
-                }
-                
+              
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.streamID) { ch in
                         let channelItem = "\(ch.num) \(ch.name)"
@@ -54,8 +50,13 @@ struct ChannelsView: View {
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG -> Now Playing { add to filter }
                         NavigationLink(channelItem, destination: PlayerView(channelName: ch.name, streamId: String(ch.streamID), playerView: AVPlayerView(streamId: String(ch.streamID) )))
+                            
+                    }.onAppear {
+                        plo.miniEpg = []
                     }
+                    
                 }
+                
 
             }
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")

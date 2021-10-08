@@ -47,10 +47,15 @@ struct AVPlayerView: UIViewControllerRepresentable {
         }
         
         videoController.player = player
+        videoController.player?.usesExternalPlaybackWhileExternalScreenIsActive = true
+        videoController.player?.appliesMediaSelectionCriteriaAutomatically = true
+        videoController.player?.currentItem?.preferredForwardBufferDuration = 1
+        videoController.player?.currentItem?.appliesPerFrameHDRDisplayMetadata = true
         videoController.player?.currentItem?.preferredMaximumResolutionForExpensiveNetworks = CGSize(width: 1920, height: 1080)
-        videoController.player?.currentItem?.preferredPeakBitRateForExpensiveNetworks = .infinity
+        videoController.player?.currentItem?.preferredPeakBitRateForExpensiveNetworks = 256
         videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
-        videoController.player?.currentItem?.startsOnFirstEligibleVariant = true
+        videoController.player?.currentItem?.variantPreferences = .scalabilityToLosslessAudio
+        videoController.player?.currentItem?.startsOnFirstEligibleVariant = false
         videoController.player?.preventsDisplaySleepDuringVideoPlayback = true
         videoController.player?.allowsExternalPlayback = true
         videoController.player?.externalPlaybackVideoGravity = .resizeAspectFill
@@ -69,7 +74,7 @@ struct AVPlayerView: UIViewControllerRepresentable {
         videoController.entersFullScreenWhenPlaybackBegins = false
         videoController.exitsFullScreenWhenPlaybackEnds = false
         videoController.player?.playImmediately(atRate: 1.0)
-        videoController.player?.automaticallyWaitsToMinimizeStalling = false
+        videoController.player?.automaticallyWaitsToMinimizeStalling = true
 
         return videoController
     }
