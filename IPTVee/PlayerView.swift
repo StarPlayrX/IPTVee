@@ -10,7 +10,7 @@ class PlayerObservable: ObservableObject {
     @Published var disableVideoController: Bool = false
     @Published var isOkayToPlay: Bool = false
     @Published var miniEpg: [EpgListing] = []
-
+    
 }
 
 struct PlayerView: View {
@@ -20,10 +20,9 @@ struct PlayerView: View {
         self.playerView = playerView
     }
     
-    
     let channelName: String
     let streamId: String
-    let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     
     let playerView: AVPlayerView
     
@@ -32,7 +31,7 @@ struct PlayerView: View {
     var portrait: Bool {
         (UIApplication.shared.connectedScenes.first as! UIWindowScene).interfaceOrientation.isPortrait
     }
-
+    
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -51,31 +50,34 @@ struct PlayerView: View {
                 //MARK: - This is 16:9 aspect ratio
                     .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625)
                 
-                VStack {
-                    Form {
-                        if !plo.miniEpg.isEmpty {
-                            ForEach(Array(plo.miniEpg),id: \.id) { epg in
-                                
-                                HStack {
-                                    Text(epg.start.toDate()!.toString())
-                                        .fontWeight(.bold)
-                                        .frame(minWidth: 160)
-                                    Text(epg.title.base64Decoded ?? "")
+                if portrait {
+                    VStack {
+                        Form {
+                            if !plo.miniEpg.isEmpty {
+                                ForEach(Array(plo.miniEpg),id: \.id) { epg in
+                                    
+                                    HStack {
+                                        Text(epg.start.toDate()?.toString() ?? "")
+                                            .fontWeight(.bold)
+                                            .frame(minWidth: 160)
+                                        Text(epg.title.base64Decoded ?? "")
+                                    }
+                                    .font(.footnote)
+                                    .multilineTextAlignment(.leading)
                                 }
-                                .font(.footnote)
-                                .multilineTextAlignment(.leading)
+                                
                             }
-                         
+                        }
+                        .onReceive(timer) { _ in
+                            getShortEpg(streamId: streamId)
                         }
                     }
-                    .onReceive(timer) { input in
-                        getShortEpg(streamId: streamId)
-                    }
                 }
+              
             }.onAppear {
                 getShortEpg(streamId: streamId)
             }
-
+            
             //MARK: - Basically allowing background playback & maintaining playback / pause on lock screen
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                 // Save Config
@@ -97,6 +99,27 @@ struct PlayerView: View {
             }
             .onDisappear {
                 plo.fullScreenTriggered = true
+            }
+            .toolbar {
+                
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    if !portrait {
+                        Text(plo.miniEpg.first?.start.toDate()?.toString() ?? "")
+                            .fontWeight(.bold)
+                            .frame(minWidth: 320)
+                            .font(.footnote)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
+                
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    if !portrait {
+                        Text(plo.miniEpg.first?.title.base64Decoded ?? "")
+                            .font(.footnote)
+                            .frame(minWidth: 320)
+                            .multilineTextAlignment(.trailing)
+                    }
+                }
             }
         }
     }
