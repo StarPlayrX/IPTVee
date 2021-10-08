@@ -13,13 +13,14 @@ class ChannelsObservable: ObservableObject {
     static var shared = ChannelsObservable()
 }
 
+
 struct ChannelsView: View {
     
     internal init(categoryID: String, categoryName: String) {
         self.categoryID = categoryID
         self.categoryName = categoryName
     }
-    
+
     let categoryID: String
     let categoryName: String
     @State var searchText: String = ""
@@ -49,15 +50,14 @@ struct ChannelsView: View {
 
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG -> Now Playing { add to filter }
-                        NavigationLink(channelItem, destination: PlayerView(channelName: ch.name, streamId: String(ch.streamID), playerView: AVPlayerView(streamId: String(ch.streamID) )))
+                        NavigationLink(channelItem, destination: PlayerView(
+                            channelName: ch.name, streamId: String(ch.streamID),
+                            playerView: AVPlayerView(streamId: String(ch.streamID) )))
                             
                     }.onAppear {
                         plo.miniEpg = []
                     }
-                    
                 }
-                
-
             }
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
             .navigationTitle(categoryName)

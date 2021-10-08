@@ -52,8 +52,9 @@ public extension String {
     }
 }
 
+//"MMM dd yyyy h:mm a"
 public extension Date {
-    func toString(withFormat format: String = "MMM dd yyyy h:mm a") -> String {
+    func toString(withFormat format: String = "h:mm a") -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = .current
         dateFormatter.timeZone = .current

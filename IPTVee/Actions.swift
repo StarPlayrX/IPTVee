@@ -114,3 +114,6 @@ func getShortEpg(streamId: String) {
     }
 }
 
+func loopOverChannelsNowPlaying() {
+    
+}

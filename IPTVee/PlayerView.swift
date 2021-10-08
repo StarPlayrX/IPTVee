@@ -9,8 +9,7 @@ class PlayerObservable: ObservableObject {
     @Published var fullScreenTriggered: Bool = false
     @Published var disableVideoController: Bool = false
     @Published var isOkayToPlay: Bool = false
-    @Published var miniEpg: [EpgListing] = []
-    
+    @Published var miniEpg: [EpgListing] = []    
 }
 
 struct PlayerView: View {
@@ -22,7 +21,7 @@ struct PlayerView: View {
     
     let channelName: String
     let streamId: String
-    let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 100, on: .main, in: .common).autoconnect()
     
     let playerView: AVPlayerView
     
@@ -54,26 +53,51 @@ struct PlayerView: View {
                     VStack {
                         Form {
                             if !plo.miniEpg.isEmpty {
-                                ForEach(Array(plo.miniEpg),id: \.id) { epg in
-                                    
-                                    HStack {
-                                        Text(epg.start.toDate()?.toString() ?? "")
-                                            .fontWeight(.bold)
-                                            .frame(minWidth: 160)
-                                        Text(epg.title.base64Decoded ?? "")
-                                    }
-                                    .font(.footnote)
-                                    .multilineTextAlignment(.leading)
-                                }
                                 
+                                Section(header: Text("PROGRAM GUIDE")) {
+                                    ForEach(Array(plo.miniEpg),id: \.id) { epg in
+                                        
+                                        HStack {
+                                            Text(epg.start.toDate()?.toString() ?? "")
+                                                .fontWeight(.medium)
+                                                .frame(minWidth: 78, alignment: .trailing)
+                                                .multilineTextAlignment(.leading)
+                                            
+                                            Text(epg.title.base64Decoded ?? "")
+                                                .multilineTextAlignment(.leading)
+                                                .padding(.leading, 5)
+                                        }
+                                        .font(.callout)
+                                    }
+                                }
+                                                                
+                                if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
+                                    Section(header: Text("Description")) {
+                                        Text(desc)
+                                            .font(.body)
+                                            .fontWeight(.light)
+                                            .frame(minWidth: 80, alignment: .leading)
+                                            .multilineTextAlignment(.leading)
+                                    }
+                                } else {
+                                    Section(header: Text("Description")) {
+                                        Text(channelName)
+                                            .font(.body)
+                                            .fontWeight(.light)
+                                            .frame(minWidth: 80, alignment: .leading)
+                                            .multilineTextAlignment(.leading)
+                                    }
+                                }
+                              
                             }
                         }
                         .onReceive(timer) { _ in
-                            getShortEpg(streamId: streamId)
+                            Calendar.current.component(.minute, from: Date()) % 6 == 0 ?
+                            getShortEpg(streamId: streamId) : ()
                         }
                     }
                 }
-              
+                
             }.onAppear {
                 getShortEpg(streamId: streamId)
             }
