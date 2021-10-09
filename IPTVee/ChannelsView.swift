@@ -13,7 +13,6 @@ class ChannelsObservable: ObservableObject {
     static var shared = ChannelsObservable()
 }
 
-
 struct ChannelsView: View {
     
     internal init(categoryID: String, categoryName: String) {
@@ -25,9 +24,7 @@ struct ChannelsView: View {
     let categoryName: String
     @State var searchText: String = ""
     @State var selectedChannel: String?
-    @FocusState var isFocused
     @State var isActive: Bool = false
-    
     @ObservedObject var plo = PlayerObservable.plo
     
     //It's a long one line but it works
@@ -43,7 +40,6 @@ struct ChannelsView: View {
         GeometryReader { geometry in
             List {
                 
-              
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.streamID) { ch in
                         let channelItem = "\(ch.num) \(ch.name)"
@@ -51,11 +47,18 @@ struct ChannelsView: View {
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG -> Now Playing { add to filter }
                         NavigationLink(channelItem, destination: PlayerView(
-                            channelName: ch.name, streamId: String(ch.streamID),
-                            playerView: AVPlayerView(streamId: String(ch.streamID) )))
+                            channelName: ch.name, streamId: String(ch.streamID), imageUrl: ch.streamIcon ))
                             
                     }.onAppear {
                         plo.miniEpg = []
+                        if player.rate == 1 {
+                            player.rate = 0
+                            plo.isOkayToPlay = false
+                        } else {
+                            plo.isOkayToPlay = true
+                            player.replaceCurrentItem(with: nil)
+                        }
+                        
                     }
                 }
             }
@@ -65,3 +68,5 @@ struct ChannelsView: View {
         }
     }
 }
+
+

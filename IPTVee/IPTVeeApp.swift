@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVFoundation
+import MediaPlayer
 
 @main
 struct IPTVapp: App {
@@ -21,20 +22,9 @@ struct IPTVapp: App {
 class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        
-        let avSession = AVAudioSession.sharedInstance()
-
-        // Get the singleton instance.
-        do {
-            // Set the audio session category, mode, and options.
-            try avSession.setPreferredIOBufferDuration(0)
-            try avSession.setCategory(.playback, mode: .moviePlayback, policy: .longFormVideo, options: [])
-            try avSession.setActive(true)
-            
-        } catch {
-            print(error.localizedDescription)
-        }
-        
+         avSession()
+         
+        application.beginReceivingRemoteControlEvents()
         return true
     }
         

@@ -17,7 +17,7 @@ class LoginObservable: ObservableObject {
     @Published var isAutoSwitchCat: Bool = false
     @Published var isCatActive: Bool = false
 
-    @Published var config: Config = nil
+    @Published var config: Config? = nil
    
 }
 

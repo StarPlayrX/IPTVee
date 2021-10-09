@@ -7,11 +7,12 @@
 
 import Foundation
 import iptvKit
+import MediaPlayer
 
 func getCategories() {
     let action = Actions.getLiveCategoriesAction.rawValue
     let endpoint = api.getEndpoint(creds, iptv, action)
-        
+    
     rest.getRequest(endpoint: endpoint) {  (categories) in
         guard let categories = categories else {
             LoginObservable.shared.status = "Get Categories Error"
@@ -42,7 +43,8 @@ func getCategories() {
                 
             }
         }
-        cats.removeLast()
+        
+        if cats.count > 3 { cats.removeLast() }
         
         awaitDone = true
     }
@@ -51,19 +53,19 @@ func getCategories() {
 func getConfig() {
     let action = Actions.configAction.rawValue
     let endpoint = api.getEndpoint(creds, iptv, action)
-        
+    
     func loginError() {
         LoginObservable.shared.status = "Login Error"
         setCurrentStep = .ConfigurationError
         awaitDone = false
     }
-
+    
     rest.getRequest(endpoint: endpoint) { (login) in
         guard let login = login else {
             loginError()
             return
         }
-       
+        
         if let config = try? decoder.decode(Configuration.self, from: login) {
             LoginObservable.shared.config = config
         } else {
@@ -79,9 +81,9 @@ func getChannels() {
     let endpoint = api.getEndpoint(creds, iptv, action)
     
     rest.getRequest(endpoint: endpoint) { (config) in
-
+        
         guard let config = config else {
-
+            
             LoginObservable.shared.status = "Get Live Streams Error"
             setCurrentStep = .ConfigurationError
             awaitDone = false
@@ -96,7 +98,7 @@ func getChannels() {
     }
 }
 
-func getShortEpg(streamId: String) {
+func getShortEpg(streamId: String, channelName: String, imageURL: String) {
     let action = Actions.getshortEpg.rawValue
     let endpoint = api.getEpgEndpoint(creds, iptv, action, streamId)
     
@@ -108,12 +110,65 @@ func getShortEpg(streamId: String) {
         
         if let epg = try? decoder.decode(ShortIPTVEpg.self, from: programguide) {
             shortEpg = epg
-            print(shortEpg?.epgListings)
             PlayerObservable.plo.miniEpg = shortEpg?.epgListings ?? []
+            
+            DispatchQueue.global().async {
+                if let url = URL(string: imageURL) {
+                    let data = try? Data(contentsOf: url)
+                    DispatchQueue.main.async {
+                        
+                        if let data = data, let image = UIImage(data: data) {
+                            setnowPlayingInfo(image: image)
+                        } else {
+                            setnowPlayingInfo(image: nil)
+                        }
+                    }
+                }
+            }
         }
     }
+    
+    func setnowPlayingInfo(channel:String = "", song:String = "", artist:String = "", image: UIImage?) {
+        let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default()
+        var nowPlayingInfo = nowPlayingInfoCenter.nowPlayingInfo ?? [String: Any]()
+        
+        if let image = image {
+            let image = image.withBackground(color: UIColor(displayP3Red: 64 / 255, green: 64 / 255, blue: 64 / 255, alpha: 1.0))
+            let artwork = MPMediaItemArtwork(boundsSize: image.size, requestHandler: {  (_) -> UIImage in
+                return image
+            })
+            
+            nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+        }
+       
+        let title = PlayerObservable.plo.miniEpg.first?.title.base64Decoded ?? "IPTvee"
+        nowPlayingInfo[MPMediaItemPropertyTitle] = channelName
+        nowPlayingInfo[MPMediaItemPropertyArtist] = title
+        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = "IPTVee"
+        nowPlayingInfo[MPMediaItemPropertyMediaType] = 1
+        nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = true
+        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] =  PlayerObservable.plo.miniEpg.first?.start.toDate()?.toString()
+        nowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
+        
+        //if self.player.rate == 1 {
+        //nowPlayingInfoCenter.playbackState = .playing
+        //} else {
+        //    nowPlayingInfoCenter.playbackState = .paused
+        //}
+        
+        nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
+        
+    }
+    
 }
 
 func loopOverChannelsNowPlaying() {
     
 }
+
+/*
+ 
+ 
+ 
+ 
+ */

@@ -16,8 +16,8 @@ struct ContentView: View {
     
     @ObservedObject var obs = LoginObservable.shared
     //MARK: - todo: Add in data store
-    @State var userName: String = "takuachenvidia@gmail.com" //"toddbruss90"
-    @State var passWord: String = "wBevDzfqb5" //"zzeH7C0xdw"
+    @State var userName: String = "toddbruss90" //"takuachenvidia@gmail.com" //
+    @State var passWord: String = "zzeH7C0xdw" //"wBevDzfqb5" //
     @State var service: String = "primestreams.tv"
     @State var https: Bool = false
     @State var port: String = "826"
