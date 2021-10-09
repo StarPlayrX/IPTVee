@@ -17,6 +17,8 @@ struct IPTVapp: App {
             ContentView()
         }
     }
+    
+   
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {

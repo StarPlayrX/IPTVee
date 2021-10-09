@@ -90,11 +90,25 @@ struct PlayerView: View {
                         }
                     }
                 }
+                
+                
+                
+                HStack {
+                    Text("HELLO")
+                    Text("HELLO")
+               
+                }         .frame(maxWidth: geometry.size.width, maxHeight: 30, alignment: .center)
+                    .padding(.bottom, 30)
+                
             }
+            
+        
         }.onAppear {
             plo.isOkayToPlay = true
             getShortEpg(streamId: streamId, channelName: channelName, imageURL: imageUrl)
         }
+        
+       
         
         //MARK: - Basically allowing background playback & maintaining playback / pause on lock screen
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
@@ -118,25 +132,25 @@ struct PlayerView: View {
         .onDisappear {
             plo.fullScreenTriggered = true
         }
-     
         .toolbar {
-            
-            ToolbarItemGroup(placement: .bottomBar) {
-                
-                Button {
-                    shouldEnterFullScreen(videoController, ride: true)
-                    videoController.player?.play()
-                } label: {
-                    Image(systemName: "arrow.up.right.video")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 35, height: 35)
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if !portrait {
+                    Text(plo.miniEpg.first?.title.base64Decoded ?? "")
+                        .font(.footnote)
+                        .frame(minWidth: 160)
+                        .multilineTextAlignment(.trailing)
+                } else {
+                    Button {
+                        shouldEnterFullScreen(videoController, ride: true)
+                        videoController.player?.play()
+                    } label: {
+                        Image(systemName: "arrow.up.right.video")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 35, height: 35)
+                    }
                 }
             }
-            
-       
         }
     }
 }
-
-
