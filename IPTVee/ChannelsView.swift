@@ -19,13 +19,23 @@ struct ChannelsView: View {
         self.categoryID = categoryID
         self.categoryName = categoryName
     }
-
+    
     let categoryID: String
     let categoryName: String
     @State var searchText: String = ""
     @State var selectedChannel: String?
     @State var isActive: Bool = false
     @ObservedObject var plo = PlayerObservable.plo
+    let srv = LoginObservable.shared.config!.serverInfo
+    let usr = LoginObservable.shared.config!.userInfo
+
+   // guard
+     
+        
+            //MARK: Todo - Build this dynamically using URL Components()
+       // let url = URL(string:"http://\(base):\(port)/live/\(user)/\(pass)/\(streamId).m3u8")
+            
+  //  else { return }
     
     //It's a long one line but it works
     var channelSearchResults: [iptvChannel] {
@@ -35,6 +45,7 @@ struct ChannelsView: View {
                 .contains(searchText.lowercased()) || searchText.isEmpty})
     }
     
+    
     var body: some View {
         
         GeometryReader { geometry in
@@ -43,21 +54,23 @@ struct ChannelsView: View {
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.streamID) { ch in
                         let channelItem = "\(ch.num) \(ch.name)"
+                        
+                           let url = URL(string:"http://\(srv.url):\(srv.port)/live/\(usr.username)/\(usr.password)/\(ch.streamID).m3u8")
+                        NavigationLink(channelItem, destination: PlayerView(url: url!, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ))
+
 
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG -> Now Playing { add to filter }
-                        NavigationLink(channelItem, destination: PlayerView(
-                            channelName: ch.name, streamId: String(ch.streamID), imageUrl: ch.streamIcon ))
-                            
+                        /*NavigationLink(channelItem, destination: PlayerView(
+                         channelName: ch.name, streamId: String(ch.streamID), imageUrl: ch.streamIcon, playerView: AVPlayerView(streamId: String(ch.streamID)) ))*/
+                 
                     }.onAppear {
                         plo.miniEpg = []
-                        if player.rate == 1 {
-                            player.rate = 0
-                            plo.isOkayToPlay = false
-                        } else {
-                            plo.isOkayToPlay = true
-                            player.replaceCurrentItem(with: nil)
-                        }
+                        
+                        
+                       // plo.videoController.player?.replaceCurrentItem(with: nil)
+                       // plo.videoController.player?.volume = 0
+                       // plo.videoController.player?.pause()
                         
                     }
                 }
@@ -65,6 +78,20 @@ struct ChannelsView: View {
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
             .navigationTitle(categoryName)
             .frame(width: geometry.size.width)
+            .toolbar {
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Text(" ")
+                }
+            }
+            .onAppear {
+                plo.videoController.player?.pause()
+                plo.videoController.requiresLinearPlayback = false
+                plo.videoController.updatesNowPlayingInfoCenter = true
+
+            }
+            .onDisappear {
+                plo.videoController.requiresLinearPlayback = false
+            }
         }
     }
 }

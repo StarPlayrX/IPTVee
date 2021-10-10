@@ -44,5 +44,6 @@ struct CategoriesView: View {
         .onAppear {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
         }
+        
     }
 }
