@@ -45,12 +45,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         let plo =  PlayerObservable.plo
         
-        plo.videoController.player = PlayerObservable.plo.player
-        
+        plo.videoController.player = AVPlayer()
+        plo.videoController.player?.replaceCurrentItem(with: nil)
         plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-        plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 240
-        plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
         plo.videoController.player?.automaticallyWaitsToMinimizeStalling = true
+        plo.videoController.player?.appliesMediaSelectionCriteriaAutomatically = true
+        plo.videoController.player?.allowsExternalPlayback = false
+        plo.videoController.player?.usesExternalPlaybackWhileExternalScreenIsActive = true
+        plo.videoController.player?.externalPlaybackVideoGravity = .resizeAspectFill
+        plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 0
+        plo.videoController.player?.currentItem?.automaticallyPreservesTimeOffsetFromLive = true
+        plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
         
         plo.videoController.requiresLinearPlayback = false
         plo.videoController.showsTimecodes = false

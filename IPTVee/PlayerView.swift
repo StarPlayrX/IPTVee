@@ -7,7 +7,6 @@ class PlayerObservable: ObservableObject {
     static var plo = PlayerObservable()
     @Published var miniEpg: [EpgListing] = []
     @Published var videoController = AVPlayerViewController()
-    @Published var player = AVPlayer()
     @Published var pip: Bool = false
     @Published var fullscreen: Bool = false
     @Published var streamID: String = ""
