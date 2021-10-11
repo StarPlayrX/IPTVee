@@ -29,14 +29,6 @@ struct ChannelsView: View {
     let srv = LoginObservable.shared.config!.serverInfo
     let usr = LoginObservable.shared.config!.userInfo
 
-   // guard
-     
-        
-            //MARK: Todo - Build this dynamically using URL Components()
-       // let url = URL(string:"http://\(base):\(port)/live/\(user)/\(pass)/\(streamId).m3u8")
-            
-  //  else { return }
-    
     //It's a long one line but it works
     var channelSearchResults: [iptvChannel] {
         chan.filter({ $0.categoryID == categoryID })
@@ -64,14 +56,6 @@ struct ChannelsView: View {
                         /*NavigationLink(channelItem, destination: PlayerView(
                          channelName: ch.name, streamId: String(ch.streamID), imageUrl: ch.streamIcon, playerView: AVPlayerView(streamId: String(ch.streamID)) ))*/
                  
-                    }.onAppear {
-                        plo.miniEpg = []
-                        
-                        
-                       // plo.videoController.player?.replaceCurrentItem(with: nil)
-                       // plo.videoController.player?.volume = 0
-                       // plo.videoController.player?.pause()
-                        
                     }
                 }
             }
@@ -84,14 +68,14 @@ struct ChannelsView: View {
                 }
             }
             .onAppear {
-                plo.videoController.player?.pause()
-                plo.videoController.requiresLinearPlayback = false
-                plo.videoController.updatesNowPlayingInfoCenter = true
+                plo.miniEpg = []
 
+                if !plo.pip {
+                    plo.videoController.player?.replaceCurrentItem(with: nil)
+                }
+                
             }
-            .onDisappear {
-                plo.videoController.requiresLinearPlayback = false
-            }
+
         }
     }
 }

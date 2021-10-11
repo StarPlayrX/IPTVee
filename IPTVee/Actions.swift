@@ -146,16 +146,12 @@ func getShortEpg(streamId: String, channelName: String, imageURL: String) {
         nowPlayingInfo[MPMediaItemPropertyArtist] = title
         nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = "IPTVee"
         nowPlayingInfo[MPMediaItemPropertyMediaType] = 1
-        nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = true
+        nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = false
         nowPlayingInfo[MPMediaItemPropertyAlbumTitle] =  PlayerObservable.plo.miniEpg.first?.start.toDate()?.toString()
         nowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
-        
-        //if self.player.rate == 1 {
-        //nowPlayingInfoCenter.playbackState = .playing
-        //} else {
-        //    nowPlayingInfoCenter.playbackState = .paused
-        //}
-        
+    
+        nowPlayingInfoCenter.playbackState = PlayerObservable.plo.videoController.player?.rate == 1 ? .playing : .paused
+  
         nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
         
     }
