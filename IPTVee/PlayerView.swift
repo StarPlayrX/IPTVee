@@ -3,24 +3,28 @@ import AVKit
 import iptvKit
 import MediaPlayer
 
-
-
 class PlayerObservable: ObservableObject {
     static var plo = PlayerObservable()
-    @Published var loadingMsg = "Loading..."
-    @Published var isLoading = true
-    @Published var isPlayingURL = ""
-    @Published var fullScreenTriggered: Bool = false
-    @Published var disableVideoController: Bool = false
-    @Published var isReadyToPlay: Bool = true
     @Published var miniEpg: [EpgListing] = []
     @Published var videoController = AVPlayerViewController()
     @Published var player = AVPlayer()
     @Published var pip: Bool = false
     @Published var fullscreen: Bool = false
+    @Published var streamID: String = ""
+    @Published var channelName: String = ""
+    @Published var imageURL: String = ""
 }
 
+
 struct PlayerView: View {
+    internal init(url: URL, channelName: String, streamID: String, imageUrl: String) {
+        self.url = url
+        self.channelName = channelName
+        self.streamID = streamID
+        self.imageUrl = imageUrl
+        
+    }
+    
     @ObservedObject var plo = PlayerObservable.plo
     
     let url: URL
@@ -28,6 +32,7 @@ struct PlayerView: View {
     let streamID: String
     let imageUrl: String
     
+
     var isPortrait: Bool {
         (UIApplication.shared.connectedScenes.first as! UIWindowScene).interfaceOrientation.isPortrait
     }
@@ -106,16 +111,25 @@ struct PlayerView: View {
                              .frame(width: 35, height: 35)
                              }*/
                         }
+                        .navigationTitle(channelName)
+
                         .frame(alignment: .bottom)
                     }
+
                 }
             }
         }
         .onAppear {
+            plo.streamID = streamID
+            plo.channelName = channelName
+            plo.imageURL = imageUrl
             getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
+            plo.videoController.player?.playImmediately(atRate: 1.0)
+
         }
-        
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+    
+
+       /* .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
         // Save Config
             plo.videoController.showsTimecodes = true
             plo.videoController.showsPlaybackControls = true
@@ -127,7 +141,7 @@ struct PlayerView: View {
             plo.videoController.showsTimecodes = true
             plo.videoController.showsPlaybackControls = true
             plo.videoController.requiresLinearPlayback = false
-        }
+        }*/
     }
 }
 
@@ -236,15 +250,7 @@ extension PlayerView {
                 let avp = AVPlayerItem.init(asset: asset)
                 
                 plo.videoController.player?.replaceCurrentItem(with: avp)
-                plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-                plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 5
-                plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = false
-                plo.videoController.requiresLinearPlayback = false
-                plo.videoController.canStartPictureInPictureAutomaticallyFromInline = true
-                plo.videoController.entersFullScreenWhenPlaybackBegins = false
-                plo.videoController.showsPlaybackControls = true
-                plo.videoController.updatesNowPlayingInfoCenter = false
-                plo.videoController.player?.play()
+
                 plo.videoController.delegate = context.coordinator
                 
                 return plo.videoController

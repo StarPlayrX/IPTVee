@@ -37,7 +37,8 @@ struct ChannelsView: View {
                 .contains(searchText.lowercased()) || searchText.isEmpty})
     }
     
-    
+    let epgTimer = Timer.publish(every: 60, on: .current, in: .default).autoconnect()
+
     var body: some View {
         
         GeometryReader { geometry in
@@ -63,18 +64,36 @@ struct ChannelsView: View {
             .navigationTitle(categoryName)
             .frame(width: geometry.size.width)
             .toolbar {
-                ToolbarItemGroup(placement: .bottomBar) {
+                /*ToolbarItemGroup(placement: .bottomBar) {
                     Text(" ")
-                }
+                }*/
             }
             .onAppear {
                 plo.miniEpg = []
 
                 if !plo.pip {
+                    
+                    plo.streamID = ""
+                    plo.channelName = ""
+                    plo.imageURL = ""
+                    setnowPlayingInfo(channelName: "", image: nil)
+
                     plo.videoController.player?.replaceCurrentItem(with: nil)
                 }
                 
             }
+       
+             
+             
+            .onReceive(epgTimer) { _ in
+                 let min = Calendar.current.component(.minute, from: Date())
+                min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
+             }
+             
+             
+        
+            
+      
 
         }
     }

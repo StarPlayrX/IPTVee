@@ -118,9 +118,9 @@ func getShortEpg(streamId: String, channelName: String, imageURL: String) {
                     DispatchQueue.main.async {
                         
                         if let data = data, let image = UIImage(data: data) {
-                            setnowPlayingInfo(image: image)
+                            setnowPlayingInfo(channelName: channelName, image: image)
                         } else {
-                            setnowPlayingInfo(image: nil)
+                            setnowPlayingInfo(channelName: channelName, image: nil)
                         }
                     }
                 }
@@ -128,35 +128,62 @@ func getShortEpg(streamId: String, channelName: String, imageURL: String) {
         }
     }
     
-    func setnowPlayingInfo(channel:String = "", song:String = "", artist:String = "", image: UIImage?) {
-        let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default()
-        var nowPlayingInfo = nowPlayingInfoCenter.nowPlayingInfo ?? [String: Any]()
-        
-        if let image = image {
-            let image = image.withBackground(color: UIColor(displayP3Red: 64 / 255, green: 64 / 255, blue: 64 / 255, alpha: 1.0))
-            let artwork = MPMediaItemArtwork(boundsSize: image.size, requestHandler: {  (_) -> UIImage in
-                return image
-            })
-            
-            nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
-        }
-       
-        let title = PlayerObservable.plo.miniEpg.first?.title.base64Decoded ?? "IPTvee"
-        nowPlayingInfo[MPMediaItemPropertyTitle] = channelName
-        nowPlayingInfo[MPMediaItemPropertyArtist] = title
-        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = "IPTVee"
-        nowPlayingInfo[MPMediaItemPropertyMediaType] = 1
-        nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = false
-        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] =  PlayerObservable.plo.miniEpg.first?.start.toDate()?.toString()
-        nowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
     
-        nowPlayingInfoCenter.playbackState = PlayerObservable.plo.videoController.player?.rate == 1 ? .playing : .paused
-  
-        nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
-        
-    }
     
 }
+
+
+
+
+
+
+func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+    let rect = CGRect(x: 0, y: 0, width: targetSize.width, height: targetSize.height)
+    
+    UIGraphicsBeginImageContextWithOptions( targetSize, false, 1.0)
+    
+    image.draw(in: rect)
+    
+    if let newImage = UIGraphicsGetImageFromCurrentImageContext() {
+        UIGraphicsEndImageContext()
+        return newImage
+    }
+    
+    return UIImage()
+}
+
+
+func setnowPlayingInfo(channelName:String, image: UIImage?) {
+    let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default()
+    var nowPlayingInfo = nowPlayingInfoCenter.nowPlayingInfo ?? [String: Any]()
+    
+    if let image = image {
+        let img = image.squareMe()
+
+        let artwork = MPMediaItemArtwork(boundsSize: img.size, requestHandler: {  (_) -> UIImage in
+            return img
+        })
+        
+        nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+    } else {
+        nowPlayingInfo[MPMediaItemPropertyArtwork] = nil
+
+    }
+   
+    let title = PlayerObservable.plo.miniEpg.first?.title.base64Decoded ?? "IPTvee"
+    nowPlayingInfo[MPMediaItemPropertyTitle] = channelName
+    nowPlayingInfo[MPMediaItemPropertyArtist] = title
+    nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = "IPTVee"
+    nowPlayingInfo[MPMediaItemPropertyMediaType] = 1
+    nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = false
+    nowPlayingInfo[MPMediaItemPropertyAlbumTitle] =  PlayerObservable.plo.miniEpg.first?.start.toDate()?.toString()
+    nowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
+    nowPlayingInfoCenter.playbackState = PlayerObservable.plo.videoController.player?.rate == 1 ? .playing : .paused
+    nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
+    
+}
+
+
 
 func loopOverChannelsNowPlaying() {
     

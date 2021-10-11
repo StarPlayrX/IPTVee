@@ -43,12 +43,23 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         avSession()
         
-        let po =  PlayerObservable.plo
-        po.videoController.player = PlayerObservable.plo.player
-        po.videoController.requiresLinearPlayback = false
-        po.videoController.showsTimecodes = false
-        po.videoController.showsPlaybackControls = true
+        let plo =  PlayerObservable.plo
         
+        plo.videoController.player = PlayerObservable.plo.player
+        
+        plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+        plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 240/
+        plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
+        plo.videoController.player?.automaticallyWaitsToMinimizeStalling = true
+        
+        plo.videoController.requiresLinearPlayback = false
+        plo.videoController.showsTimecodes = false
+        plo.videoController.showsPlaybackControls = true
+        plo.videoController.requiresLinearPlayback = false
+        plo.videoController.canStartPictureInPictureAutomaticallyFromInline = true
+        plo.videoController.entersFullScreenWhenPlaybackBegins = false
+        plo.videoController.showsPlaybackControls = true
+        plo.videoController.updatesNowPlayingInfoCenter = false
         
         application.beginReceivingRemoteControlEvents()
         return true
