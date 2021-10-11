@@ -48,7 +48,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         plo.videoController.player = PlayerObservable.plo.player
         
         plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-        plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 240/
+        plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 240
         plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
         plo.videoController.player?.automaticallyWaitsToMinimizeStalling = true
         
