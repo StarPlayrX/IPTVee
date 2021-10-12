@@ -118,12 +118,12 @@ extension PlayerView {
                 plo.videoController.player?.currentItem?.seekingWaitsForVideoCompositionRendering = true
                 plo.videoController.player?.currentItem?.videoApertureMode = .cleanAperture
                 plo.videoController.player?.currentItem?.appliesPerFrameHDRDisplayMetadata = true
-                plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 10
+                plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 15
                 plo.videoController.player?.currentItem?.automaticallyPreservesTimeOffsetFromLive = true
                 plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
-                plo.videoController.player?.currentItem?.configuredTimeOffsetFromLive = .init(seconds: 10, preferredTimescale: 600)
+                plo.videoController.player?.currentItem?.configuredTimeOffsetFromLive = .init(seconds: 30, preferredTimescale: 600)
                 plo.videoController.player?.currentItem?.startsOnFirstEligibleVariant = true
-
+                plo.videoController.player?.currentItem?.variantPreferences = .scalabilityToLosslessAudio
                 plo.videoController.delegate = context.coordinator
                 
                 return plo.videoController
