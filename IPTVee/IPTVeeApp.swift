@@ -53,9 +53,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         plo.videoController.player?.replaceCurrentItem(with: nil)
         plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
         plo.videoController.player?.automaticallyWaitsToMinimizeStalling = true
-        plo.videoController.player?.appliesMediaSelectionCriteriaAutomatically = false
+        plo.videoController.player?.appliesMediaSelectionCriteriaAutomatically = true
         plo.videoController.player?.preventsDisplaySleepDuringVideoPlayback = true
-        plo.videoController.player?.allowsExternalPlayback = false
+        plo.videoController.player?.allowsExternalPlayback = true
         plo.videoController.player?.usesExternalPlaybackWhileExternalScreenIsActive = true
         plo.videoController.player?.externalPlaybackVideoGravity = .resizeAspectFill
         plo.videoController.player?.actionAtItemEnd = .pause
