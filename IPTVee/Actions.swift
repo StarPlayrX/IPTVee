@@ -68,6 +68,7 @@ func getConfig() {
         
         if let config = try? decoder.decode(Configuration.self, from: login) {
             LoginObservable.shared.config = config
+            saveUserDefaults()
         } else {
             loginError()
         }
@@ -158,6 +159,9 @@ func setnowPlayingInfo(channelName:String, image: UIImage?) {
     var nowPlayingInfo = nowPlayingInfoCenter.nowPlayingInfo ?? [String: Any]()
     
     if let image = image {
+        
+      
+
         let img = image.squareMe()
 
         let artwork = MPMediaItemArtwork(boundsSize: img.size, requestHandler: {  (_) -> UIImage in
@@ -175,10 +179,10 @@ func setnowPlayingInfo(channelName:String, image: UIImage?) {
     nowPlayingInfo[MPMediaItemPropertyArtist] = title
     nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = "IPTVee"
     nowPlayingInfo[MPMediaItemPropertyMediaType] = 1
-    nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = false
+    nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = true
     nowPlayingInfo[MPMediaItemPropertyAlbumTitle] =  PlayerObservable.plo.miniEpg.first?.start.toDate()?.toString()
     nowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
-    nowPlayingInfoCenter.playbackState = PlayerObservable.plo.videoController.player?.rate == 1 ? .playing : .paused
+    nowPlayingInfoCenter.playbackState = PlayerObservable.plo.videoController.player?.rate == 1 ? .playing : .unknown
     nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
     
 }

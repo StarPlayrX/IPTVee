@@ -16,9 +16,7 @@ class LoginObservable: ObservableObject {
     @Published var isLoggedIn: Bool = false
     @Published var isAutoSwitchCat: Bool = false
     @Published var isCatActive: Bool = false
-
     @Published var config: Config = nil
-   
 }
 
 func login(_ user: String,_ pass: String,_ host: String,_ port: String) {

@@ -29,4 +29,3 @@ var cats: Categories = Categories()
 var conf: Configuration? = nil
 var chan: Channels = Channels()
 var shortEpg: iptvShortEpg? = nil
-
