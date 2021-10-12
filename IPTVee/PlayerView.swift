@@ -136,7 +136,7 @@ struct PlayerView: View {
             plo.imageURL = imageUrl
             getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
             
-            DispatchQueue.background(delay: 0.0) {
+            /*DispatchQueue.background(delay: 0.0) {
                 plo.videoController.player?.rate = 0.0
                 while ( plo.videoController.player?.status != .readyToPlay ) {}
             } completion: {
@@ -147,7 +147,7 @@ struct PlayerView: View {
                         }
                     })
                 }
-            }
+            }*/
         }
     
 

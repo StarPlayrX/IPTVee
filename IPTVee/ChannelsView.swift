@@ -82,19 +82,12 @@ struct ChannelsView: View {
                 }
                 
             }
-       
-             
-             
+         
             .onReceive(epgTimer) { _ in
                  let min = Calendar.current.component(.minute, from: Date())
                 min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
              }
-             
-             
-        
             
-      
-
         }
     }
 }
