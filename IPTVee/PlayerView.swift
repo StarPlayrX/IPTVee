@@ -131,6 +131,7 @@ struct PlayerView: View {
             }
         }
         .onAppear {
+            print("APP")
             plo.streamID = streamID
             plo.channelName = channelName
             plo.imageURL = imageUrl
@@ -148,6 +149,9 @@ struct PlayerView: View {
                     })
                 }
             }*/
+        }
+        .onDisappear {
+            print("DIS")
         }
     
 

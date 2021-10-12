@@ -139,7 +139,6 @@ extension PlayerView {
             // Passing a nil options value indicates the highest available bitrate should be downloaded
             //guard let downloadTask = downloadSession.makeAssetDownloadTask(asset: asset, assetTitle: "download", assetArtworkData: nil, options: nil) else { return plo.videoController }
             let playerItem = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: ["duration"])
-            print(url)
             //player = AVPlayer(playerItem: playerItem)
             //player.play()
             //let avp = AVPlayerItem.init(asset: asset, automaticallyLoadedAssetKeys: ["duration"])
