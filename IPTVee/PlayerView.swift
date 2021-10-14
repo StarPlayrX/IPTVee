@@ -3,17 +3,6 @@ import AVKit
 import iptvKit
 import MediaPlayer
 
-class PlayerObservable: ObservableObject {
-    static var plo = PlayerObservable()
-    @Published var miniEpg: [EpgListing] = []
-    @Published var videoController = AVPlayerViewController()
-    @Published var pip: Bool = false
-    @Published var fullscreen: Bool = false
-    @Published var reset: Bool = false
-    @Published var streamID: String = ""
-    @Published var channelName: String = ""
-    @Published var imageURL: String = ""
-}
 
 
 struct PlayerView: View {
@@ -24,7 +13,7 @@ struct PlayerView: View {
         self.imageUrl = imageUrl
     }
     
-    @ObservedObject var plo = PlayerObservable.plo
+    @ObservedObject var plo = iptvKit.PlayerObservable.plo
     
     let url: URL
     let channelName: String
@@ -45,24 +34,29 @@ struct PlayerView: View {
                     
                     if isPortrait {
                         //IPTVee Logo
-                        HStack {
-                            Text("IPTV")
-                                .fontWeight(.bold)
-                                .frame(alignment: .trailing)
-                                .offset(x: 4.3)
+                        if UIDevice.current.userInterfaceIdiom == .phone {
+                            HStack {
+                                Text("IPTV")
+                                    .fontWeight(.bold)
+                                    .frame(alignment: .trailing)
+                                    .offset(x: 4.3)
 
-                            Text("ee")
-                                .fontWeight(.light)
-                                .frame(alignment: .leading)
-                                .offset(x: -4.3)
+                                Text("ee")
+                                    .fontWeight(.light)
+                                    .frame(alignment: .leading)
+                                    .offset(x: -4.3)
+                            }
+                            .foregroundColor( Color(.displayP3, red: 63 / 255, green: 188 / 255, blue: 237 / 255)  )
+
                         }
-                        .foregroundColor( Color(.displayP3, red: 63 / 255, green: 188 / 255, blue: 237 / 255)  )
                     }
                     
                     AVPlayerView(url: url)
                         .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625)
                         .offset(y:10)
-                    
+#if !targetEnvironment(macCatalyst)
+
+                    #endif
                     if isPortrait {
                         Form {
                             if !plo.miniEpg.isEmpty {
@@ -122,6 +116,7 @@ struct PlayerView: View {
                              .frame(width: 35, height: 35)
                              }*/
                         }
+                        .navigationBarTitleDisplayMode(.inline)
                         .navigationTitle(channelName)
 
                         .frame(alignment: .bottom)
@@ -131,7 +126,6 @@ struct PlayerView: View {
             }
         }
         .onAppear {
-            print("APP")
             plo.streamID = streamID
             plo.channelName = channelName
             plo.imageURL = imageUrl
@@ -151,7 +145,6 @@ struct PlayerView: View {
             }*/
         }
         .onDisappear {
-            print("DIS")
         }
     
 

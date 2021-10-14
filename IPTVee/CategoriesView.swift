@@ -8,14 +8,8 @@
 import SwiftUI
 import iptvKit
 
-class CategoriesObservable: ObservableObject {
-    static var cto = CategoriesObservable()
-    @Published var status: String = "test"
-    @Published var loggedIn: Bool = false
-}
-
 struct CategoriesView: View {
-    @ObservedObject var obs = LoginObservable.shared
+    @ObservedObject var obs = iptvKit.LoginObservable.shared
     
     @State var searchText: String = ""
     @State var isActive: Bool = false
@@ -37,10 +31,13 @@ struct CategoriesView: View {
                         NavigationLink(cat.categoryName,destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName))
                     }
                 }
-            }.navigationTitle("Categories")
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Categories")
         }
+        #if !targetEnvironment(macCatalyst)
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
-
+        #endif
         .onAppear {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
         }

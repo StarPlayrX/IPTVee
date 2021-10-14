@@ -9,9 +9,7 @@ import SwiftUI
 import iptvKit
 import AVKit
 
-class ChannelsObservable: ObservableObject {
-    static var shared = ChannelsObservable()
-}
+
 
 struct ChannelsView: View {
     
@@ -42,7 +40,7 @@ struct ChannelsView: View {
     var body: some View {
         
         GeometryReader { geometry in
-            List {
+            Form {
                 
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.streamID) { ch in
@@ -60,7 +58,10 @@ struct ChannelsView: View {
                     }
                 }
             }
+            #if !targetEnvironment(macCatalyst)
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
+            #endif
+            .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(categoryName)
             .frame(width: geometry.size.width)
             .toolbar {
@@ -83,8 +84,6 @@ struct ChannelsView: View {
                     plo.videoController.removeFromParent()
                     plo.videoController.player = AVPlayer()
                     plo.videoController.player?.replaceCurrentItem(with: nil)
-
-
                 }
                 
             }
@@ -97,5 +96,3 @@ struct ChannelsView: View {
         }
     }
 }
-
-

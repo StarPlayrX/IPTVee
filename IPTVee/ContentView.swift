@@ -8,16 +8,14 @@
 import SwiftUI
 import iptvKit
 
-extension RangeReplaceableCollection where Self: StringProtocol {
-    var digits: Self { filter(\.isWholeNumber) }
-}
+
 
 struct ContentView: View {
     
     @ObservedObject var obs = LoginObservable.shared
     //MARK: - todo: Add in data store
-    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? "" //"takuachenvidia@gmail.com" //
-    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? "" //"wBevDzfqb5" //
+    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? "takuachenvidia@gmail.com" //
+    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? "wBevDzfqb5" //
     @State var service: String = LoginObservable.shared.config?.serverInfo.url ?? ""
     @State var https: Bool = false
     @State var port: String = LoginObservable.shared.config?.serverInfo.port ?? ""
@@ -30,20 +28,21 @@ struct ContentView: View {
         NavigationView {
             
             VStack {
-                HStack {
-                    Text("IPTV")
-                        .fontWeight(.bold)
-                        .frame(alignment: .trailing)
-                        .offset(x: 4.3)
-
-                    Text("ee")
-                        .fontWeight(.light)
-                        .frame(alignment: .leading)
-                        .offset(x: -4.3)
+                
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                    HStack {
+                        Text("IPTV")
+                            .fontWeight(.bold)
+                            .frame(alignment: .trailing)
+                            .offset(x: 4.3)
+                        
+                        Text("ee")
+                            .fontWeight(.light)
+                            .frame(alignment: .leading)
+                            .offset(x: -4.3)
+                    }
+                    .foregroundColor( Color(.displayP3, red: 63 / 255, green: 188 / 255, blue: 237 / 255)  )
                 }
-                .foregroundColor( Color(.displayP3, red: 63 / 255, green: 188 / 255, blue: 237 / 255)  )
-                
-                
                 
                 Form {
                     
@@ -105,16 +104,20 @@ struct ContentView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle(title)
                 .onAppear {
-                    AppDelegate.interfaceMask = UIInterfaceOrientationMask.portrait
+                    if UIDevice.current.userInterfaceIdiom == .phone {
+                        AppDelegate.interfaceMask = UIInterfaceOrientationMask.portrait
+                        
+                    }   else {
+                        AppDelegate.interfaceMask = UIInterfaceOrientationMask.landscape
+                    }
+                    
                 }
                 .onDisappear {
                     AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
                 }
+                .navigationViewStyle(DoubleColumnNavigationViewStyle())
                 
             }
-            
-            
-            
         }
     }
 }

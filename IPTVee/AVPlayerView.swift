@@ -9,6 +9,7 @@ import AVKit
 import SwiftUI
 import MediaPlayer
 import AVFoundation
+import iptvKit
 
 extension PlayerView {
     
@@ -150,13 +151,19 @@ extension PlayerView {
              plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 0
             plo.videoController.player?.currentItem?.automaticallyPreservesTimeOffsetFromLive = true
             plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
-            
-            plo.videoController.player?.play()
             plo.videoController.player?.currentItem?.configuredTimeOffsetFromLive = .init(seconds: 34, preferredTimescale: 1000)
             plo.videoController.player?.currentItem?.startsOnFirstEligibleVariant = true
             plo.videoController.player?.currentItem?.variantPreferences = .scalabilityToLosslessAudio
-            plo.videoController.delegate = context.coordinator
             
+            #if !targetEnvironment(macCatalyst)
+            plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+            #endif
+            
+            plo.videoController.player?.appliesMediaSelectionCriteriaAutomatically = true
+            plo.videoController.player?.preventsDisplaySleepDuringVideoPlayback = true
+            plo.videoController.delegate = context.coordinator
+            plo.videoController.player?.playImmediately(atRate: 1.0)
+
             return plo.videoController
         }
     }

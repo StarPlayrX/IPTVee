@@ -19,11 +19,8 @@ struct IPTVapp: App {
     }
 }
 
-let userSettings = "userSettings"
 
-func saveUserDefaults() {
-    UserDefaults.standard.set(try? PropertyListEncoder().encode(LoginObservable.shared.config), forKey:userSettings)
-}
+
 
 func loadUserDefaults() {
     if let data = UserDefaults.standard.value(forKey:userSettings) as? Data,
@@ -51,7 +48,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     fileprivate func setupVideoController(_ plo: PlayerObservable) {
         plo.videoController.player = AVPlayer()
         plo.videoController.player?.replaceCurrentItem(with: nil)
+        
+        #if !targetEnvironment(macCatalyst)
         plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+        plo.videoController.canStartPictureInPictureAutomaticallyFromInline = true
+        #endif
+        
         plo.videoController.player?.automaticallyWaitsToMinimizeStalling = true
         plo.videoController.player?.appliesMediaSelectionCriteriaAutomatically = true
         plo.videoController.player?.preventsDisplaySleepDuringVideoPlayback = true
@@ -64,7 +66,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         plo.videoController.showsTimecodes = false
         plo.videoController.showsPlaybackControls = true
         plo.videoController.requiresLinearPlayback = false
-        plo.videoController.canStartPictureInPictureAutomaticallyFromInline = true
         plo.videoController.entersFullScreenWhenPlaybackBegins = false
         plo.videoController.showsPlaybackControls = true
         plo.videoController.updatesNowPlayingInfoCenter = false
@@ -79,8 +80,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
 
-    static var interfaceMask = UIInterfaceOrientationMask.portrait
-
+    static var interfaceMask = UIDevice.current.userInterfaceIdiom == .phone ? UIInterfaceOrientationMask.portrait : UIInterfaceOrientationMask.landscape
+  
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window:UIWindow?) -> UIInterfaceOrientationMask {
         return AppDelegate.interfaceMask
     }
