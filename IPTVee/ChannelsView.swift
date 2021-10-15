@@ -7,9 +7,6 @@
 
 import SwiftUI
 import iptvKit
-import AVKit
-
-
 
 struct ChannelsView: View {
     
@@ -49,18 +46,18 @@ struct ChannelsView: View {
                            let url = URL(string:"http://\(srv.url):\(srv.port)/live/\(usr.username)/\(usr.password)/\(ch.streamID).m3u8")
                         NavigationLink(channelItem, destination: PlayerView(url: url!, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ))
 
-
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG -> Now Playing { add to filter }
                         /*NavigationLink(channelItem, destination: PlayerView(
                          channelName: ch.name, streamId: String(ch.streamID), imageUrl: ch.streamIcon, playerView: AVPlayerView(streamId: String(ch.streamID)) ))*/
-                 
                     }
                 }
             }
             #if !targetEnvironment(macCatalyst)
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
             #endif
+            
+        
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(categoryName)
             .frame(width: geometry.size.width)
@@ -80,12 +77,8 @@ struct ChannelsView: View {
                     setnowPlayingInfo(channelName: "", image: nil)
                     plo.videoController.player?.pause()
                     plo.videoController.player?.replaceCurrentItem(with: nil)
-                    plo.videoController.player = nil
-                    plo.videoController.removeFromParent()
-                    plo.videoController.player = AVPlayer()
-                    plo.videoController.player?.replaceCurrentItem(with: nil)
+                    plo.videoController.player?.pause()
                 }
-                
             }
          
             .onReceive(epgTimer) { _ in

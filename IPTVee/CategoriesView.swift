@@ -37,6 +37,7 @@ struct CategoriesView: View {
         }
         #if !targetEnvironment(macCatalyst)
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
+     
         #endif
         .onAppear {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		6F307AA9270924FD009A6EF9 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F307AA8270924FD009A6EF9 /* WebView.swift */; };
-		6F307AAD270A754C009A6EF9 /* AVPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F307AAC270A754C009A6EF9 /* AVPlayerView.swift */; };
 		6F74A0DE2707B5B5000171B5 /* ChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */; };
 		6F74A0E02707C38D000171B5 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F74A0DF2707C38D000171B5 /* PlayerView.swift */; };
 		6F87E9242702A31700434C6E /* IPTVeeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F87E9232702A31700434C6E /* IPTVeeApp.swift */; };
@@ -22,7 +21,6 @@
 /* Begin PBXFileReference section */
 		6F22DB732715F4420077CDA0 /* IPTVee.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IPTVee.entitlements; sourceTree = "<group>"; };
 		6F307AA8270924FD009A6EF9 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
-		6F307AAC270A754C009A6EF9 /* AVPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVPlayerView.swift; sourceTree = "<group>"; };
 		6F512E292711558A0010BE18 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsView.swift; sourceTree = "<group>"; };
 		6F74A0DF2707C38D000171B5 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
@@ -74,7 +72,6 @@
 				6FAFD738270416C900D49704 /* CategoriesView.swift */,
 				6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */,
 				6F74A0DF2707C38D000171B5 /* PlayerView.swift */,
-				6F307AAC270A754C009A6EF9 /* AVPlayerView.swift */,
 				6F307AA8270924FD009A6EF9 /* WebView.swift */,
 				6F87E9272702A31800434C6E /* Assets.xcassets */,
 				6F87E9292702A31800434C6E /* Preview Content */,
@@ -178,7 +175,6 @@
 				6F74A0DE2707B5B5000171B5 /* ChannelsView.swift in Sources */,
 				6F74A0E02707C38D000171B5 /* PlayerView.swift in Sources */,
 				6FAFD739270416C900D49704 /* CategoriesView.swift in Sources */,
-				6F307AAD270A754C009A6EF9 /* AVPlayerView.swift in Sources */,
 				6F87E9242702A31700434C6E /* IPTVeeApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -332,6 +328,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brusstodd.IPTVee;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -368,6 +365,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brusstodd.IPTVee;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -8,8 +8,6 @@
 import SwiftUI
 import iptvKit
 
-
-
 struct ContentView: View {
     
     @ObservedObject var obs = LoginObservable.shared
@@ -59,7 +57,9 @@ struct ContentView: View {
                         Button(action: {login(userName, passWord, service, obs.port) }) {
                             Text("Login")
                                 .frame(maxWidth: .infinity, alignment: .center)
-                        }
+
+                        }.disabled(awaitDone)
+
                     }
                     
                     Section(header: Text("UPDATE")) {
