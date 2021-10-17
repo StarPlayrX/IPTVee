@@ -8,6 +8,7 @@
 import SwiftUI
 import AVFoundation
 import iptvKit
+import MediaPlayer
 
 @main
 struct IPTVapp: App {
@@ -18,9 +19,6 @@ struct IPTVapp: App {
         }
     }
 }
-
-
-
 
 func loadUserDefaults() {
     if let data = UserDefaults.standard.value(forKey:userSettings) as? Data,
@@ -69,7 +67,34 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         plo.videoController.entersFullScreenWhenPlaybackBegins = false
         plo.videoController.showsPlaybackControls = true
         plo.videoController.updatesNowPlayingInfoCenter = false
+        
+        commandCenter(plo)
+        
     }
+    
+    
+    func commandCenter(_ plo: PlayerObservable) {
+        
+        let commandCenter = MPRemoteCommandCenter.shared()
+        
+        commandCenter.accessibilityActivate()
+        
+        commandCenter.playCommand.addTarget(handler: { (event) in
+            plo.videoController.player?.play()
+            return MPRemoteCommandHandlerStatus.success}
+        )
+        
+        commandCenter.pauseCommand.addTarget(handler: { (event) in
+            plo.videoController.player?.pause()
+            return MPRemoteCommandHandlerStatus.success}
+        )
+        
+        commandCenter.togglePlayPauseCommand.addTarget(handler: { (event) in
+            plo.videoController.player?.rate == 1 ? plo.videoController.player?.pause() : plo.videoController.player?.play()
+            return MPRemoteCommandHandlerStatus.success}
+        )
+    }
+    
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         avSession()
@@ -78,7 +103,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         loadUserDefaults()
         return true
     }
-    
 
     static var interfaceMask = UIDevice.current.userInterfaceIdiom == .phone ? UIInterfaceOrientationMask.portrait : UIInterfaceOrientationMask.landscape
   
@@ -86,6 +110,3 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return AppDelegate.interfaceMask
     }
 }
-
-
-

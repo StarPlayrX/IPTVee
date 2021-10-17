@@ -109,17 +109,22 @@ struct PlayerView: View {
                 }
             }
         }
+        .accessibilityAction(.magicTap, {performMagicTap()})
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(channelName)
         .onAppear {
             plo.streamID = streamID
             plo.channelName = channelName
             plo.imageURL = imageUrl
+            plo.videoController.updatesNowPlayingInfoCenter = false
             getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
         }
     }
+    
+    func performMagicTap() {
+        plo.videoController.player?.rate == 1 ? plo.videoController.player?.pause() : plo.videoController.player?.play()
+    }
 }
-
 
 
 

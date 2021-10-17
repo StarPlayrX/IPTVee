@@ -9,14 +9,14 @@ import SwiftUI
 import iptvKit
 
 struct ContentView: View {
+
     
     @ObservedObject var obs = LoginObservable.shared
-    //MARK: - todo: Add in data store
-    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? "takuachenvidia@gmail.com" //
-    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? "wBevDzfqb5" //
-    @State var service: String = LoginObservable.shared.config?.serverInfo.url ?? ""
+    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? ""//"Guanacko503" //"toddbruss90" //
+    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? ""//"wGt0cSKkXF" //"zzeH7C0xdw" //
+    @State var service: String = LoginObservable.shared.config?.serverInfo.url ?? "primestreams.tv"
     @State var https: Bool = false
-    @State var port: String = LoginObservable.shared.config?.serverInfo.port ?? ""
+    @State var port: String = LoginObservable.shared.config?.serverInfo.port ?? "826"
     @State var showOneLevelIn: Bool = false
     @State var title: String = "IPTVee"
     @State var isCatActive: Bool = false

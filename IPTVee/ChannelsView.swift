@@ -7,6 +7,7 @@
 
 import SwiftUI
 import iptvKit
+import AVKit
 
 struct ChannelsView: View {
     
@@ -57,7 +58,7 @@ struct ChannelsView: View {
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
             #endif
             
-        
+            .accessibilityAction(.magicTap, {performMagicTapStop()})
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(categoryName)
             .frame(width: geometry.size.width)
@@ -67,25 +68,34 @@ struct ChannelsView: View {
                 }*/
             }
             .onAppear {
-                plo.miniEpg = []
-
-                if !plo.pip {
-                    
+                
+                if plo.pip {
+                    plo.fullscreen = false
+                } else {
+                    plo.miniEpg = []
+                    plo.pip = false
+                    plo.fullscreen = false
                     plo.streamID = ""
                     plo.channelName = ""
                     plo.imageURL = ""
-                    setnowPlayingInfo(channelName: "", image: nil)
-                    plo.videoController.player?.pause()
-                    plo.videoController.player?.replaceCurrentItem(with: nil)
+                    setnowPlayingInfo(channelName: plo.channelName, image: nil)
+                    plo.videoController.updatesNowPlayingInfoCenter = true
                     plo.videoController.player?.pause()
                 }
+   
             }
          
             .onReceive(epgTimer) { _ in
-                 let min = Calendar.current.component(.minute, from: Date())
-                min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
+                
+                if !plo.videoController.updatesNowPlayingInfoCenter {
+                   let min = Calendar.current.component(.minute, from: Date())
+                   min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
+                }
              }
-            
         }
+    }
+    
+    func performMagicTapStop() {
+        plo.videoController.player?.pause()
     }
 }
