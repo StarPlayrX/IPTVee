@@ -75,7 +75,10 @@ struct ChannelsView: View {
                     plo.channelName = ""
                     plo.imageURL = ""
                     setnowPlayingInfo(channelName: plo.channelName, image: nil)
+                    plo.videoController.player?.volume = 0
                     plo.videoController.player?.pause()
+                    plo.videoController = AVPlayerViewController()
+                    plo.videoController.player = AVPlayer()
                 }
                 
             }
