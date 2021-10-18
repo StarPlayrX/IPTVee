@@ -35,13 +35,13 @@ struct CategoriesView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Categories")
         }
-        #if !targetEnvironment(macCatalyst)
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
-     
-        #endif
         .onAppear {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
         }
         
+        if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+            Text("")
+                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
+        }
     }
 }

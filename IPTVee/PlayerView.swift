@@ -26,6 +26,10 @@ struct PlayerView: View {
         Group {
             
             GeometryReader { geometry in
+                
+                Text("")
+                Form {}
+                
                 VStack {
                     
                     if isPortrait {
@@ -47,8 +51,12 @@ struct PlayerView: View {
                         }
                     }
                     
-                    AVPlayerView(url: url)
-                        .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625)
+                    
+                    HStack {
+                        AVPlayerView(url: url)
+                            .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625)
+                            .background(Color(UIColor.systemBackground))
+                    } 
                     
                     if isPortrait {
                         Form {

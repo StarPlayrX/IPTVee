@@ -24,7 +24,7 @@ struct ChannelsView: View {
     @ObservedObject var plo = PlayerObservable.plo
     let srv = LoginObservable.shared.config!.serverInfo
     let usr = LoginObservable.shared.config!.userInfo
-
+    
     //It's a long one line but it works
     var channelSearchResults: [iptvChannel] {
         chan.filter({ $0.categoryID == categoryID })
@@ -34,7 +34,7 @@ struct ChannelsView: View {
     }
     
     let epgTimer = Timer.publish(every: 60, on: .current, in: .default).autoconnect()
-
+    
     var body: some View {
         
         GeometryReader { geometry in
@@ -44,9 +44,9 @@ struct ChannelsView: View {
                     ForEach(Array(channelSearchResults),id: \.streamID) { ch in
                         let channelItem = "\(ch.num) \(ch.name)"
                         
-                           let url = URL(string:"http://\(srv.url):\(srv.port)/live/\(usr.username)/\(usr.password)/\(ch.streamID).m3u8")
+                        let url = URL(string:"http://\(srv.url):\(srv.port)/live/\(usr.username)/\(usr.password)/\(ch.streamID).m3u8")
                         NavigationLink(channelItem, destination: PlayerView(url: url!, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ))
-
+                        
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG -> Now Playing { add to filter }
                         /*NavigationLink(channelItem, destination: PlayerView(
@@ -54,18 +54,14 @@ struct ChannelsView: View {
                     }
                 }
             }
-            #if !targetEnvironment(macCatalyst)
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
-            #endif
-            
             .accessibilityAction(.magicTap, {performMagicTapStop()})
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(categoryName)
             .frame(width: geometry.size.width)
             .toolbar {
                 /*ToolbarItemGroup(placement: .bottomBar) {
-                    Text(" ")
-                }*/
+                 Text(" ")
+                 }*/
             }
             .onAppear {
                 
@@ -79,19 +75,24 @@ struct ChannelsView: View {
                     plo.channelName = ""
                     plo.imageURL = ""
                     setnowPlayingInfo(channelName: plo.channelName, image: nil)
-                    plo.videoController.updatesNowPlayingInfoCenter = true
                     plo.videoController.player?.pause()
                 }
-   
-            }
-         
-            .onReceive(epgTimer) { _ in
                 
-                if !plo.videoController.updatesNowPlayingInfoCenter {
-                   let min = Calendar.current.component(.minute, from: Date())
-                   min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
+            }
+            
+            .onReceive(epgTimer) { _ in
+                if plo.videoController.player?.rate == 1 {
+                    let min = Calendar.current.component(.minute, from: Date())
+                    min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
                 }
-             }
+            }
+            
+            if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+                Text("")
+                    .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
+            }
+            
+            
         }
     }
     

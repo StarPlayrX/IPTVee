@@ -10,10 +10,9 @@ import iptvKit
 
 struct ContentView: View {
 
-    
     @ObservedObject var obs = LoginObservable.shared
-    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? ""//"Guanacko503" //"toddbruss90" //
-    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? ""//"wGt0cSKkXF" //"zzeH7C0xdw" //
+    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? ""//"toddbruss90"//"Guanacko503" //"toddbruss90" //
+    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? ""//"zzeH7C0xdw"//"wGt0cSKkXF" //"zzeH7C0xdw" //
     @State var service: String = LoginObservable.shared.config?.serverInfo.url ?? "primestreams.tv"
     @State var https: Bool = false
     @State var port: String = LoginObservable.shared.config?.serverInfo.port ?? "826"
@@ -26,7 +25,8 @@ struct ContentView: View {
         NavigationView {
             
             VStack {
-                
+             
+                //IPTVee Logo
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     HStack {
                         Text("IPTV")
@@ -40,10 +40,12 @@ struct ContentView: View {
                             .offset(x: -4.3)
                     }
                     .foregroundColor( Color(.displayP3, red: 63 / 255, green: 188 / 255, blue: 237 / 255)  )
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
+                
                 Form {
-                    
+                  
                     Section(header: Text("CREDENTIALS")) {
                         TextField("Username", text: $userName)
                         SecureField("Password", text: $passWord)
@@ -64,12 +66,10 @@ struct ContentView: View {
                     
                     Section(header: Text("UPDATE")) {
                         Text("Status")
-                            .foregroundColor(.white)
                             .frame(maxWidth: .infinity, alignment: .center)
                         Text(obs.status)
                             .font(.body)
                             .fontWeight(.regular)
-                            .foregroundColor(Color.gray)
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
                     
@@ -90,7 +90,6 @@ struct ContentView: View {
                     
                     Section(header: Text("COPYRIGHT")) {
                         Text("© 2021 Todd Bruss")
-                            .foregroundColor(.white)
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
                 }
