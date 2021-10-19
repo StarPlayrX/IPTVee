@@ -22,7 +22,6 @@ struct ChannelsView: View {
     @State var selectedChannel: String?
     @State var isActive: Bool = false
     @State var selectedItem: Int?
-    @State var postSelection: Int?
 
     @ObservedObject var plo = PlayerObservable.plo
     let srv = LoginObservable.shared.config!.serverInfo
@@ -46,15 +45,12 @@ struct ChannelsView: View {
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.streamID) { ch in
                         let channelItem = "\(ch.num) \(ch.name)"
-                        
                         let url = URL(string:"http://\(srv.url):\(srv.port)/live/\(usr.username)/\(usr.password)/\(ch.streamID).m3u8")
                         NavigationLink(channelItem, destination: PlayerView(url: url!, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ), tag: ch.streamID, selection: self.$selectedItem)
-                        
-                            .listRowBackground(self.selectedItem == ch.streamID || self.postSelection == ch.streamID ? Color.accentColor : Color(UIColor.secondarySystemBackground))
+                            .listRowBackground(self.selectedItem == ch.streamID || (plo.previousStreamID == ch.streamID && self.selectedItem == nil) ? Color.accentColor : Color(UIColor.secondarySystemBackground))
+                       
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG -> Now Playing { add to filter }
-                        /*NavigationLink(channelItem, destination: PlayerView(
-                         channelName: ch.name, streamId: String(ch.streamID), imageUrl: ch.streamIcon, playerView: AVPlayerView(streamId: String(ch.streamID)) ))*/
                     }
                 }
             }
@@ -68,25 +64,21 @@ struct ChannelsView: View {
                  }*/
             }
             .onAppear {
-
+                print("plo.previousStreamID Appear",plo.previousStreamID )
                 if plo.pip {
                     plo.fullscreen = false
                 } else {
                     plo.miniEpg = []
-                    plo.pip = false
                     plo.fullscreen = false
-                    plo.streamID = ""
-                    plo.channelName = ""
-                    plo.imageURL = ""
-                    setnowPlayingInfo(channelName: plo.channelName, image: nil)
-                    //plo.videoController.player?.volume = 0
-                    //plo.videoController.player?.pause()
-                    //plo.videoController = AVPlayerViewController()
-                    //plo.videoController.player = AVPlayer()
                 }
                 
             }.onDisappear{
-                postSelection = selectedItem
+                print("plo.previousStreamID Dissappear",plo.previousStreamID )
+                
+                if selectedItem != nil {
+                    plo.previousStreamID = selectedItem
+                }
+                
                 selectedItem = nil
             }
             
