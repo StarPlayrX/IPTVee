@@ -21,6 +21,9 @@ struct ChannelsView: View {
     @State var searchText: String = ""
     @State var selectedChannel: String?
     @State var isActive: Bool = false
+    @State var selectedItem: Int?
+    @State var postSelection: Int?
+
     @ObservedObject var plo = PlayerObservable.plo
     let srv = LoginObservable.shared.config!.serverInfo
     let usr = LoginObservable.shared.config!.userInfo
@@ -38,15 +41,16 @@ struct ChannelsView: View {
     var body: some View {
         
         GeometryReader { geometry in
-            Form {
+            List {
                 
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.streamID) { ch in
                         let channelItem = "\(ch.num) \(ch.name)"
                         
                         let url = URL(string:"http://\(srv.url):\(srv.port)/live/\(usr.username)/\(usr.password)/\(ch.streamID).m3u8")
-                        NavigationLink(channelItem, destination: PlayerView(url: url!, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ))
+                        NavigationLink(channelItem, destination: PlayerView(url: url!, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ), tag: ch.streamID, selection: self.$selectedItem)
                         
+                            .listRowBackground(self.selectedItem == ch.streamID || self.postSelection == ch.streamID ? Color.accentColor : Color(UIColor.secondarySystemBackground))
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG -> Now Playing { add to filter }
                         /*NavigationLink(channelItem, destination: PlayerView(
@@ -64,7 +68,7 @@ struct ChannelsView: View {
                  }*/
             }
             .onAppear {
-                
+
                 if plo.pip {
                     plo.fullscreen = false
                 } else {
@@ -75,12 +79,15 @@ struct ChannelsView: View {
                     plo.channelName = ""
                     plo.imageURL = ""
                     setnowPlayingInfo(channelName: plo.channelName, image: nil)
-                    plo.videoController.player?.volume = 0
-                    plo.videoController.player?.pause()
-                    plo.videoController = AVPlayerViewController()
-                    plo.videoController.player = AVPlayer()
+                    //plo.videoController.player?.volume = 0
+                    //plo.videoController.player?.pause()
+                    //plo.videoController = AVPlayerViewController()
+                    //plo.videoController.player = AVPlayer()
                 }
                 
+            }.onDisappear{
+                postSelection = selectedItem
+                selectedItem = nil
             }
             
             .onReceive(epgTimer) { _ in
@@ -98,6 +105,8 @@ struct ChannelsView: View {
             
         }
     }
+    
+
     
     func performMagicTapStop() {
         plo.videoController.player?.pause()

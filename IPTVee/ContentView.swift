@@ -26,6 +26,7 @@ struct ContentView: View {
             
             VStack {
              
+                
                 //IPTVee Logo
                 if UIDevice.current.userInterfaceIdiom == .phone {
                     HStack {

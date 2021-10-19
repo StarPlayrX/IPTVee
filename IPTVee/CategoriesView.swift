@@ -13,6 +13,8 @@ struct CategoriesView: View {
     
     @State var searchText: String = ""
     @State var isActive: Bool = false
+    @State var selectedItem: String?
+    @State var postSelection: String?
 
     // This is our search filter
     var categorySearchResults: Categories {
@@ -23,13 +25,12 @@ struct CategoriesView: View {
     
     var body: some View {
         
-        Form {
+        List {
             Section(header: Text("CATEGORIES")) {
                 
-                ForEach(Array(categorySearchResults),id: \.categoryName) { cat in
-                    HStack {
-                        NavigationLink(cat.categoryName,destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName))
-                    }
+                ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
+                        NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
+                            .listRowBackground(self.selectedItem == cat.categoryID || postSelection == cat.categoryID ? Color.accentColor : Color(UIColor.secondarySystemBackground))
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -37,6 +38,10 @@ struct CategoriesView: View {
         }
         .onAppear {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
+        }
+        .onDisappear{
+            postSelection = selectedItem
+            selectedItem = nil
         }
         
         if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {

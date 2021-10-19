@@ -17,6 +17,7 @@ struct PlayerView: View {
     let imageUrl: String
     
     var played: Bool = false
+
     
     var isPortrait: Bool {
         (UIApplication.shared.connectedScenes.first as! UIWindowScene).interfaceOrientation.isPortrait
@@ -32,6 +33,7 @@ struct PlayerView: View {
                 
                 VStack {
                     
+                  
                     if isPortrait {
                         //IPTVee Logo
                         if UIDevice.current.userInterfaceIdiom == .phone {
@@ -126,8 +128,7 @@ struct PlayerView: View {
             plo.imageURL = imageUrl
             plo.videoController.updatesNowPlayingInfoCenter = false
             getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
-        }
-    }
+        }    }
     
     func performMagicTap() {
         plo.videoController.player?.rate == 1 ? plo.videoController.player?.pause() : plo.videoController.player?.play()
