@@ -39,6 +39,7 @@ struct ContentView: View {
                             .fontWeight(.light)
                             .frame(alignment: .leading)
                             .offset(x: -4.3)
+
                     }
                     .foregroundColor( Color(.displayP3, red: 63 / 255, green: 188 / 255, blue: 237 / 255)  )
                     .frame(maxWidth: .infinity, alignment: .center)
@@ -46,7 +47,9 @@ struct ContentView: View {
                 
                 
                 Form {
-                  
+                    
+                    
+                    
                     Section(header: Text("CREDENTIALS")) {
                         TextField("Username", text: $userName)
                         SecureField("Password", text: $passWord)

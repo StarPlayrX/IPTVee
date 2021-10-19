@@ -40,7 +40,7 @@ struct ChannelsView: View {
     var body: some View {
         
         GeometryReader { geometry in
-            List {
+            Form {
                 
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.streamID) { ch in
@@ -64,7 +64,6 @@ struct ChannelsView: View {
                  }*/
             }
             .onAppear {
-                print("plo.previousStreamID Appear",plo.previousStreamID )
                 if plo.pip {
                     plo.fullscreen = false
                 } else {
@@ -73,13 +72,11 @@ struct ChannelsView: View {
                 }
                 
             }.onDisappear{
-                print("plo.previousStreamID Dissappear",plo.previousStreamID )
                 
                 if selectedItem != nil {
                     plo.previousStreamID = selectedItem
                 }
                 
-                selectedItem = nil
             }
             
             .onReceive(epgTimer) { _ in

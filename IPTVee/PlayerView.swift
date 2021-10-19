@@ -7,6 +7,7 @@ struct PlayerView: View {
         self.channelName = channelName
         self.streamID = streamID
         self.imageUrl = imageUrl
+
     }
     
     @ObservedObject var plo = iptvKit.PlayerObservable.plo
@@ -18,12 +19,16 @@ struct PlayerView: View {
     
     var played: Bool = false
 
-    
+
+
     var isPortrait: Bool {
         (UIApplication.shared.connectedScenes.first as! UIWindowScene).interfaceOrientation.isPortrait
     }
     
     var body: some View {
+        let apv: AVPlayerView =  AVPlayerView(url: url)
+
+
         Group {
             
             GeometryReader { geometry in
@@ -38,28 +43,30 @@ struct PlayerView: View {
                         //IPTVee Logo
                         if UIDevice.current.userInterfaceIdiom == .phone {
                             HStack {
-                                Text("IPTV")
+                                Text("")//Text("IPTV")
                                     .fontWeight(.bold)
                                     .frame(alignment: .trailing)
                                     .offset(x: 4.3)
                                 
-                                Text("ee")
+                                Text("")//Text("ee")
                                     .fontWeight(.light)
                                     .frame(alignment: .leading)
                                     .offset(x: -4.3)
                             }
-                            .foregroundColor( Color(.displayP3, red: 63 / 255, green: 188 / 255, blue: 237 / 255)  )
-                            .padding(.bottom, 10)
+                            .foregroundColor(Color.clear)
+                            .padding(.bottom, 5)
+                            //.foregroundColor( Color(.displayP3, red: 63 / 255, green: 188 / 255, blue: 237 / 255)  )
+                            //.padding(.bottom, 10)
                         }
                     }
                     
-                    
                     HStack {
-                        AVPlayerView(url: url)
+                        apv
                             .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625)
                             .background(Color(UIColor.systemBackground))
-                    } 
-                    
+                        
+                    }
+               
                     if isPortrait {
                         Form {
                             if !plo.miniEpg.isEmpty {

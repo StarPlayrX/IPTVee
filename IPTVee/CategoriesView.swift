@@ -25,7 +25,7 @@ struct CategoriesView: View {
     
     var body: some View {
         
-        List {
+        Form {
                         
             Section(header: Text("CATEGORIES")) {
                 
@@ -46,7 +46,6 @@ struct CategoriesView: View {
                 plo.previousCategoryID = selectedItem
             }
             
-            selectedItem = nil
         }
         
         if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
@@ -55,3 +54,4 @@ struct CategoriesView: View {
         }
     }
 }
+
