@@ -22,6 +22,7 @@ struct ChannelsView: View {
     @State var selectedChannel: String?
     @State var isActive: Bool = false
     @State var selectedItem: Int?
+    @Environment(\.colorScheme) var colorScheme
 
     @ObservedObject var plo = PlayerObservable.plo
     let srv = LoginObservable.shared.config!.serverInfo
@@ -46,9 +47,12 @@ struct ChannelsView: View {
                     ForEach(Array(channelSearchResults),id: \.streamID) { ch in
                         let channelItem = "\(ch.num) \(ch.name)"
                         let url = URL(string:"http://\(srv.url):\(srv.port)/live/\(usr.username)/\(usr.password)/\(ch.streamID).m3u8")
-                        NavigationLink(channelItem, destination: PlayerView(url: url!, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ), tag: ch.streamID, selection: self.$selectedItem)
-                            .listRowBackground(self.selectedItem == ch.streamID || (plo.previousStreamID == ch.streamID && self.selectedItem == nil) ? Color.accentColor : Color(UIColor.secondarySystemBackground))
+                        
+                            NavigationLink(channelItem, destination: PlayerView(url: url!, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ), tag: ch.streamID, selection: self.$selectedItem)
+                            .listRowBackground(self.selectedItem == ch.streamID || (plo.previousStreamID == ch.streamID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
                        
+                     
+                        
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
                         //MARK: - Todo Electronic Program Guide, EPG -> Now Playing { add to filter }
                     }
@@ -56,13 +60,8 @@ struct ChannelsView: View {
             }
             .accessibilityAction(.magicTap, {performMagicTapStop()})
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(categoryName)
+            .navigationBarTitle(categoryName)
             .frame(width: geometry.size.width)
-            .toolbar {
-                /*ToolbarItemGroup(placement: .bottomBar) {
-                 Text(" ")
-                 }*/
-            }
             .onAppear {
                 if plo.pip {
                     plo.fullscreen = false
@@ -75,6 +74,8 @@ struct ChannelsView: View {
                 
                 if selectedItem != nil {
                     plo.previousStreamID = selectedItem
+                } else {
+                    selectedItem = plo.previousStreamID
                 }
                 
             }
@@ -86,16 +87,23 @@ struct ChannelsView: View {
                 }
             }
             
-            if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+            
+            if #available(iOS 15.0, *) {
+                #if !targetEnvironment(macCatalyst)
                 Text("")
                     .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
+                #endif
             }
             
             
+            
         }
+        
+        
     }
     
-
+    
+    
     
     func performMagicTapStop() {
         plo.videoController.player?.pause()

@@ -11,8 +11,8 @@ import iptvKit
 struct ContentView: View {
 
     @ObservedObject var obs = LoginObservable.shared
-    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? ""//"toddbruss90"//"Guanacko503" //"toddbruss90" //
-    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? ""//"zzeH7C0xdw"//"wGt0cSKkXF" //"zzeH7C0xdw" //
+    @State var userName: String = "toddbruss90" //LoginObservable.shared.config?.userInfo.username ?? ""//"toddbruss90"//"Guanacko503" //"toddbruss90" //
+    @State var passWord: String = "zzeH7C0xdw" //LoginObservable.shared.config?.userInfo.password ?? ""//"zzeH7C0xdw"//"wGt0cSKkXF" //"zzeH7C0xdw" //
     @State var service: String = LoginObservable.shared.config?.serverInfo.url ?? "primestreams.tv"
     @State var https: Bool = false
     @State var port: String = LoginObservable.shared.config?.serverInfo.port ?? "826"
@@ -23,27 +23,8 @@ struct ContentView: View {
     var body: some View {
         
         NavigationView {
-            
             VStack {
-             
-                
-                //IPTVee Logo
-                if UIDevice.current.userInterfaceIdiom == .phone {
-                    HStack {
-                        Text("IPTV")
-                            .fontWeight(.bold)
-                            .frame(alignment: .trailing)
-                            .offset(x: 4.3)
-                        
-                        Text("ee")
-                            .fontWeight(.light)
-                            .frame(alignment: .leading)
-                            .offset(x: -4.3)
-
-                    }
-                    .foregroundColor( Color(.displayP3, red: 63 / 255, green: 188 / 255, blue: 237 / 255)  )
-                    .frame(maxWidth: .infinity, alignment: .center)
-                }
+        
                 
                 
                 Form {
@@ -80,21 +61,43 @@ struct ContentView: View {
                     Section(header: Text("VIDEO")) {
                         HStack {
                             
-                            NavigationLink(destination: CategoriesView(), isActive: $obs.isAutoSwitchCat) {
-                                Button(action: {
+                            NavigationLink("Categories", destination: CategoriesView(), isActive: $obs.isAutoSwitchCat) //{
+                                /*Button(action: {
                                     title = "Login"
                                     obs.isAutoSwitchCat = true
                                 }) {
                                     Text("Categories")
-                                }
+                                }*/
                             }
-                        }
+                        
                         .disabled(!obs.isLoggedIn)
                     }
                     
                     Section(header: Text("COPYRIGHT")) {
-                        Text("© 2021 Todd Bruss")
-                            .frame(maxWidth: .infinity, alignment: .center)
+                        HStack {
+                            HStack {
+                                Text("IPTV")
+                                    .fontWeight(.bold)
+                                    .frame(alignment: .trailing)
+                                    .offset(x: 4.3)
+                                
+                                Text("ee")
+                                    .fontWeight(.light)
+                                    .frame(alignment: .leading)
+                                    .offset(x: -4.3)
+
+                            } 
+
+                            
+                            Text("© 2021 Todd Bruss")
+                                .offset(x: -4.3)
+
+                        }.frame(maxWidth: .infinity, alignment: .center)
+
+                        
+                            
+                       
+                      
                     }
                 }
                 .onAppear(perform: {
@@ -105,7 +108,7 @@ struct ContentView: View {
                 .autocapitalization(UITextAutocapitalizationType.none)
                 .padding(0.0)
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle(title)
+                .navigationBarTitle(title)
                 .onAppear {
                     if UIDevice.current.userInterfaceIdiom == .phone {
                         AppDelegate.interfaceMask = UIInterfaceOrientationMask.portrait

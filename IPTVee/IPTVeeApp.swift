@@ -17,7 +17,7 @@ struct IPTVapp: App {
         WindowGroup {
             ContentView()
                 .navigationBarTitleDisplayMode(.inline)
-
+                .navigationBarTitle("IPTVee")
         }
     }
 }

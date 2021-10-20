@@ -31,11 +31,11 @@ struct CategoriesView: View {
                 
                 ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
                         NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
-                        .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil)  ? Color.accentColor : Color(UIColor.secondarySystemBackground))
+                        .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("Categories")
+            .navigationBarTitle("Categories")
         }
         .onAppear {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
@@ -44,13 +44,17 @@ struct CategoriesView: View {
             
             if selectedItem != nil {
                 plo.previousCategoryID = selectedItem
+            } else {
+                selectedItem = plo.previousCategoryID
             }
             
         }
         
-        if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+        if #available(iOS 15.0, *) {
+            #if !targetEnvironment(macCatalyst)
             Text("")
                 .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
+            #endif
         }
     }
 }

@@ -1,5 +1,7 @@
 import SwiftUI
 import iptvKit
+import UIKit
+import AVFAudio
 
 struct PlayerView: View {
     internal init(url: URL, channelName: String, streamID: String, imageUrl: String) {
@@ -7,10 +9,13 @@ struct PlayerView: View {
         self.channelName = channelName
         self.streamID = streamID
         self.imageUrl = imageUrl
-
     }
     
+    
     @ObservedObject var plo = iptvKit.PlayerObservable.plo
+    @Environment(\.presentationMode) var presentationMode
+
+    let uin = UINavigationItem.self
     
     let url: URL
     let channelName: String
@@ -18,55 +23,47 @@ struct PlayerView: View {
     let imageUrl: String
     
     var played: Bool = false
-
-
-
+    
     var isPortrait: Bool {
         (UIApplication.shared.connectedScenes.first as! UIWindowScene).interfaceOrientation.isPortrait
     }
     
     var body: some View {
-        let apv: AVPlayerView =  AVPlayerView(url: url)
-
-
+        let avPlayerView: AVPlayerView =  AVPlayerView(url: url)
+        
         Group {
             
             GeometryReader { geometry in
                 
-                Text("")
-                Form {}
+                Form{}
                 
                 VStack {
                     
-                  
-                    if isPortrait {
-                        //IPTVee Logo
-                        if UIDevice.current.userInterfaceIdiom == .phone {
-                            HStack {
-                                Text("")//Text("IPTV")
-                                    .fontWeight(.bold)
-                                    .frame(alignment: .trailing)
-                                    .offset(x: 4.3)
-                                
-                                Text("")//Text("ee")
-                                    .fontWeight(.light)
-                                    .frame(alignment: .leading)
-                                    .offset(x: -4.3)
-                            }
-                            .foregroundColor(Color.clear)
-                            .padding(.bottom, 5)
-                            //.foregroundColor( Color(.displayP3, red: 63 / 255, green: 188 / 255, blue: 237 / 255)  )
-                            //.padding(.bottom, 10)
-                        }
-                    }
+                    Text("")
+                        .frame(height:10)
+                        .padding(0)
                     
                     HStack {
-                        apv
-                            .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.width * 0.5625)
+                        avPlayerView
+                            .frame(maxWidth: geometry.size.width, maxHeight: (geometry.size.width * 0.5625), alignment: .center)
                             .background(Color(UIColor.systemBackground))
+                    }
+                    .toolbar {
+                     
+                        
+                        ToolbarItem(placement: .principal) {
+                            if !isPortrait, let desc = plo.miniEpg.first?.title.base64Decoded, desc.count > 3 {
+                                Text("\(channelName) - \(desc)")
+                                    .font(.footnote)
+                                    .fontWeight(.medium)
+                                    .frame(alignment: .center)
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: 200)
+                            }
+                        }
                         
                     }
-               
+                    
                     if isPortrait {
                         Form {
                             if !plo.miniEpg.isEmpty {
@@ -108,27 +105,18 @@ struct PlayerView: View {
                             }
                         }
                     }
-                    
-                    if !isPortrait {
-                        Text("")
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                if let desc = plo.miniEpg.first?.title.base64Decoded, desc.count > 3 {
-                                    Text(desc)
-                                        .font(.body)
-                                        .fontWeight(.light)
-                                        .frame(minWidth: 160, alignment: .trailing)
-                                        .multilineTextAlignment(.trailing)
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
         .accessibilityAction(.magicTap, {performMagicTap()})
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(channelName)
+        
+        
+        
+        
+        
+        
+        .navigationBarTitle(channelName)
         .onAppear {
             plo.streamID = streamID
             plo.channelName = channelName
