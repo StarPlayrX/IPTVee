@@ -4,8 +4,9 @@ import UIKit
 import AVFAudio
 
 struct PlayerView: View {
-    internal init(url: URL, channelName: String, streamID: String, imageUrl: String) {
-        self.url = url
+    internal init(url: URL?, channelName: String, streamID: String, imageUrl: String) {
+
+        self.url = url!
         self.channelName = channelName
         self.streamID = streamID
         self.imageUrl = imageUrl
@@ -55,7 +56,7 @@ struct PlayerView: View {
                             if !isPortrait, let desc = plo.miniEpg.first?.title.base64Decoded, desc.count > 3 {
                                 Text("\(channelName) - \(desc)")
                                     .font(.footnote)
-                                    .fontWeight(.medium)
+                                    .fontWeight(.thin)
                                     .frame(alignment: .center)
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: 200)
