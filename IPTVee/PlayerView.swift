@@ -5,7 +5,7 @@ import AVFAudio
 
 struct PlayerView: View {
     internal init(url: URL?, channelName: String, streamID: String, imageUrl: String) {
-
+        
         self.url = url!
         self.channelName = channelName
         self.streamID = streamID
@@ -15,7 +15,7 @@ struct PlayerView: View {
     
     @ObservedObject var plo = iptvKit.PlayerObservable.plo
     @Environment(\.presentationMode) var presentationMode
-
+    
     let uin = UINavigationItem.self
     
     let url: URL
@@ -33,36 +33,32 @@ struct PlayerView: View {
         let avPlayerView: AVPlayerView =  AVPlayerView(url: url)
         
         Group {
-            
             GeometryReader { geometry in
-                
                 Form{}
-                
                 VStack {
-                    
                     Text("")
                         .frame(height:10)
                         .padding(0)
-                    
                     HStack {
                         avPlayerView
                             .frame(maxWidth: geometry.size.width, maxHeight: (geometry.size.width * 0.5625), alignment: .center)
                             .background(Color(UIColor.systemBackground))
                     }
                     .toolbar {
-                     
-                        
                         ToolbarItem(placement: .principal) {
                             if !isPortrait, let desc = plo.miniEpg.first?.title.base64Decoded, desc.count > 3 {
-                                Text("\(channelName) - \(desc)")
-                                    .font(.footnote)
-                                    .fontWeight(.thin)
-                                    .frame(alignment: .center)
-                                    .multilineTextAlignment(.center)
-                                    .frame(maxWidth: 200)
+                                VStack {
+                                    Text("\(channelName)")
+                                        .fontWeight(.bold)
+                                    Text("\(desc)")
+                                        .fontWeight(.regular)
+                                }
+                                .frame(alignment: .center)
+                                .multilineTextAlignment(.center)
+                                .frame(minWidth: 320, alignment: .center)
+                                .font(.body)
                             }
                         }
-                        
                     }
                     
                     if isPortrait {
@@ -90,8 +86,8 @@ struct PlayerView: View {
                             if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
                                 Section(header: Text("Description")) {
                                     Text(desc)
-                                        .font(.body)
-                                        .fontWeight(.light)
+                                    //.font(.body)
+                                    //.fontWeight(.light)
                                         .frame(minWidth: 80, alignment: .leading)
                                         .multilineTextAlignment(.leading)
                                 }
@@ -111,12 +107,6 @@ struct PlayerView: View {
         }
         .accessibilityAction(.magicTap, {performMagicTap()})
         .navigationBarTitleDisplayMode(.inline)
-        
-        
-        
-        
-        
-        
         .navigationBarTitle(channelName)
         .onAppear {
             plo.streamID = streamID
@@ -124,7 +114,8 @@ struct PlayerView: View {
             plo.imageURL = imageUrl
             plo.videoController.updatesNowPlayingInfoCenter = false
             getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
-        }    }
+        }
+    }
     
     func performMagicTap() {
         plo.videoController.player?.rate == 1 ? plo.videoController.player?.pause() : plo.videoController.player?.play()

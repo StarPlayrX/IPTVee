@@ -44,10 +44,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             print(error)
         }
     }
-  
-    
 
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         avSession()
         setupVideoController(PlayerObservable.plo)

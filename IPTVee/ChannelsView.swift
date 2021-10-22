@@ -44,12 +44,45 @@ struct ChannelsView: View {
                 
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.streamID) { ch in
-                        let channelItem = "\(ch.num) \(ch.name)"
+                        let channelItem = "\(ch.name)"
+                        let channelNumber = "\(ch.num)"
                         let url = URL(string:"http://\(lgo.url):\(lgo.port)/live/\(lgo.username)/\(lgo.password)/\(ch.streamID).m3u8")
+                        let nowPlaying = iptvNowPlaying?[ch.epgChannelID ?? "ERROR"]?.title ?? ""
                         
-                            NavigationLink(channelItem, destination: PlayerView(url: url, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ), tag: ch.streamID, selection: self.$selectedItem)
-                            .listRowBackground(self.selectedItem == ch.streamID || (plo.previousStreamID == ch.streamID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
-                       
+                           // NavigationLink(channelItem, destination: PlayerView(url: url!, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ), tag: ch.streamID, selection: self.$selectedItem)
+                           // .listRowBackground(self.selectedItem == ch.streamID || (plo.previousStreamID == ch.streamID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                        
+                        
+                        
+                                NavigationLink(destination: PlayerView(url: url, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ), tag: ch.streamID, selection: self.$selectedItem) {
+                                    HStack {
+                                        Text(channelNumber + " ")
+                                            .fontWeight(.medium)
+                                            .font(.system(size: 24, design: .rounded))
+                                            .frame(minWidth: 20, idealWidth: 30, maxWidth: 60, alignment: .trailing)
+
+
+                                    }
+                                        VStack (alignment: .leading, spacing: 0) {
+                                            Text(channelItem)
+                                                .font(.system(size: 16, design: .default))
+                                                .fontWeight(.medium)
+                                            
+                                            if nowPlaying.count > 3 {
+                                                Text(nowPlaying.base64Decoded ?? "")
+                                                    .font(.system(size: 14, design: .default))
+                                                    .fontWeight(.medium)
+                                            }
+                                     
+
+
+                                        }.frame(alignment: .center)
+                                   
+                                }.listRowBackground(self.selectedItem == ch.streamID || (plo.previousStreamID == ch.streamID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                        
+                                
+                                //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
+                                //
                      
                         
                         //MARK: - Todo Add Channel Logos { create backend code, and it download as a data file with bytes or SHA256 checksum }
@@ -83,6 +116,10 @@ struct ChannelsView: View {
                 if plo.videoController.player?.rate == 1 {
                     let min = Calendar.current.component(.minute, from: Date())
                     min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
+                    min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg() : ()
+                } else {
+                    let min = Calendar.current.component(.minute, from: Date())
+                    min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg() : ()
                 }
             }
             
