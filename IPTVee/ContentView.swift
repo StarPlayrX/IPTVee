@@ -90,7 +90,6 @@ struct ContentView: View {
                 } else {
                     AppDelegate.interfaceMask = UIInterfaceOrientationMask.landscape
                 }
-                getNowPlayingEpg()
             }
             .onDisappear {
                 AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown

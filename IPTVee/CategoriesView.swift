@@ -38,7 +38,7 @@ struct CategoriesView: View {
             .navigationBarTitle("Categories")
         }
         .onAppear {
-            AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
+            AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown            
         }
         .onDisappear{
             
