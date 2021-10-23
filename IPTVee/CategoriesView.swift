@@ -24,7 +24,6 @@ struct CategoriesView: View {
     }
     
     var body: some View {
-        
         Form {
                         
             Section(header: Text("CATEGORIES")) {
@@ -34,8 +33,12 @@ struct CategoriesView: View {
                         .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
                 }
             }
+       
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle("Categories")
+        }
+        .refreshable {
+            getNowPlayingHelper()
         }
         .onAppear {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown            

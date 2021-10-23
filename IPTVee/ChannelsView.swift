@@ -51,10 +51,10 @@ struct ChannelsView: View {
                         
                         NavigationLink(destination: PlayerView(url: url, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ), tag: ch.streamID, selection: self.$selectedItem) {
                             HStack {
-                                Text(channelNumber + " ")
+                                Text(channelNumber)
                                     .fontWeight(.medium)
-                                    .font(.system(size: 24, design: .rounded))
-                                    .frame(minWidth: 50, idealWidth: (50 + 100) / 2, alignment: .trailing)
+                                    .font(.system(size: 24, design: .monospaced))
+                                    .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
                                 
                             }
                             VStack (alignment: .leading, spacing: 0) {
@@ -62,10 +62,14 @@ struct ChannelsView: View {
                                     .font(.system(size: 16, design: .default))
                                     .fontWeight(.medium)
                                 
-                                    Text(ch.nowPlaying)
-                                        .font(.system(size: 14, design: .default))
-                                        .fontWeight(.medium)
-                            }.frame(alignment: .center)
+                                    if !ch.nowPlaying.isEmpty {
+                                        Text(ch.nowPlaying)
+                                            .font(.system(size: 14, design: .default))
+                                            .fontWeight(.medium)
+                                    }
+                            }
+                            .padding(.leading, 7.5)
+                            .frame(alignment: .center)
                             
                         }.listRowBackground(self.selectedItem == ch.streamID || (plo.previousStreamID == ch.streamID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
                     }
@@ -100,6 +104,9 @@ struct ChannelsView: View {
                     let min = Calendar.current.component(.minute, from: Date())
                     min % 6 == 0 || min % 6 == 3 ? getNowPlayingHelper() : ()
                 }
+            }
+            .refreshable {
+                getNowPlayingEpg(channelz: ChannelsObservable.shared.chan)
             }
             
             if #available(iOS 15.0, *) {

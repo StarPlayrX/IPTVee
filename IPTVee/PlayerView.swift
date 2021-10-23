@@ -105,6 +105,9 @@ struct PlayerView: View {
                 }
             }
         }
+        .refreshable {
+            getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
+        }
         .accessibilityAction(.magicTap, {performMagicTap()})
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarTitle(channelName)
