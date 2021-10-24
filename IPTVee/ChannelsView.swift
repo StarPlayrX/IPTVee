@@ -30,10 +30,10 @@ struct ChannelsView: View {
 
     //It's a long one line but it works
     var channelSearchResults: [iptvChannel] {
-        (cha.chan?.filter({ $0.categoryID == categoryID })
+        (cha.chan.filter({ $0.categoryID == categoryID })
             .filter({"\($0.num)\($0.name)\($0.nowPlaying)"
             .lowercased()
-            .contains(searchText.lowercased()) || searchText.isEmpty}))!   
+            .contains(searchText.lowercased()) || searchText.isEmpty}))
     }
     
     let epgTimer = Timer.publish(every: 60, on: .current, in: .default).autoconnect()
@@ -48,7 +48,7 @@ struct ChannelsView: View {
                         let channelItem = "\(ch.name)"
                         let channelNumber = "\(ch.num)"
                         let url = URL(string:"http://\(lgo.url):\(lgo.port)/live/\(lgo.username)/\(lgo.password)/\(ch.streamID).m3u8")
-                        
+
                         NavigationLink(destination: PlayerView(url: url, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ), tag: ch.streamID, selection: self.$selectedItem) {
                             HStack {
                                 Text(channelNumber)
@@ -60,12 +60,12 @@ struct ChannelsView: View {
                             VStack (alignment: .leading, spacing: 0) {
                                 Text(channelItem)
                                     .font(.system(size: 16, design: .default))
-                                    .fontWeight(.medium)
+                                    .fontWeight(.regular)
                                 
                                     if !ch.nowPlaying.isEmpty {
                                         Text(ch.nowPlaying)
                                             .font(.system(size: 14, design: .default))
-                                            .fontWeight(.medium)
+                                            .fontWeight(.light)
                                     }
                             }
                             .padding(.leading, 7.5)
@@ -97,17 +97,20 @@ struct ChannelsView: View {
             }
             .onReceive(epgTimer) { _ in
                 if plo.videoController.player?.rate == 1 {
-                    let min = Calendar.current.component(.minute, from: Date())
+                    let min = Int(Calendar.current.component(.minute, from: Date()))
                     min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
-                    min % 6 == 0 || min % 6 == 3 ? getNowPlayingHelper() : ()
+                    min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
                 } else {
                     let min = Calendar.current.component(.minute, from: Date())
-                    min % 6 == 0 || min % 6 == 3 ? getNowPlayingHelper() : ()
+                    min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
                 }
             }
+            #if !targetEnvironment(macCatalyst)
             .refreshable {
                 getNowPlayingEpg(channelz: ChannelsObservable.shared.chan)
             }
+            #endif
+            
             
             if #available(iOS 15.0, *) {
                 #if !targetEnvironment(macCatalyst)

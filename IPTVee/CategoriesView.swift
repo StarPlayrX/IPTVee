@@ -37,9 +37,13 @@ struct CategoriesView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle("Categories")
         }
+        
+        #if !targetEnvironment(macCatalyst)
         .refreshable {
             getNowPlayingHelper()
         }
+        #endif
+   
         .onAppear {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown            
         }
