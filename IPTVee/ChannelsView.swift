@@ -105,6 +105,13 @@ struct ChannelsView: View {
                     min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)) { info in
+                print("ROUTE CHANGE HAPPEND")
+            }
+            
+            .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)) { info in
+                print("ROUTE CHANGE HAPPEND")
+            }
             #if !targetEnvironment(macCatalyst)
             .refreshable {
                 getNowPlayingEpg(channelz: ChannelsObservable.shared.chan)

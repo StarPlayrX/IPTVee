@@ -7,6 +7,7 @@
 
 import SwiftUI
 import iptvKit
+import AVFoundation
 
 struct ContentView: View {
     
@@ -93,6 +94,17 @@ struct ContentView: View {
                 }
                 getNowPlayingEpg(channelz: ChannelsObservable.shared.chan)
             }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                HLSxServe.shared.stop_HLSx()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                HLSxServe.shared.start_HLSx()
+                getNowPlayingEpg(channelz: ChannelsObservable.shared.chan)
+            }
+          
+           
+            
+        
             .onDisappear {
                 AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
             }

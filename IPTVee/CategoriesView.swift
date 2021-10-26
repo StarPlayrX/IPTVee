@@ -48,6 +48,7 @@ struct CategoriesView: View {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
             
         }
+      
         .onDisappear{
             
             if selectedItem != nil {

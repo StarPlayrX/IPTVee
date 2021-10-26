@@ -72,7 +72,7 @@ struct PlayerView: View {
                             }
                         }
                         
-                     
+                        
                     }
                     
                     if isPortrait {
@@ -124,12 +124,12 @@ struct PlayerView: View {
                                 Image(systemName: "gobackward.10")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-
+                                
                             }.frame(width: 40, height: 40)
                                 .padding(5)
                                 .padding(.trailing, 5)
                                 .padding(.bottom, 10)
-
+                            
                             
                             Button(action: {
                                 skipForward(plo.videoController)
@@ -137,28 +137,38 @@ struct PlayerView: View {
                                 Image(systemName: "goforward.10")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-
+                                
                             }.frame(width: 40, height: 40)
                                 .padding(5)
                                 .padding(.leading, 5)
                                 .padding(.bottom, 10)
-
-
-
+                            
+                            
+                            
                             
                         }.frame(alignment:.bottom)
+                        // This only works on each view
+                            .onReceive( (PlayerObservable.plo.videoController.player!).publisher(for: \.timeControlStatus)) { newStatus in
+                                switch newStatus {
+                                case .waitingToPlayAtSpecifiedRate:
+                                    print("waiting")
+                                case .paused:
+                                    print("paused")
+                                case .playing:
+                                    print("playing")
+                                }
+                                
+                            }
                     }
-                    
-                
                 }
             }
         }
         
-#if !targetEnvironment(macCatalyst)
+        #if !targetEnvironment(macCatalyst)
         .refreshable {
             getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
         }
-#endif
+        #endif
         
         .accessibilityAction(.magicTap, {performMagicTap()})
         .navigationBarTitleDisplayMode(.inline)
@@ -177,41 +187,41 @@ struct PlayerView: View {
     }
     
     func skipForward(_ videoController: AVPlayerViewController ) {
-       let seekDuration: Double = 10
-       videoController.player?.pause()
-       
-       guard
-           let player = videoController.player
-       else {
-           return
-       }
-       
-       var playerCurrentTime = CMTimeGetSeconds( player.currentTime() )
-       playerCurrentTime += seekDuration
-       
-       let time: CMTime = CMTimeMake(value: Int64(playerCurrentTime * 1000 as Double), timescale: 1000)
-       videoController.player?.seek(to: time)
-       videoController.player?.play()
+        let seekDuration: Double = 10
+        videoController.player?.pause()
+        
+        guard
+            let player = videoController.player
+        else {
+            return
+        }
+        
+        var playerCurrentTime = CMTimeGetSeconds( player.currentTime() )
+        playerCurrentTime += seekDuration
+        
+        let time: CMTime = CMTimeMake(value: Int64(playerCurrentTime * 1000 as Double), timescale: 1000)
+        videoController.player?.seek(to: time)
+        videoController.player?.play()
     }
-
+    
     func skipBackward(_ videoController: AVPlayerViewController ) {
-       let seekDuration: Double = 10
-       videoController.player?.pause()
-       
-       guard
-           let player = videoController.player
-       else {
-           return
-       }
-       
-       var playerCurrentTime = CMTimeGetSeconds( player.currentTime() )
-       playerCurrentTime -= seekDuration
-       
-       let time: CMTime = CMTimeMake(value: Int64(playerCurrentTime * 1000 as Double), timescale: 1000)
-       videoController.player?.seek(to: time)
-       videoController.player?.play()
+        let seekDuration: Double = 10
+        videoController.player?.pause()
+        
+        guard
+            let player = videoController.player
+        else {
+            return
+        }
+        
+        var playerCurrentTime = CMTimeGetSeconds( player.currentTime() )
+        playerCurrentTime -= seekDuration
+        
+        let time: CMTime = CMTimeMake(value: Int64(playerCurrentTime * 1000 as Double), timescale: 1000)
+        videoController.player?.seek(to: time)
+        videoController.player?.play()
     }
-
+    
 }
 
 
