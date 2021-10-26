@@ -50,6 +50,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         setupVideoController(PlayerObservable.plo)
         application.beginReceivingRemoteControlEvents()
         loadUserDefaults()
+        
+        hlsX()
+        
         return true
     }
 
@@ -58,4 +61,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window:UIWindow?) -> UIInterfaceOrientationMask {
         return AppDelegate.interfaceMask
     }
+
+    
+ 
 }

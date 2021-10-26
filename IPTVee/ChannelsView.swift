@@ -47,7 +47,7 @@ struct ChannelsView: View {
                     ForEach(Array(channelSearchResults),id: \.id) { ch in
                         let channelItem = "\(ch.name)"
                         let channelNumber = "\(ch.num)"
-                        let url = URL(string:"http://\(lgo.url):\(lgo.port)/live/\(lgo.username)/\(lgo.password)/\(ch.streamID).m3u8")
+                        let url = URL(string:"http://localhost:\(hlsxPort)/\(ch.streamID)/playlist.m3u8")
 
                         NavigationLink(destination: PlayerView(url: url, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ), tag: ch.streamID, selection: self.$selectedItem) {
                             HStack {

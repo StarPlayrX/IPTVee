@@ -77,6 +77,7 @@ struct ContentView: View {
             }
             .onAppear(perform: {
                 title = "Login"
+                
             })
             
             .disableAutocorrection(true)

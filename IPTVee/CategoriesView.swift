@@ -45,7 +45,8 @@ struct CategoriesView: View {
         #endif
    
         .onAppear {
-            AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown            
+            AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
+            
         }
         .onDisappear{
             
