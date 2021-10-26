@@ -27,7 +27,7 @@ struct ChannelsView: View {
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     @ObservedObject var cha = ChannelsObservable.shared
-
+    
     //It's a long one line but it works
     var channelSearchResults: [iptvChannel] {
         (cha.chan.filter({ $0.categoryID == categoryID })
@@ -36,19 +36,23 @@ struct ChannelsView: View {
             .contains(searchText.lowercased()) || searchText.isEmpty}))
     }
     
-    let epgTimer = Timer.publish(every: 60, on: .current, in: .default).autoconnect()
-    
     var body: some View {
         
         GeometryReader { geometry in
             Form {
-                
+                    
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.id) { ch in
                         let channelItem = "\(ch.name)"
                         let channelNumber = "\(ch.num)"
-                        let url = URL(string:"http://localhost:\(hlsxPort)/\(ch.streamID)/playlist.m3u8")
-                    
+                        //let url = URL(string:"http://localhost:\(hlsxPort)/\(ch.streamID)/playlist.m3u8")
+                        
+                        let good: String = lgo.username
+                        let time: String = lgo.password
+                        let todd: String = lgo.config?.serverInfo.url ?? "primestreams.tv"
+                        let boss: String = lgo.config?.serverInfo.port ?? "826"
+                        let url = URL(string:"http://starplayrx.com:9999/\(todd)/\(boss)/\(good)/\(time)/\(ch.streamID)/hlsx.m3u8")
+                                             
                         NavigationLink(destination: PlayerView(url: url, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon ), tag: ch.streamID, selection: self.$selectedItem) {
                             HStack {
                                 Text(channelNumber)
@@ -62,11 +66,11 @@ struct ChannelsView: View {
                                     .font(.system(size: 16, design: .default))
                                     .fontWeight(.regular)
                                 
-                                    if !ch.nowPlaying.isEmpty {
-                                        Text(ch.nowPlaying)
-                                            .font(.system(size: 14, design: .default))
-                                            .fontWeight(.light)
-                                    }
+                                if !ch.nowPlaying.isEmpty {
+                                    Text(ch.nowPlaying)
+                                        .font(.system(size: 14, design: .default))
+                                        .fontWeight(.light)
+                                }
                             }
                             .padding(.leading, 7.5)
                             .frame(alignment: .center)
@@ -86,45 +90,13 @@ struct ChannelsView: View {
                     plo.miniEpg = []
                     plo.fullscreen = false
                 }
-                                
-            }.onDisappear{
-                
-                if selectedItem != nil {
-                    plo.previousStreamID = selectedItem
-                } else {
-                    selectedItem = plo.previousStreamID
-                }
+            }.onDisappear {
+                plo.previousStreamID = selectedItem
             }
-            .onReceive(epgTimer) { _ in
-                if plo.videoController.player?.rate == 1 {
-                    let min = Int(Calendar.current.component(.minute, from: Date()))
-                    min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
-                    min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
-                } else {
-                    let min = Calendar.current.component(.minute, from: Date())
-                    min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
-                }
-            }
-            .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)) { info in
-                print("ROUTE CHANGE HAPPEND")
-            }
-            
-            .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)) { info in
-                print("ROUTE CHANGE HAPPEND")
-            }
-            #if !targetEnvironment(macCatalyst)
             .refreshable {
                 getNowPlayingEpg(channelz: ChannelsObservable.shared.chan)
             }
-            #endif
-            
-            
-            if #available(iOS 15.0, *) {
-                #if !targetEnvironment(macCatalyst)
-                Text("")
-                    .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
-                #endif
-            }
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
         }
     }
     

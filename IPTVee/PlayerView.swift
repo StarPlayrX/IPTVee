@@ -25,14 +25,10 @@ struct PlayerView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-    let uin = UINavigationItem.self
-    
     let url: URL
     let channelName: String
     let streamID: String
     let imageUrl: String
-    
-    var played: Bool = false
     
     var isPortrait: Bool {
         guard let scene =  (UIApplication.shared.connectedScenes.first as? UIWindowScene) else {
@@ -71,8 +67,6 @@ struct PlayerView: View {
                                 .font(.body)
                             }
                         }
-                        
-                        
                     }
                     
                     if isPortrait {
@@ -142,10 +136,6 @@ struct PlayerView: View {
                                 .padding(5)
                                 .padding(.leading, 5)
                                 .padding(.bottom, 10)
-                            
-                            
-                            
-                            
                         }.frame(alignment:.bottom)
                         // This only works on each view
                             .onReceive( (PlayerObservable.plo.videoController.player!).publisher(for: \.timeControlStatus)) { newStatus in
@@ -156,6 +146,8 @@ struct PlayerView: View {
                                     print("paused")
                                 case .playing:
                                     print("playing")
+                                @unknown default:
+                                    ()
                                 }
                                 
                             }
@@ -163,12 +155,9 @@ struct PlayerView: View {
                 }
             }
         }
-        
-        #if !targetEnvironment(macCatalyst)
         .refreshable {
             getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
         }
-        #endif
         
         .accessibilityAction(.magicTap, {performMagicTap()})
         .navigationBarTitleDisplayMode(.inline)
@@ -180,6 +169,7 @@ struct PlayerView: View {
             plo.videoController.updatesNowPlayingInfoCenter = false
             getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
         }
+        
     }
     
     func performMagicTap() {

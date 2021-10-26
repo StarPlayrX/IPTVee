@@ -14,23 +14,32 @@ import MediaPlayer
 struct IPTVapp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
-
+    let epgTimer = Timer.publish(every: 60, on: .current, in: .default).autoconnect()
+    @ObservedObject var plo = PlayerObservable.plo
+    
     var body: some Scene {
         
-       
+        
         WindowGroup {
-
-
-            ContentView()
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarTitle("IPTVee")
-                .onAppear()
-           
-         
-        }
-       
-        
-        
+            
+            Group {
+                ContentView()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarTitle("IPTVee")
+                    .onAppear()
+                    .onReceive(epgTimer) { _ in
+                        if plo.videoController.player?.rate == 1 {
+                            let min = Int(Calendar.current.component(.minute, from: Date()))
+                            min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
+                            min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
+                        } else {
+                            let min = Calendar.current.component(.minute, from: Date())
+                            min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
+                        }
+                    }
+            }
+            
+        }  
     }
 }
 
@@ -43,22 +52,8 @@ func loadUserDefaults() {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     
-    func avSession() {
-        let avSession = AVAudioSession.sharedInstance()
-        
-        do {
-            avSession.accessibilityPerformMagicTap()
-            avSession.accessibilityActivate()
-            try avSession.setPreferredIOBufferDuration(0)
-            try avSession.setCategory(.playback, mode: .moviePlayback, policy: .longFormVideo, options: [])
-            try avSession.setActive(true)
-        } catch {
-            print(error)
-        }
-    }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        avSession()
         setupVideoController(PlayerObservable.plo)
         application.beginReceivingRemoteControlEvents()
         loadUserDefaults()

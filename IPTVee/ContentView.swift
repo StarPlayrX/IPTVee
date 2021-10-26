@@ -24,63 +24,76 @@ struct ContentView: View {
     var body: some View {
         
         NavigationView {
-            Form {
-                Section(header: Text("CREDENTIALS")) {
-                    TextField("Username", text: $userName)
-                    SecureField("Password", text: $passWord)
-                    TextField("iptvService.tv", text: $service)
-                    TextField("port #", text: $port)
-                        .keyboardType(.numberPad)
-                    Button(action: {login(userName, passWord, service, port) }) {
-                        Text("Login")
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        
-                    }.disabled(awaitDone)
-                }
-                
-                Section(header: Text("UPDATE")) {
-                    Text("Status")
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    Text(obs.status)
-                        .font(.body)
-                        .fontWeight(.regular)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                }
-                
-                Section(header: Text("VIDEO")) {
-                    HStack {
-                        
-                        NavigationLink("Categories", destination: CategoriesView(), isActive: $obs.isAutoSwitchCat)
-                    }
-                    .disabled(!obs.isLoggedIn)
-                }
-                
-                Section(header: Text("COPYRIGHT")) {
-                    HStack {
-                        HStack {
-                            Text("IPTV")
-                                .fontWeight(.bold)
-                                .frame(alignment: .trailing)
-                                .offset(x: 4.3)
+            
+            VStack {
+                Form {
+                    Section(header: Text("CREDENTIALS")) {
+                        TextField("Username", text: $userName)
+                        SecureField("Password", text: $passWord)
+                        TextField("iptvService.tv", text: $service)
+                        TextField("port #", text: $port)
+                            .keyboardType(.numberPad)
+                        Button(action: {login(userName, passWord, service, port) }) {
+                            Text("Login")
+                                .frame(maxWidth: .infinity, alignment: .center)
                             
-                            Text("ee")
-                                .fontWeight(.light)
-                                .frame(alignment: .leading)
+                        }.disabled(awaitDone)
+                    }
+                    
+                    Section(header: Text("UPDATE")) {
+                        Text("Status")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        Text(obs.status)
+                            .font(.body)
+                            .fontWeight(.regular)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                    
+                    Section(header: Text("VIDEO")) {
+                        HStack {
+                            
+                            NavigationLink("Categories", destination: CategoriesView(), isActive: $obs.isAutoSwitchCat)
+                        }
+                        .disabled(!obs.isLoggedIn)
+                    }
+                    
+                    Section(header: Text("COPYRIGHT")) {
+                        HStack {
+                            HStack {
+                                Text("IPTV")
+                                    .fontWeight(.bold)
+                                    .frame(alignment: .trailing)
+                                    .offset(x: 4.3)
+                                
+                                Text("ee")
+                                    .fontWeight(.light)
+                                    .frame(alignment: .leading)
+                                    .offset(x: -4.3)
+                                
+                            }
+                            
+                            Text("© 2021 Todd Bruss")
                                 .offset(x: -4.3)
                             
-                        }
-                        
-                        Text("© 2021 Todd Bruss")
-                            .offset(x: -4.3)
-                        
-                    }.frame(maxWidth: .infinity, alignment: .center)
+                        }.frame(maxWidth: .infinity, alignment: .center)
+                    }
+                }
+                .onAppear(perform: {
+                    title = "Login"
+                    avSession2()
+                    
+                })
+            }
+          
+            .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)) { info in
+                
+                if avSession.currentRoute.outputs.first?.portType == .airPlay {
+                    DispatchQueue.main.async {
+                        let url = URL(string: "http://primestreams.tv:826/live/starplayrx34/GxeaHJv2ZP/38699.m3u8")!
+                        PlayerObservable.plo.videoController.player = AVPlayer(url: url)
+                    }
                 }
             }
-            .onAppear(perform: {
-                title = "Login"
-                
-            })
-            
             .disableAutocorrection(true)
             .autocapitalization(UITextAutocapitalizationType.none)
             .padding(0.0)
@@ -94,21 +107,26 @@ struct ContentView: View {
                 }
                 getNowPlayingEpg(channelz: ChannelsObservable.shared.chan)
             }
-            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
-                HLSxServe.shared.stop_HLSx()
-            }
-            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                HLSxServe.shared.start_HLSx()
-                getNowPlayingEpg(channelz: ChannelsObservable.shared.chan)
-            }
-          
-           
-            
-        
             .onDisappear {
                 AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
             }
             .navigationViewStyle(DoubleColumnNavigationViewStyle())
+        }
+    }
+    
+    let avSession = AVAudioSession.sharedInstance()
+
+    
+    func avSession2() {
+        
+        do {
+            avSession.accessibilityPerformMagicTap()
+            avSession.accessibilityActivate()
+            try avSession.setPreferredIOBufferDuration(0)
+            try avSession.setCategory(.playback, mode: .moviePlayback, policy: .longFormVideo, options: [])
+            try avSession.setActive(true)
+        } catch {
+            print(error)
         }
     }
 }
