@@ -1,7 +1,7 @@
 import SwiftUI
 import iptvKit
 import UIKit
-import AVFAudio
+import AVKit
 
 struct PlayerView: View {
     internal init(url: URL?, channelName: String, streamID: String, imageUrl: String) {
@@ -19,10 +19,10 @@ struct PlayerView: View {
         self.streamID = streamID
         self.imageUrl = imageUrl
     }
-
+    
     @ObservedObject var plo = iptvKit.PlayerObservable.plo
     @ObservedObject var lgn = iptvKit.LoginObservable.shared
-
+    
     @Environment(\.presentationMode) var presentationMode
     
     let uin = UINavigationItem.self
@@ -53,7 +53,7 @@ struct PlayerView: View {
                         .padding(0)
                     HStack {
                         AVPlayerView(url: url)
-                            .frame(width: geometry.size.width, height: (geometry.size.width * 0.5625), alignment: .center)
+                            .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .center)
                             .background(Color(UIColor.systemBackground))
                     }
                     .toolbar {
@@ -71,6 +71,8 @@ struct PlayerView: View {
                                 .font(.body)
                             }
                         }
+                        
+                     
                     }
                     
                     if isPortrait {
@@ -113,17 +115,51 @@ struct PlayerView: View {
                                 }
                             }
                         }
+                        
+                        HStack {
+                            
+                            Button(action: {
+                                skipBackward(plo.videoController)
+                            }) {
+                                Image(systemName: "gobackward.10")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+
+                            }.frame(width: 40, height: 40)
+                                .padding(5)
+                                .padding(.trailing, 5)
+                                .padding(.bottom, 10)
+
+                            
+                            Button(action: {
+                                skipForward(plo.videoController)
+                            }) {
+                                Image(systemName: "goforward.10")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+
+                            }.frame(width: 40, height: 40)
+                                .padding(5)
+                                .padding(.leading, 5)
+                                .padding(.bottom, 10)
+
+
+
+                            
+                        }.frame(alignment:.bottom)
                     }
+                    
+                
                 }
             }
         }
         
-        #if !targetEnvironment(macCatalyst)
-            .refreshable {
-                getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
-            }
-        #endif
-   
+#if !targetEnvironment(macCatalyst)
+        .refreshable {
+            getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
+        }
+#endif
+        
         .accessibilityAction(.magicTap, {performMagicTap()})
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarTitle(channelName)
@@ -139,12 +175,49 @@ struct PlayerView: View {
     func performMagicTap() {
         plo.videoController.player?.rate == 1 ? plo.videoController.player?.pause() : plo.videoController.player?.play()
     }
+    
+    func skipForward(_ videoController: AVPlayerViewController ) {
+       let seekDuration: Double = 10
+       videoController.player?.pause()
+       
+       guard
+           let player = videoController.player
+       else {
+           return
+       }
+       
+       var playerCurrentTime = CMTimeGetSeconds( player.currentTime() )
+       playerCurrentTime += seekDuration
+       
+       let time: CMTime = CMTimeMake(value: Int64(playerCurrentTime * 1000 as Double), timescale: 1000)
+       videoController.player?.seek(to: time)
+       videoController.player?.play()
+    }
+
+    func skipBackward(_ videoController: AVPlayerViewController ) {
+       let seekDuration: Double = 10
+       videoController.player?.pause()
+       
+       guard
+           let player = videoController.player
+       else {
+           return
+       }
+       
+       var playerCurrentTime = CMTimeGetSeconds( player.currentTime() )
+       playerCurrentTime -= seekDuration
+       
+       let time: CMTime = CMTimeMake(value: Int64(playerCurrentTime * 1000 as Double), timescale: 1000)
+       videoController.player?.seek(to: time)
+       videoController.player?.play()
+    }
+
 }
 
 
 extension Date {
     func userTimeZone( initTimeZone: TimeZone = TimeZone(identifier: iptvKit.LoginObservable.shared.config?.serverInfo.timezone ?? "America/New_York") ?? TimeZone(abbreviation: "EST") ?? .autoupdatingCurrent , timeZone: TimeZone = .autoupdatingCurrent) -> Date {
-         let delta = TimeInterval(timeZone.secondsFromGMT(for: self) - initTimeZone.secondsFromGMT(for: self))
-         return addingTimeInterval(delta)
+        let delta = TimeInterval(timeZone.secondsFromGMT(for: self) - initTimeZone.secondsFromGMT(for: self))
+        return addingTimeInterval(delta)
     }
 }
