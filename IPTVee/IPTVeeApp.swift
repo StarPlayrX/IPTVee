@@ -35,6 +35,12 @@ struct IPTVapp: App {
                         min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
                     }
                 }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                    HLSxServe.shared.stop_HLSx()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    HLSxServe.shared.start_HLSx()
+                }
         }
     }
 }
@@ -48,12 +54,11 @@ func loadUserDefaults() {
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         setupVideoController(PlayerObservable.plo)
         application.beginReceivingRemoteControlEvents()
         loadUserDefaults()
-        
+        runAVSession()
         HLSxServe.shared.start_HLSx()
         return true
     }
@@ -64,12 +69,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return AppDelegate.interfaceMask
     }
     
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        HLSxServe.shared.start_HLSx()
-    }
-    
-    func applicationWillResignActive(_ application: UIApplication) {
-        HLSxServe.shared.stop_HLSx()
-    }
+  
 }
 

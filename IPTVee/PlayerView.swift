@@ -4,20 +4,25 @@ import UIKit
 import AVKit
 
 struct PlayerView: View {
-    internal init(url: URL?, channelName: String, streamID: String, imageUrl: String) {
+    public init(primaryUrl: URL?, backupUrl: URL?, airplayUrl: URL?, channelName: String, streamID: String, imageUrl: String) {
         
-        guard let url = url else {
-            self.url = URL(string:"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8") ?? URL(fileURLWithPath: "IPTVee")
+        guard let primaryUrl = primaryUrl, let backupUrl = backupUrl, let airplayUrl = airplayUrl  else {
+            self.primaryUrl = URL(string:"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8") ?? URL(fileURLWithPath: "IPTVee")
+            self.backupUrl = URL(string:"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8") ?? URL(fileURLWithPath: "IPTVee")
+            self.airplayUrl = URL(string:"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8") ?? URL(fileURLWithPath: "IPTVee")
             self.channelName = channelName
             self.streamID = streamID
             self.imageUrl = imageUrl
             return
         }
         
-        self.url = url
-        self.channelName = channelName
-        self.streamID = streamID
-        self.imageUrl = imageUrl
+        self.primaryUrl     = primaryUrl
+        self.backupUrl      = backupUrl
+        self.airplayUrl     = airplayUrl
+        
+        self.channelName    = channelName
+        self.streamID       = streamID
+        self.imageUrl       = imageUrl
     }
     
     @ObservedObject var plo = iptvKit.PlayerObservable.plo
@@ -25,7 +30,10 @@ struct PlayerView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-    let url: URL
+    let primaryUrl: URL
+    let backupUrl: URL
+    let airplayUrl: URL
+
     let channelName: String
     let streamID: String
     let imageUrl: String
@@ -49,7 +57,7 @@ struct PlayerView: View {
                 VStack {
                   
                     HStack {
-                        AVPlayerView(url: url)
+                        AVPlayerView(primaryUrl: primaryUrl, backupUrl: backupUrl, airplayUrl: airplayUrl)
                             .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .center)
                             .background(Color(UIColor.systemBackground))
                     }

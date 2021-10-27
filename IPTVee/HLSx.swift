@@ -35,7 +35,7 @@ class HLSxServe {
     """
     #EXTM3U
     #EXTINF: -1, HLSx Protocol by IPTVee (c) 2021 Todd Goodtime Boss
-    \(hlsx)://\(todd):\(boss)/\(live)/\(good)/\(time)/\(xtrm)\(code)
+    \(hlsx)://\(todd):\(boss)/\(live)\(good)/\(time)/\(xtrm)\(code)
     """
         
         guard
@@ -55,7 +55,7 @@ class HLSxServe {
     func start_HLSx() {
         print("Starting HLSx Protocol")
 
-        hlsx["/:streamid/playlist.m3u8"] = { request in
+        hlsx["/:streamid/local.m3u8"] = { request in
             guard let streamid = request.params[":streamid"] else { return HttpResponse.ok(.data(Data(), contentType: "")) }
             return self.playlist(streamid: streamid)
         }
@@ -70,7 +70,7 @@ class HLSxServe {
                 hlsxPort = UInt16.random(in: 1012...9997)
             }
             
-            print( "HLSx streaming protocol starting on port: \(hlsxPort)")
+            print( "HLSx protocol starting on port: \(hlsxPort)")
             try? self.hlsx.start(hlsxPort, forceIPv4: true)
         }
     }

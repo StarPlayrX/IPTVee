@@ -21,7 +21,9 @@ struct ContentView: View {
     @State var title: String = "IPTVee"
     @State var isCatActive: Bool = false
     
+    
     var body: some View {
+        
         
         NavigationView {
             
@@ -80,20 +82,14 @@ struct ContentView: View {
                 }
                 .onAppear(perform: {
                     title = "Login"
-                    avSession2()
                     
                 })
             }
           
-            .onReceive(NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)) { info in
+            /*.onReceive(NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)) { info in
                 
-                if avSession.currentRoute.outputs.first?.portType == .airPlay {
-                    DispatchQueue.main.async {
-                        let url = URL(string: "http://primestreams.tv:826/live/starplayrx34/GxeaHJv2ZP/38699.m3u8")!
-                        PlayerObservable.plo.videoController.player = AVPlayer(url: url)
-                    }
-                }
-            }
+               
+            }*/
             .disableAutocorrection(true)
             .autocapitalization(UITextAutocapitalizationType.none)
             .padding(0.0)
@@ -115,19 +111,7 @@ struct ContentView: View {
       
     }
     
-    let avSession = AVAudioSession.sharedInstance()
-    func avSession2() {
-        
-        do {
-            avSession.accessibilityPerformMagicTap()
-            avSession.accessibilityActivate()
-            try avSession.setPreferredIOBufferDuration(0)
-            try avSession.setCategory(.playback, mode: .moviePlayback, policy: .longFormVideo, options: [])
-            try avSession.setActive(true)
-        } catch {
-            print(error)
-        }
-    }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
