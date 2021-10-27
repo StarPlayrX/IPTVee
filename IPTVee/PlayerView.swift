@@ -39,14 +39,15 @@ struct PlayerView: View {
     }
     
     var body: some View {
-        
+        Text("")
+            .frame(height:10)
+            .padding(0)
+
         Group {
             GeometryReader { geometry in
                 Form{}
                 VStack {
-                    Text("")
-                        .frame(height:10)
-                        .padding(0)
+                  
                     HStack {
                         AVPlayerView(url: url)
                             .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .center)

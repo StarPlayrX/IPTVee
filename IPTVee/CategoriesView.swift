@@ -24,6 +24,10 @@ struct CategoriesView: View {
     }
     
     var body: some View {
+        
+        Text("")
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
+
         Form {
             
             Section(header: Text("CATEGORIES")) {
@@ -36,16 +40,15 @@ struct CategoriesView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle("Categories")
         }
+        
+     
         .onAppear {
             AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
         }
         .onDisappear{
-            plo.previousCategoryID = selectedItem
             if selectedItem != nil {
-                
+                plo.previousCategoryID = selectedItem
             }
         }
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
-
     }
 }

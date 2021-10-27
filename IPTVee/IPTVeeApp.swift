@@ -19,27 +19,23 @@ struct IPTVapp: App {
     
     var body: some Scene {
         
-        
         WindowGroup {
             
-            Group {
-                ContentView()
-                    .navigationBarTitleDisplayMode(.inline)
-                    .navigationBarTitle("IPTVee")
-                    .onAppear()
-                    .onReceive(epgTimer) { _ in
-                        if plo.videoController.player?.rate == 1 {
-                            let min = Int(Calendar.current.component(.minute, from: Date()))
-                            min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
-                            min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
-                        } else {
-                            let min = Calendar.current.component(.minute, from: Date())
-                            min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
-                        }
+            ContentView()
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitle("IPTVee")
+                .onAppear()
+                .onReceive(epgTimer) { _ in
+                    if plo.videoController.player?.rate == 1 {
+                        let min = Int(Calendar.current.component(.minute, from: Date()))
+                        min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
+                        min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
+                    } else {
+                        let min = Calendar.current.component(.minute, from: Date())
+                        min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
                     }
-            }
-            
-        }  
+                }
+        }
     }
 }
 
@@ -67,4 +63,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window:UIWindow?) -> UIInterfaceOrientationMask {
         return AppDelegate.interfaceMask
     }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        HLSxServe.shared.start_HLSx()
+    }
+    
+    func applicationWillResignActive(_ application: UIApplication) {
+        HLSxServe.shared.stop_HLSx()
+    }
 }
+

@@ -39,6 +39,10 @@ struct ChannelsView: View {
     var body: some View {
         
         GeometryReader { geometry in
+            
+            Text("")
+                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
+
             Form {
                     
                 Section(header: Text("CHANNELS")) {
@@ -91,12 +95,13 @@ struct ChannelsView: View {
                     plo.fullscreen = false
                 }
             }.onDisappear {
-                plo.previousStreamID = selectedItem
+                if selectedItem != nil {
+                    plo.previousStreamID = selectedItem
+                }
             }
             .refreshable {
                 getNowPlayingEpg(channelz: ChannelsObservable.shared.chan)
             }
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
         }
     }
     

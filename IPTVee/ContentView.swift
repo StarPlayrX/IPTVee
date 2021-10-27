@@ -26,8 +26,8 @@ struct ContentView: View {
         NavigationView {
             
             VStack {
-                Form {
-                    Section(header: Text("CREDENTIALS")) {
+                List {
+                    Section(header: Text("Credentials")) {
                         TextField("Username", text: $userName)
                         SecureField("Password", text: $passWord)
                         TextField("iptvService.tv", text: $service)
@@ -39,8 +39,8 @@ struct ContentView: View {
                             
                         }.disabled(awaitDone)
                     }
-                    
-                    Section(header: Text("UPDATE")) {
+
+                    Section(header: Text("Update")) {
                         Text("Status")
                             .frame(maxWidth: .infinity, alignment: .center)
                         Text(obs.status)
@@ -49,7 +49,7 @@ struct ContentView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
                     
-                    Section(header: Text("VIDEO")) {
+                    Section(header: Text("Video")) {
                         HStack {
                             
                             NavigationLink("Categories", destination: CategoriesView(), isActive: $obs.isAutoSwitchCat)
@@ -57,7 +57,7 @@ struct ContentView: View {
                         .disabled(!obs.isLoggedIn)
                     }
                     
-                    Section(header: Text("COPYRIGHT")) {
+                    Section(header: Text("Copyright")) {
                         HStack {
                             HStack {
                                 Text("IPTV")
@@ -112,11 +112,10 @@ struct ContentView: View {
             }
             .navigationViewStyle(DoubleColumnNavigationViewStyle())
         }
+      
     }
     
     let avSession = AVAudioSession.sharedInstance()
-
-    
     func avSession2() {
         
         do {
