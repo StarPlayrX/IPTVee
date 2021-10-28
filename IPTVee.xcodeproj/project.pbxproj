@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F15FE16272A205100F05971 /* PlayerSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F15FE15272A205100F05971 /* PlayerSettings.swift */; };
 		6F307AA9270924FD009A6EF9 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F307AA8270924FD009A6EF9 /* WebView.swift */; };
 		6F74A0DE2707B5B5000171B5 /* ChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */; };
 		6F74A0E02707C38D000171B5 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F74A0DF2707C38D000171B5 /* PlayerView.swift */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6F15FE15272A205100F05971 /* PlayerSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSettings.swift; sourceTree = "<group>"; };
 		6F22DB732715F4420077CDA0 /* IPTVee.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IPTVee.entitlements; sourceTree = "<group>"; };
 		6F307AA8270924FD009A6EF9 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		6F512E292711558A0010BE18 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -74,6 +76,7 @@
 				6F87E9232702A31700434C6E /* IPTVeeApp.swift */,
 				6F87E9252702A31700434C6E /* ContentView.swift */,
 				6FAFD738270416C900D49704 /* CategoriesView.swift */,
+				6F15FE15272A205100F05971 /* PlayerSettings.swift */,
 				6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */,
 				6F74A0DF2707C38D000171B5 /* PlayerView.swift */,
 				6F307AA8270924FD009A6EF9 /* WebView.swift */,
@@ -182,6 +185,7 @@
 				6F74A0DE2707B5B5000171B5 /* ChannelsView.swift in Sources */,
 				6F856D6A2725EE90001C1A79 /* HLSx.swift in Sources */,
 				6F74A0E02707C38D000171B5 /* PlayerView.swift in Sources */,
+				6F15FE16272A205100F05971 /* PlayerSettings.swift in Sources */,
 				6FAFD739270416C900D49704 /* CategoriesView.swift in Sources */,
 				6F87E9242702A31700434C6E /* IPTVeeApp.swift in Sources */,
 			);
@@ -313,7 +317,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = IPTVee/IPTVee.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 39;
+				CURRENT_PROJECT_VERSION = 43;
 				DEVELOPMENT_ASSET_PATHS = "\"IPTVee/Preview Content\"";
 				DEVELOPMENT_TEAM = 469UCUB275;
 				ENABLE_PREVIEWS = YES;
@@ -350,7 +354,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = IPTVee/IPTVee.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 39;
+				CURRENT_PROJECT_VERSION = 43;
 				DEVELOPMENT_ASSET_PATHS = "\"IPTVee/Preview Content\"";
 				DEVELOPMENT_TEAM = 469UCUB275;
 				ENABLE_PREVIEWS = YES;

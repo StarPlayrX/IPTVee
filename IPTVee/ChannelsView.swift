@@ -47,28 +47,17 @@ struct ChannelsView: View {
                     
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.id) { ch in
-                        let channelItem = "\(ch.name)"
-                        let channelNumber = "\(ch.num)"
-                       // let url = URL(string:"http://localhost:\(hlsxPort)/\(ch.streamID)/playlist.m3u8")
-                        
-                        let good: String = lgo.username
-                        let time: String = lgo.password
-                        let todd: String = lgo.config?.serverInfo.url ?? "primestreams.tv"
-                        let boss: String = lgo.config?.serverInfo.port ?? "826"
-                        let primaryUrl = URL(string:"http://starplayrx.com:9999/\(todd)/\(boss)/\(good)/\(time)/\(ch.streamID)/hlsx.m3u8")
-                        let backupUrl = URL(string:"http://localhost:\(hlsxPort)/\(ch.streamID)/local.m3u8")
-                        let airplayUrl = URL(string:"http://\(todd):\(boss)/live/\(good)/\(time)/\(ch.streamID).m3u8")
-                        
-                        NavigationLink(destination: PlayerView(primaryUrl: primaryUrl, backupUrl: backupUrl, airplayUrl: airplayUrl, channelName: ch.name, streamID: String(ch.streamID), imageUrl: ch.streamIcon), tag: ch.streamID, selection: self.$selectedItem) {
+    
+                        NavigationLink(destination: PlayerView(channelName: ch.name, streamId: ch.streamID, imageUrl: ch.streamIcon), tag: ch.streamID, selection: self.$selectedItem) {
                             HStack {
-                                Text(channelNumber)
+                                Text("\(ch.num)")
                                     .fontWeight(.medium)
                                     .font(.system(size: 24, design: .monospaced))
                                     .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
                                 
                             }
                             VStack (alignment: .leading, spacing: 0) {
-                                Text(channelItem)
+                                Text(ch.name)
                                     .font(.system(size: 16, design: .default))
                                     .fontWeight(.regular)
                                 
@@ -95,10 +84,15 @@ struct ChannelsView: View {
                 } else {
                     plo.miniEpg = []
                     plo.fullscreen = false
+                    
+                    if let player = plo.videoController.player, player.rate == 1 && !player.isExternalPlaybackActive && SettingsObservable.shared.stopWhenExitingPlayer {
+                        plo.videoController.player?.pause()
+                    }
                 }
+                
             }.onDisappear {
-                if selectedItem != nil {
-                    plo.previousStreamID = selectedItem
+                if let si = selectedItem {
+                    plo.previousStreamID = si
                 }
             }
             .refreshable {

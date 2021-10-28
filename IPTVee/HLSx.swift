@@ -13,11 +13,8 @@ import Swifter
 var hlsxPort: UInt16 = 1010
 
 class HLSxServe {
-    static let shared = HLSxServe()
-    
+    static let shared = HLSxServe()    
     let hlsx = HttpServer()
-
-   
 
     fileprivate func playlist(streamid: String) -> HttpResponse {
         
@@ -35,7 +32,7 @@ class HLSxServe {
     """
     #EXTM3U
     #EXTINF: -1, HLSx Protocol by IPTVee (c) 2021 Todd Goodtime Boss
-    \(hlsx)://\(todd):\(boss)/\(live)\(good)/\(time)/\(xtrm)\(code)
+    \(hlsx)://\(todd):\(boss)/\(live)/\(good)/\(time)/\(xtrm)\(code)
     """
         
         guard
@@ -55,7 +52,11 @@ class HLSxServe {
     func start_HLSx() {
         print("Starting HLSx Protocol")
 
-        hlsx["/:streamid/local.m3u8"] = { request in
+        hlsx["eHRybS5tM3U4"] = { request in
+            HttpResponse.ok(.text("aGxzeC5tM3U4"))
+        }
+        
+        hlsx["/:streamid/hlsx.m3u8"] = { request in
             guard let streamid = request.params[":streamid"] else { return HttpResponse.ok(.data(Data(), contentType: "")) }
             return self.playlist(streamid: streamid)
         }

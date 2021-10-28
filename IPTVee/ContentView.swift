@@ -20,11 +20,9 @@ struct ContentView: View {
     @State var showOneLevelIn: Bool = false
     @State var title: String = "IPTVee"
     @State var isCatActive: Bool = false
-    
-    
+
     var body: some View {
-        
-        
+            
         NavigationView {
             
             VStack {
@@ -53,10 +51,13 @@ struct ContentView: View {
                     
                     Section(header: Text("Video")) {
                         HStack {
-                            
                             NavigationLink("Categories", destination: CategoriesView(), isActive: $obs.isAutoSwitchCat)
                         }
                         .disabled(!obs.isLoggedIn)
+
+                        HStack {
+                            NavigationLink("Player Settings", destination: PlayerSettings())
+                        }
                     }
                     
                     Section(header: Text("Copyright")) {
@@ -71,25 +72,14 @@ struct ContentView: View {
                                     .fontWeight(.light)
                                     .frame(alignment: .leading)
                                     .offset(x: -4.3)
-                                
                             }
                             
                             Text("© 2021 Todd Bruss")
                                 .offset(x: -4.3)
-                            
                         }.frame(maxWidth: .infinity, alignment: .center)
                     }
                 }
-                .onAppear(perform: {
-                    title = "Login"
-                    
-                })
             }
-          
-            /*.onReceive(NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)) { info in
-                
-               
-            }*/
             .disableAutocorrection(true)
             .autocapitalization(UITextAutocapitalizationType.none)
             .padding(0.0)
@@ -108,10 +98,7 @@ struct ContentView: View {
             }
             .navigationViewStyle(DoubleColumnNavigationViewStyle())
         }
-      
     }
-    
-    
 }
 
 struct ContentView_Previews: PreviewProvider {

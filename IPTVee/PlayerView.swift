@@ -4,24 +4,9 @@ import UIKit
 import AVKit
 
 struct PlayerView: View {
-    public init(primaryUrl: URL?, backupUrl: URL?, airplayUrl: URL?, channelName: String, streamID: String, imageUrl: String) {
-        
-        guard let primaryUrl = primaryUrl, let backupUrl = backupUrl, let airplayUrl = airplayUrl  else {
-            self.primaryUrl = URL(string:"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8") ?? URL(fileURLWithPath: "IPTVee")
-            self.backupUrl = URL(string:"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8") ?? URL(fileURLWithPath: "IPTVee")
-            self.airplayUrl = URL(string:"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8") ?? URL(fileURLWithPath: "IPTVee")
-            self.channelName = channelName
-            self.streamID = streamID
-            self.imageUrl = imageUrl
-            return
-        }
-        
-        self.primaryUrl     = primaryUrl
-        self.backupUrl      = backupUrl
-        self.airplayUrl     = airplayUrl
-        
+    public init(channelName: String, streamId: Int, imageUrl: String) {
         self.channelName    = channelName
-        self.streamID       = streamID
+        self.streamId       = streamId
         self.imageUrl       = imageUrl
     }
     
@@ -29,13 +14,9 @@ struct PlayerView: View {
     @ObservedObject var lgn = iptvKit.LoginObservable.shared
     
     @Environment(\.presentationMode) var presentationMode
-    
-    let primaryUrl: URL
-    let backupUrl: URL
-    let airplayUrl: URL
 
     let channelName: String
-    let streamID: String
+    let streamId: Int
     let imageUrl: String
     
     var isPortrait: Bool {
@@ -57,7 +38,7 @@ struct PlayerView: View {
                 VStack {
                   
                     HStack {
-                        AVPlayerView(primaryUrl: primaryUrl, backupUrl: backupUrl, airplayUrl: airplayUrl)
+                        AVPlayerView(streamId: streamId, hlsxPort: hlsxPort)
                             .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .center)
                             .background(Color(UIColor.systemBackground))
                     }
@@ -121,7 +102,33 @@ struct PlayerView: View {
                         
                         HStack {
                             
-                            Button(action: {
+                            VStack {
+                                Text("Troubleshooting")
+                                    .padding(3)
+                                
+                                if (plo.nowPlayingUrl).contains("Primary") {
+                                    Text(plo.nowPlayingUrl)
+                                        .foregroundColor(.green)
+                                }
+                                
+                                if (plo.nowPlayingUrl).contains("Secondary") {
+                                    Text(plo.nowPlayingUrl)
+                                        .foregroundColor(.orange)
+                                }
+                                
+                                if (plo.nowPlayingUrl).contains("Ternary") {
+                                    Text(plo.nowPlayingUrl)
+                                        .foregroundColor(.blue)
+                                }
+                                
+                            }.frame(width: .infinity, height: 60, alignment: .center)
+                                .padding(5)
+                                .padding(.trailing, 5)
+                                .padding(.bottom, 10)
+                                    
+                            
+                            
+                           /* Button(action: {
                                 skipBackward(plo.videoController)
                             }) {
                                 Image(systemName: "gobackward.10")
@@ -144,7 +151,7 @@ struct PlayerView: View {
                             }.frame(width: 40, height: 40)
                                 .padding(5)
                                 .padding(.leading, 5)
-                                .padding(.bottom, 10)
+                                .padding(.bottom, 10) */
                         }.frame(alignment:.bottom)
                         // This only works on each view
                             .onReceive( (PlayerObservable.plo.videoController.player!).publisher(for: \.timeControlStatus)) { newStatus in
@@ -165,18 +172,18 @@ struct PlayerView: View {
             }
         }
         .refreshable {
-            getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
+            getShortEpg(streamId: streamId, channelName: channelName, imageURL: imageUrl)
         }
         
         .accessibilityAction(.magicTap, {performMagicTap()})
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarTitle(channelName)
         .onAppear {
-            plo.streamID = streamID
+            plo.streamID = streamId
             plo.channelName = channelName
             plo.imageURL = imageUrl
             plo.videoController.updatesNowPlayingInfoCenter = false
-            getShortEpg(streamId: streamID, channelName: channelName, imageURL: imageUrl)
+            getShortEpg(streamId: streamId, channelName: channelName, imageURL: imageUrl)
         }
         
     }
