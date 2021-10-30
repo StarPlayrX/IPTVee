@@ -91,7 +91,7 @@ struct ContentView: View {
                 } else {
                     AppDelegate.interfaceMask = UIInterfaceOrientationMask.landscape
                 }
-                getNowPlayingEpg(channelz: ChannelsObservable.shared.chan)
+                getNowPlayingEpg()
             }
             .onDisappear {
                 AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown

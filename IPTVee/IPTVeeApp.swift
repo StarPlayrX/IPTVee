@@ -23,6 +23,9 @@ struct IPTVapp: App {
         WindowGroup {
             
             ContentView()
+                
+            
+            Text("")
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarTitle("IPTVee")
                 .onAppear()
@@ -30,10 +33,10 @@ struct IPTVapp: App {
                     if plo.videoController.player?.rate == 1 {
                         let min = Int(Calendar.current.component(.minute, from: Date()))
                         min % 6 == 0 || min % 6 == 3 ? getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL) : ()
-                        min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
+                        min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg() : ()
                     } else {
                         let min = Calendar.current.component(.minute, from: Date())
-                        min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg(channelz: ChannelsObservable.shared.chan) : ()
+                        min % 6 == 0 || min % 6 == 3 ? getNowPlayingEpg() : ()
                     }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in

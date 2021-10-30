@@ -95,8 +95,10 @@ struct ChannelsView: View {
                     plo.previousStreamID = si
                 }
             }
-            .refreshable {
-                getNowPlayingEpg(channelz: ChannelsObservable.shared.chan)
+            .refreshable  {
+                DispatchQueue.global().async {
+                     getNowPlayingEpg()
+                }
             }
         }
     }

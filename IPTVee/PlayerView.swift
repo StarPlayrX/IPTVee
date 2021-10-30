@@ -102,30 +102,7 @@ struct PlayerView: View {
                         
                         HStack {
                             
-                            VStack {
-                                Text("Troubleshooting")
-                                    .padding(3)
-                                
-                                if (plo.nowPlayingUrl).contains("Primary") {
-                                    Text(plo.nowPlayingUrl)
-                                        .foregroundColor(.green)
-                                }
-                                
-                                if (plo.nowPlayingUrl).contains("Secondary") {
-                                    Text(plo.nowPlayingUrl)
-                                        .foregroundColor(.orange)
-                                }
-                                
-                                if (plo.nowPlayingUrl).contains("Ternary") {
-                                    Text(plo.nowPlayingUrl)
-                                        .foregroundColor(.blue)
-                                }
-                                
-                            }.frame(width: .infinity, height: 60, alignment: .center)
-                                .padding(5)
-                                .padding(.trailing, 5)
-                                .padding(.bottom, 10)
-                                    
+                          
                             
                             
                            /* Button(action: {
