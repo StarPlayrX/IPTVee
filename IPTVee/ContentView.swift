@@ -23,11 +23,11 @@ struct ContentView: View {
 
     var body: some View {
             
-        NavigationView {
+        ZStack {
             
             VStack {
                 List {
-                    Section(header: Text("Credentials")) {
+                  /*  Section(header: Text("Credentials")) {
                         TextField("Username", text: $userName)
                         SecureField("Password", text: $passWord)
                         TextField("iptvService.tv", text: $service)
@@ -38,7 +38,7 @@ struct ContentView: View {
                                 .frame(maxWidth: .infinity, alignment: .center)
                             
                         }.disabled(awaitDone)
-                    }
+                    } */
 
                     Section(header: Text("Update")) {
                         Text("Status")
@@ -49,7 +49,7 @@ struct ContentView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
                     
-                    Section(header: Text("Video")) {
+                    /* Section(header: Text("Video")) {
                         HStack {
                             NavigationLink("Categories", destination: CategoriesView(), isActive: $obs.isAutoSwitchCat)
                         }
@@ -58,7 +58,7 @@ struct ContentView: View {
                         HStack {
                             NavigationLink("Player Settings", destination: PlayerSettings())
                         }
-                    }
+                    } */
                     
                     Section(header: Text("Copyright")) {
                         HStack {

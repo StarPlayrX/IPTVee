@@ -19,6 +19,7 @@
 		6FA65FB927113D5C009DA6AF /* iptvKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6FA65FB827113D5C009DA6AF /* iptvKit */; };
 		6FA9C65E2727785C00598396 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 6FA9C65D2727785C00598396 /* Swifter */; };
 		6FAFD739270416C900D49704 /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAFD738270416C900D49704 /* CategoriesView.swift */; };
+		6FF7E9EB272D991D001B5F22 /* LoginSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF7E9EA272D991D001B5F22 /* LoginSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		6F87E92A2702A31800434C6E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		6F87E9832702AF1100434C6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6FAFD738270416C900D49704 /* CategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesView.swift; sourceTree = "<group>"; };
+		6FF7E9EA272D991D001B5F22 /* LoginSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 				6F22DB732715F4420077CDA0 /* IPTVee.entitlements */,
 				6F87E9832702AF1100434C6E /* Info.plist */,
 				6F87E9232702A31700434C6E /* IPTVeeApp.swift */,
+				6FF7E9EA272D991D001B5F22 /* LoginSheet.swift */,
 				6F87E9252702A31700434C6E /* ContentView.swift */,
 				6FAFD738270416C900D49704 /* CategoriesView.swift */,
 				6F15FE15272A205100F05971 /* PlayerSettings.swift */,
@@ -181,6 +184,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6F87E9262702A31700434C6E /* ContentView.swift in Sources */,
+				6FF7E9EB272D991D001B5F22 /* LoginSheet.swift in Sources */,
 				6F307AA9270924FD009A6EF9 /* WebView.swift in Sources */,
 				6F74A0DE2707B5B5000171B5 /* ChannelsView.swift in Sources */,
 				6F856D6A2725EE90001C1A79 /* HLSx.swift in Sources */,

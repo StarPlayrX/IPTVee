@@ -24,32 +24,36 @@ struct CategoriesView: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            Text("")
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
+        
+        Group {
+            GeometryReader { geometry in
+                Text("")
+                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
 
-            Form {
-                
-                Section(header: Text("CATEGORIES")) {
+                Form {
                     
-                    ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
-                        NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
-                            .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                    Section(header: Text("CATEGORIES")) {
+                        
+                        ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
+                            NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
+                                .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                        }
                     }
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarTitle("Categories")
                 }
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarTitle("Categories")
-            }
-            
-         
-            .onAppear {
-                AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
-            }
-            .onDisappear{
-                if selectedItem != nil {
-                    plo.previousCategoryID = selectedItem
+                
+             
+                .onAppear {
+                    AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
+                }
+                .onDisappear{
+                    if selectedItem != nil {
+                        plo.previousCategoryID = selectedItem
+                    }
                 }
             }
         }
+   
     }
 }

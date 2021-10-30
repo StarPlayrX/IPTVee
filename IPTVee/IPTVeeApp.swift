@@ -22,7 +22,7 @@ struct IPTVapp: App {
         
         WindowGroup {
             
-            ContentView()
+            LoginView()
                 
             
             Text("")
