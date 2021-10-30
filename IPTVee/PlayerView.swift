@@ -2,6 +2,7 @@ import SwiftUI
 import iptvKit
 import UIKit
 import AVKit
+import MediaPlayer
 
 struct PlayerView: View {
     public init(channelName: String, streamId: Int, imageUrl: String) {
@@ -18,7 +19,6 @@ struct PlayerView: View {
     let channelName: String
     let streamId: Int
     let imageUrl: String
-    
     var isPortrait: Bool {
         guard let scene =  (UIApplication.shared.connectedScenes.first as? UIWindowScene) else {
             return true
@@ -28,20 +28,15 @@ struct PlayerView: View {
     }
     
     var body: some View {
-        Text("")
-            .frame(height:10)
-            .padding(0)
-
+       
         Group {
             GeometryReader { geometry in
-                Form{}
                 VStack {
                   
-                    HStack {
                         AVPlayerView(streamId: streamId, hlsxPort: hlsxPort)
-                            .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .center)
+                            .frame(width: .infinity, height: geometry.size.width * 0.5625, alignment: .center)
                             .background(Color(UIColor.systemBackground))
-                    }
+                  
                     .toolbar {
                         ToolbarItem(placement: .principal) {
                             if !isPortrait, let desc = plo.miniEpg.first?.title.base64Decoded, desc.count > 3 {
@@ -137,6 +132,13 @@ struct PlayerView: View {
                                     print("waiting")
                                 case .paused:
                                     print("paused")
+                                    DispatchQueue.background(delay: 1.0) {
+
+                                    } completion: {
+                                        plo.videoController.player?.play()
+
+                                    }
+
                                 case .playing:
                                     print("playing")
                                 @unknown default:
@@ -156,12 +158,17 @@ struct PlayerView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarTitle(channelName)
         .onAppear {
+            print("HELLO")
             plo.streamID = streamId
             plo.channelName = channelName
             plo.imageURL = imageUrl
             plo.videoController.updatesNowPlayingInfoCenter = false
             getShortEpg(streamId: streamId, channelName: channelName, imageURL: imageUrl)
         }
+        .onDisappear{
+            print("DISSAPEAR")
+        }
+        
         
     }
     

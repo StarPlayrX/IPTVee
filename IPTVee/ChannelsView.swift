@@ -49,13 +49,16 @@ struct ChannelsView: View {
                     ForEach(Array(channelSearchResults),id: \.id) { ch in
     
                         NavigationLink(destination: PlayerView(channelName: ch.name, streamId: ch.streamID, imageUrl: ch.streamIcon), tag: ch.streamID, selection: self.$selectedItem) {
+
                             HStack {
                                 Text("\(ch.num)")
                                     .fontWeight(.medium)
                                     .font(.system(size: 24, design: .monospaced))
                                     .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
+
                                 
                             }
+                            
                             VStack (alignment: .leading, spacing: 0) {
                                 Text(ch.name)
                                     .font(.system(size: 16, design: .default))
@@ -70,10 +73,16 @@ struct ChannelsView: View {
                             .padding(.leading, 7.5)
                             .frame(alignment: .center)
                             
-                        }.listRowBackground(self.selectedItem == ch.streamID || (plo.previousStreamID == ch.streamID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                        }
+                        .isDetailLink(true)
                     }
                 }
             }
+            .padding(.top, -20)
+            .padding(.leading, -20)
+            .padding(.trailing, -20)
+            .frame(width: .infinity, alignment: .trailing)
+            .edgesIgnoringSafeArea(.all)
             .accessibilityAction(.magicTap, {performMagicTapStop()})
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle(categoryName)
@@ -89,6 +98,8 @@ struct ChannelsView: View {
                         plo.videoController.player?.pause()
                     }
                 }
+                
+                print("HELLO")
                 
             }.onDisappear {
                 if let si = selectedItem {

@@ -100,11 +100,15 @@ struct LoginView: View {
                     Section(header: Text("Video")) {
                         HStack {
                             NavigationLink("Categories", destination: CategoriesView(), isActive: $obs.isAutoSwitchCat)
+                                .isDetailLink(false)
+
                         }
                         .disabled(!obs.isLoggedIn)
 
                         HStack {
                             NavigationLink("Player Settings", destination: PlayerSettings())
+                                .isDetailLink(true)
+
                         }
                     }
                     
@@ -127,9 +131,10 @@ struct LoginView: View {
                         }.frame(maxWidth: .infinity, alignment: .center)
                     }
                 }
+                .padding()
                 .disableAutocorrection(true)
                 .autocapitalization(UITextAutocapitalizationType.none)
-                .padding(0.0)
+                
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarTitle("IPTVee")
                 .onAppear {
@@ -155,9 +160,11 @@ struct LoginView: View {
                     AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
                     toggleSidebar()
                 }
-                .navigationViewStyle(.automatic)
+                .navigationViewStyle(.stack)
             }
         }
+        .padding()
+
         
      
         
