@@ -7,7 +7,6 @@
 
 import SwiftUI
 import iptvKit
-import AVKit
 
 struct CategoriesView: View {
     @ObservedObject var obs = iptvKit.LoginObservable.shared
@@ -15,6 +14,8 @@ struct CategoriesView: View {
     @State var searchText: String = ""
     @State var isActive: Bool = false
     @State var selectedItem: String?
+    @State var toggleBackground: Bool = false
+
     @ObservedObject var plo = PlayerObservable.plo
     
     // This is our search filter
@@ -29,48 +30,65 @@ struct CategoriesView: View {
         
         NavigationView {
             
-            
-            
-            
-            
-            Form {
-                
-                Section(header: Text("LIST")) {
-                    Button("Login") {
-                        obs.showingLogin = true
-                    }
-                    .sheet(isPresented: $obs.showingLogin) {
-                        LoginSheetView()
-                    }
-                }
-                
-                
-                
-                
-                Section(header: Text("CATEGORIES")) {
                     
-                    ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
-                        NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
-                            .isDetailLink(false)
-                        // .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                   
+                    
+                    
+                    Form {
+                        
+                        Section(header: Text("LIST")) {
+                            Button("Login") {
+                                obs.showingLogin = true
+                            }
+                            .sheet(isPresented: $obs.showingLogin) {
+                                LoginSheetView()
+                            }
+                        }
+                      
+                        
+                        
+                        Section(header: Text("CATEGORIES")) {
+                            
+
+                            ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
+                                
+                                    NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
+                                        .isDetailLink(false)
+                                        .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color.clear )
+                                
+                                
+                             
+                            }
+                        }
+
+                        .navigationBarTitleDisplayMode(.inline)
+                        .navigationBarTitle("Categories")
                     }
-                }
-                
-                
+                    .padding(.leading, -20)
+                    .padding(.trailing, -20)
+                    .frame(width: .infinity, alignment: .trailing)
+                    .edgesIgnoringSafeArea(.all)
+                    
+            
+
+                    
+                    .onAppear {
+                        AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
+                    }
+                    .onDisappear{
+                        
+                        if selectedItem != nil {
+                            plo.previousCategoryID = selectedItem
+                        }
             }
-            
-            
-            
-            
-            Group {
-                HStack {
-                    AVPlayerView()
-                    //.frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .center)
-                        .background(Color(UIColor.systemBackground))
-                }
-            }
-            
-            
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
+
+            TestView()
         }
+        .edgesIgnoringSafeArea(.all)
+        .navigationViewStyle(.automatic)
+        
+        
+        
     }
 }

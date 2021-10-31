@@ -9,6 +9,16 @@ import SwiftUI
 import iptvKit
 import AVKit
 
+
+struct TestView: View {
+    
+    
+    var body: some View {
+        Group{ AVPlayerView()}
+        .frame(width: 1000, height: 600, alignment: .center)
+    }
+    
+}
 struct ChannelsView: View {
     
     internal init(categoryID: String, categoryName: String) {
@@ -44,36 +54,53 @@ struct ChannelsView: View {
                     
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.id) { ch in
-    
-                       HStack {
-
+                        
+                        
+                        NavigationLink(destination: TestView()) {
                             HStack {
-                                Text("\(ch.num)")
-                                    .fontWeight(.medium)
-                                    .font(.system(size: 24, design: .monospaced))
-                                    .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
 
+                                 HStack {
+                                     Text("\(ch.num)")
+                                         .fontWeight(.medium)
+                                         .font(.system(size: 24, design: .monospaced))
+                                         .frame(idealWidth: 80, alignment: .trailing)
+                                        
+                                     
+                                 }
+                                 
                                 
-                            }
+                                 VStack (alignment: .leading, spacing: 0) {
+                                     Text(ch.name)
+                                         .font(.system(size: 16, design: .default))
+                                         .fontWeight(.regular)
+                                     
+                                     if !ch.nowPlaying.isEmpty {
+                                         Text(ch.nowPlaying)
+                                             .font(.system(size: 14, design: .default))
+                                             .fontWeight(.light)
+                                     }
+                                 }
+
                             
-                            VStack (alignment: .leading, spacing: 0) {
-                                Text(ch.name)
-                                    .font(.system(size: 16, design: .default))
-                                    .fontWeight(.regular)
                                 
-                                if !ch.nowPlaying.isEmpty {
-                                    Text(ch.nowPlaying)
-                                        .font(.system(size: 14, design: .default))
-                                        .fontWeight(.light)
-                                }
-                            }
-                            .padding(.leading, 7.5)
-                            .frame(alignment: .center)
+                                 
+                             }
+
+                                   }
+                        .listRowBackground(self.selectedItem == ch.streamID ? Color("iptvTableViewSelection") : Color.clear )
+
+                        .onTapGesture {
+                            self.selectedItem = ch.streamID;
+                            
+                            AirPlayr(streamId: ch.streamID)
+                            
+                            
                             
                         }
-                        .listRowBackground(self.selectedItem == ch.streamID ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
-                        .onTapGesture { self.selectedItem = ch.streamID; AirPlayr(streamId: ch.streamID) }
 
+                        
+                        
+                     
                     }
 
                 }
