@@ -64,6 +64,8 @@ struct ChannelsView: View {
                         
                         
                         Button(action: { Action(streamId: ch.streamID) }) {
+                            
+                            NavigationLink(destination: EmptyView()) {
                                 HStack {
                                     
                                     HStack {
@@ -88,17 +90,19 @@ struct ChannelsView: View {
                                     }
                                 }
                                 .foregroundColor(Color.primary)
+
                                 
+                            }
+                             
                                 
                                 
                              
                                 
                         }
-                        
+                        .listRowBackground(self.selectedItem == ch.streamID ? Color("iptvTableViewSelection") : Color.clear )
+
                         
                     
-                        .listRowBackground(self.selectedItem == ch.streamID ? Color("iptvTableViewSelection") : Color.clear )
-                      
                         
                         
                         

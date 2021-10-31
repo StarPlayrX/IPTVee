@@ -63,12 +63,7 @@ public struct AVPlayerView: UIViewControllerRepresentable {
         plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
         plo.videoController.player?.currentItem?.configuredTimeOffsetFromLive = .init(seconds: 60, preferredTimescale: 600)
         plo.videoController.player?.currentItem?.startsOnFirstEligibleVariant = true
-        plo.videoController.player?.currentItem?.variantPreferences = .scalabilityToLosslessAudio
-         
-     //    if SettingsObservable.shared. {
-       //      plo.videoController.player?.pause()
-         //}
-         
+        plo.videoController.player?.currentItem?.variantPreferences = .scalabilityToLosslessAudio  
         plo.videoController.player?.automaticallyWaitsToMinimizeStalling = true
         plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
         
