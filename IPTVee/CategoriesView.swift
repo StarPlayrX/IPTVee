@@ -83,7 +83,7 @@ struct CategoriesView: View {
             }
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
 
-            TestView()
+            PlayerView()
         }
         .edgesIgnoringSafeArea(.all)
         .navigationViewStyle(.automatic)
