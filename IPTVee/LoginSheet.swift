@@ -160,7 +160,7 @@ struct LoginView: View {
                     AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
                     toggleSidebar()
                 }
-                .navigationViewStyle(.stack)
+                .navigationViewStyle(.columns)
             }
         }
         .padding()

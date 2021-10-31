@@ -7,6 +7,7 @@
 
 import SwiftUI
 import iptvKit
+import AVKit
 
 struct CategoriesView: View {
     @ObservedObject var obs = iptvKit.LoginObservable.shared
@@ -28,60 +29,48 @@ struct CategoriesView: View {
         
         NavigationView {
             
-                    
-                   
-                    
-                    
-                    Form {
-                        
-                        Section(header: Text("LIST")) {
-                            Button("Login") {
-                                obs.showingLogin = true
-                            }
-                            .sheet(isPresented: $obs.showingLogin) {
-                                LoginSheetView()
-                            }
-                        }
-                      
-                        
-                        
-                        
-                        Section(header: Text("CATEGORIES")) {
-                            
-                            ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
-                                NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
-                                    .isDetailLink(false)
-                                    .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
-                            }
-                        }
-                        
-                        .navigationBarTitleDisplayMode(.inline)
-                        .navigationBarTitle("Categories")
+            
+            
+            
+            
+            Form {
+                
+                Section(header: Text("LIST")) {
+                    Button("Login") {
+                        obs.showingLogin = true
                     }
-                    .padding(.top, -20)
-                    .padding(.leading, -20)
-                    .padding(.trailing, -20)
-                    .frame(width: .infinity, alignment: .trailing)
-                    .edgesIgnoringSafeArea(.all)
-                    
-                    
-                    .onAppear {
-                        AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
+                    .sheet(isPresented: $obs.showingLogin) {
+                        LoginSheetView()
                     }
-                    .onDisappear{
-                        print("HELLO")
-                        if selectedItem != nil {
-                            plo.previousCategoryID = selectedItem
-                        }
+                }
+                
+                
+                
+                
+                Section(header: Text("CATEGORIES")) {
+                    
+                    ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
+                        NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
+                            .isDetailLink(false)
+                        // .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                    }
+                }
+                
+                
             }
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
-
-        
+            
+            
+            
+            
+            Group {
+                HStack {
+                    AVPlayerView()
+                    //.frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .center)
+                        .background(Color(UIColor.systemBackground))
+                }
+            }
+            
+            
         }
-        .edgesIgnoringSafeArea(.all)
-        .navigationViewStyle(.columns)
-        
-        
-        
     }
 }

@@ -27,7 +27,7 @@ struct ChannelsView: View {
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     @ObservedObject var cha = ChannelsObservable.shared
-    
+
     //It's a long one line but it works
     var channelSearchResults: [iptvChannel] {
         (cha.chan.filter({ $0.categoryID == categoryID })
@@ -40,15 +40,12 @@ struct ChannelsView: View {
         
         GeometryReader { geometry in
             
-            Text("")
-                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
-
             Form {
                     
                 Section(header: Text("CHANNELS")) {
                     ForEach(Array(channelSearchResults),id: \.id) { ch in
     
-                        NavigationLink(destination: PlayerView(channelName: ch.name, streamId: ch.streamID, imageUrl: ch.streamIcon), tag: ch.streamID, selection: self.$selectedItem) {
+                       HStack {
 
                             HStack {
                                 Text("\(ch.num)")
@@ -74,47 +71,103 @@ struct ChannelsView: View {
                             .frame(alignment: .center)
                             
                         }
-                        .isDetailLink(true)
+                        .listRowBackground(self.selectedItem == ch.streamID ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                        .onTapGesture { self.selectedItem = ch.streamID; AirPlayr(streamId: ch.streamID) }
+
                     }
+
                 }
             }
-            .padding(.top, -20)
-            .padding(.leading, -20)
-            .padding(.trailing, -20)
-            .frame(width: .infinity, alignment: .trailing)
-            .edgesIgnoringSafeArea(.all)
-            .accessibilityAction(.magicTap, {performMagicTapStop()})
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarTitle(categoryName)
-            .frame(width: geometry.size.width)
-            .onAppear {
-                if plo.pip {
-                    plo.fullscreen = false
-                } else {
-                    plo.miniEpg = []
-                    plo.fullscreen = false
-                    
-                    if let player = plo.videoController.player, player.rate == 1 && !player.isExternalPlaybackActive && SettingsObservable.shared.stopWhenExitingPlayer {
-                        plo.videoController.player?.pause()
-                    }
-                }
-                
-                print("HELLO")
-                
-            }.onDisappear {
-                if let si = selectedItem {
-                    plo.previousStreamID = si
-                }
-            }
-            .refreshable  {
-                DispatchQueue.global().async {
-                     getNowPlayingEpg()
-                }
-            }
+            
         }
     }
     
     func performMagicTapStop() {
         plo.videoController.player?.pause()
     }
+    
+    func AirPlayr(streamId: Int) {
+        
+        if streamId != plo.previousStreamID  {
+            plo.previousStreamID = streamId
+
+           plo.videoController.player?.replaceCurrentItem(with: nil)
+         //  plo.videoController.delegate = context.coordinator
+         //  plo.videoController.requiresLinearPlayback = false
+        //   plo.videoController.canStartPictureInPictureAutomaticallyFromInline = true
+        //    plo.videoController.accessibilityPerformMagicTap()
+           let good: String = lgo.username
+           let time: String = lgo.password
+           let todd: String = lgo.config?.serverInfo.url ?? "primestreams.tv"
+           let boss: String = lgo.config?.serverInfo.port ?? "826"
+           
+           let primaryUrl = URL(string:"https://starplayrx.com:8888/\(todd)/\(boss)/\(good)/\(time)/\(streamId)/hlsx.m3u8")
+            let backupUrl = URL(string:"http://localhost:\(hlsxPort)/\(plo.streamID)/hlsx.m3u8")
+           let airplayUrl = URL(string:"http://\(todd):\(boss)/live/\(good)/\(time)/\(streamId).m3u8")
+           
+           guard
+               let primaryUrl = primaryUrl,
+               let backupUrl = backupUrl,
+               let airplayUrl = airplayUrl
+                   
+           else { return }
+                       
+           func playUrl(_ streamUrl: URL) {
+               DispatchQueue.main.async {
+                   let options = [AVURLAssetPreferPreciseDurationAndTimingKey : true, AVURLAssetAllowsCellularAccessKey : true, AVURLAssetAllowsExpensiveNetworkAccessKey : true, AVURLAssetAllowsConstrainedNetworkAccessKey : true, AVURLAssetReferenceRestrictionsKey: true ]
+                   
+                   let playNowUrl = avSession.currentRoute.outputs.first?.portType == .airPlay || plo.videoController.player!.isExternalPlaybackActive ? airplayUrl : streamUrl
+               
+                   plo.streamID = streamId
+                   
+                   let asset = AVURLAsset.init(url: playNowUrl, options:options)
+                   let playerItem = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: ["duration"])
+                   plo.videoController.player?.replaceCurrentItem(with: playerItem)
+                   plo.videoController.player?.playImmediately(atRate: 1.0)
+               }
+           }
+           
+           func starPlayrHLSx() {
+               rest.textAsync(url: "https://starplayrx.com:8888/eHRybS5tM3U4") { hlsxm3u8 in
+                   let decodedString = (hlsxm3u8?.base64Decoded ?? "This is a really bad error 1.")
+                   primaryUrl.absoluteString.contains(decodedString) ? playUrl(primaryUrl) : localHLSx()
+               }
+           }
+           
+           func localHLSx() {
+               rest.textAsync(url: "http://localhost:\(hlsxPort)/eHRybS5tM3U4/") { hlsxm3u8 in
+                   let decodedString = (hlsxm3u8?.base64Decoded ?? "This is a really bad error 2.")
+                   backupUrl.absoluteString.contains(decodedString) ? playUrl(backupUrl) : playUrl(airplayUrl)
+               }
+           }
+           
+           starPlayrHLSx()
+           
+           plo.videoController.player?.externalPlaybackVideoGravity = .resizeAspectFill
+           plo.videoController.player?.preventsDisplaySleepDuringVideoPlayback = true
+           plo.videoController.player?.usesExternalPlaybackWhileExternalScreenIsActive = true
+           plo.videoController.player?.appliesMediaSelectionCriteriaAutomatically = true
+           plo.videoController.player?.preventsDisplaySleepDuringVideoPlayback = true
+           plo.videoController.player?.allowsExternalPlayback = true
+           plo.videoController.player?.currentItem?.automaticallyHandlesInterstitialEvents = true
+           plo.videoController.player?.currentItem?.seekingWaitsForVideoCompositionRendering = true
+           plo.videoController.player?.currentItem?.appliesPerFrameHDRDisplayMetadata = true
+           plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 60
+           plo.videoController.player?.currentItem?.automaticallyPreservesTimeOffsetFromLive = true
+           plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
+           plo.videoController.player?.currentItem?.configuredTimeOffsetFromLive = .init(seconds: 60, preferredTimescale: 600)
+           plo.videoController.player?.currentItem?.startsOnFirstEligibleVariant = true
+           plo.videoController.player?.currentItem?.variantPreferences = .scalabilityToLosslessAudio
+            
+        //    if SettingsObservable.shared. {
+          //      plo.videoController.player?.pause()
+            //}
+            
+           plo.videoController.player?.automaticallyWaitsToMinimizeStalling = true
+           plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+           plo.videoController.showsPlaybackControls = true
+       }
+    }
+
 }
+

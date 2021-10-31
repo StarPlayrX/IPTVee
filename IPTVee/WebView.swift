@@ -212,3 +212,67 @@ public func runAVSession() {
 
 }
 */
+
+
+//
+//  AVPlayerView.swift
+//  IPTVee
+//
+//  Created by Todd Bruss on 10/3/21.
+//
+
+import AVKit
+import SwiftUI
+import MediaPlayer
+import iptvKit
+
+public var avSession = AVAudioSession.sharedInstance()
+
+public struct AVPlayerView: UIViewControllerRepresentable {
+    
+    @ObservedObject var plo = PlayerObservable.plo
+    @ObservedObject var lo = LoginObservable.shared
+
+    public class Coordinator: NSObject, AVPlayerViewControllerDelegate, UINavigationControllerDelegate {
+        let po = PlayerObservable.plo
+        
+        public func playerViewController(_ playerViewController: AVPlayerViewController, willBeginFullScreenPresentationWithAnimationCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+            po.fullscreen = true
+        }
+        
+        public func playerViewController(_ playerViewController: AVPlayerViewController, willEndFullScreenPresentationWithAnimationCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+            po.fullscreen = false
+        }
+        
+        public func playerViewControllerWillStartPictureInPicture(_ playerViewController: AVPlayerViewController) {
+            po.pip = true
+        }
+        
+        public func playerViewControllerWillStopPictureInPicture(_ playerViewController: AVPlayerViewController) {
+            po.pip = false
+        }
+    }
+    
+    public func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+    
+    public func updateUIViewController(_ videoController: AVPlayerViewController, context: Context) {}
+    
+    public func makeUIViewController(context: Context) -> AVPlayerViewController {
+        return plo.videoController
+    }
+}
+
+public func runAVSession() {
+    do {
+        avSession.accessibilityPerformMagicTap()
+        avSession.accessibilityActivate()
+        try avSession.setPreferredIOBufferDuration(0)
+        try avSession.setCategory(.playback, mode: .moviePlayback, policy: .longFormVideo, options: [])
+        try avSession.setActive(true)
+    } catch {
+        print(error)
+    }
+    
+}

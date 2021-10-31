@@ -23,9 +23,9 @@ struct IPTVapp: App {
         WindowGroup {
             
             CategoriesView()
-                .navigationTitle("IPTVee")
+                
             
-       
+    
         }
     }
 }
@@ -43,8 +43,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         setupVideoController(PlayerObservable.plo)
         application.beginReceivingRemoteControlEvents()
         loadUserDefaults()
-        //runAVSession()
-        //HLSxServe.shared.start_HLSx()
+        runAVSession()
+        HLSxServe.shared.start_HLSx()
         return true
     }
     
