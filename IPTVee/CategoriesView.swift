@@ -26,14 +26,9 @@ struct CategoriesView: View {
     }
     
     var body: some View {
-        
-        
+    
         NavigationView {
-            
-                    
-                   
-                    
-                    
+
                     Form {
                         
                         Section(header: Text("LIST")) {
@@ -45,22 +40,15 @@ struct CategoriesView: View {
                             }
                         }
                       
-                        
-                        
                         Section(header: Text("CATEGORIES")) {
-                            
-
+                        
                             ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
                                 
                                     NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
                                         .isDetailLink(false)
                                         .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color.clear )
-                                
-                                
-                             
                             }
                         }
-
                         .navigationBarTitleDisplayMode(.inline)
                         .navigationBarTitle("Categories")
                     }
@@ -68,9 +56,6 @@ struct CategoriesView: View {
                     .padding(.trailing, -20)
                     .frame(width: .infinity, alignment: .trailing)
                     .edgesIgnoringSafeArea(.all)
-                    
-            
-
                     
                     .onAppear {
                         AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
@@ -87,8 +72,5 @@ struct CategoriesView: View {
         }
         .edgesIgnoringSafeArea(.all)
         .navigationViewStyle(.automatic)
-        
-        
-        
     }
 }
