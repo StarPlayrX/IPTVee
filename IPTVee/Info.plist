@@ -30,6 +30,6 @@
 		<string>fetch</string>
 	</array>
 	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleDarkContent</string>
+	<string>UIStatusBarStyleDefault</string>
 </dict>
 </plist>

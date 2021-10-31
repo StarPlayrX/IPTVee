@@ -16,13 +16,13 @@ struct IPTVapp: App {
     
     let epgTimer = Timer.publish(every: 60, on: .current, in: .default).autoconnect()
     @ObservedObject var plo = PlayerObservable.plo
-    @ObservedObject var lo = LoginObservable.shared
+    @ObservedObject var lgo = LoginObservable.shared
     
     var body: some Scene {
         
         WindowGroup {
             
-            CategoriesView()
+                CategoriesView()
                 
             
     

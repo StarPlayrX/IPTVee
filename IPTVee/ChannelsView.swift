@@ -46,46 +46,55 @@ struct ChannelsView: View {
             
             Form {
                 
-                Section(header: Text("CHANNELS")) {
+                Section(header: Text("Channels").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                     ForEach(Array(channelSearchResults),id: \.id) { ch in
                         
                         Button(action: { Action(streamId: ch.streamID, channelName: ch.name, imageURL: ch.streamIcon) }) {
-                            
                             NavigationLink(destination: EmptyView()) {
                                 HStack {
                                     
                                     HStack {
-                                        Text("\(ch.num)")
+                                        Text(String(ch.num))
                                             .fontWeight(.medium)
                                             .font(.system(size: 24, design: .monospaced))
-                                            .frame(idealWidth: 80, alignment: .trailing)
+                                            .frame(minWidth: 45, idealWidth: 80, alignment: .trailing)
                                     }
                                     
                                     VStack (alignment: .leading, spacing: 0) {
                                         Text(ch.name)
                                             .font(.system(size: 16, design: .default))
                                             .fontWeight(.regular)
-                                        
+                                            .multilineTextAlignment(.leading)
+
                                         if !ch.nowPlaying.isEmpty {
                                             Text(ch.nowPlaying)
                                                 .font(.system(size: 14, design: .default))
                                                 .fontWeight(.light)
+                                                .multilineTextAlignment(.leading)
                                         }
                                     }
+                                    .fixedSize(horizontal: false, vertical: true)
                                 }
                                 .foregroundColor(Color.primary)
                             }
                         }
-                        .listRowBackground(self.selectedItem == ch.streamID ? Color("iptvTableViewSelection") : Color.clear )
+                        .buttonStyle(PlainButtonStyle())
+                        .listRowBackground(self.selectedItem == ch.streamID ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
                     }
-                    
                 }
             }
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitle(plo.channelName)
             .padding(.leading, -20)
             .padding(.trailing, -20)
             .frame(width: .infinity, alignment: .trailing)
             .edgesIgnoringSafeArea(.all)
-            
+            .onAppear{
+                if plo.streamID > 0 && plo.videoController.player?.rate == 1 {
+                    self.selectedItem = plo.streamID
+                }
+            }
         }
     }
     

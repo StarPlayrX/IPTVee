@@ -1,4 +1,3 @@
-//
 //  CategoriesView.swift
 //  IPTVee
 //
@@ -9,15 +8,15 @@ import SwiftUI
 import iptvKit
 
 struct CategoriesView: View {
-    @ObservedObject var obs = iptvKit.LoginObservable.shared
-    
+    @Environment(\.presentationMode) var presentationMode
+
     @State var searchText: String = ""
     @State var isActive: Bool = false
     @State var selectedItem: String?
     @State var toggleBackground: Bool = false
-
     @ObservedObject var plo = PlayerObservable.plo
-    
+    @ObservedObject var lgo = LoginObservable.shared
+
     // This is our search filter
     var categorySearchResults: Categories {
         cats.filter({"\($0.categoryName)"
@@ -26,51 +25,65 @@ struct CategoriesView: View {
     }
     
     var body: some View {
-    
+        
+        
+        
         NavigationView {
-
-                    Form {
-                        
-                        Section(header: Text("LIST")) {
-                            Button("Login") {
-                                obs.showingLogin = true
-                            }
-                            .sheet(isPresented: $obs.showingLogin) {
-                                LoginSheetView()
-                            }
-                        }
-                      
-                        Section(header: Text("CATEGORIES")) {
-                        
-                            ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
-                                
-                                    NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
-                                        .isDetailLink(false)
-                                        .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color.clear )
-                            }
-                        }
-                        .navigationBarTitleDisplayMode(.inline)
-                        .navigationBarTitle("Categories")
-                    }
-                    .padding(.leading, -20)
-                    .padding(.trailing, -20)
-                    .frame(width: .infinity, alignment: .trailing)
-                    .edgesIgnoringSafeArea(.all)
+            
+          
+            
+            Form {
+                Section(header: Text("Categories").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                     
-                    .onAppear {
-                        AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
+                    EmptyView()
+                        .frame(width: 0, height: 0, alignment: .center)
+                    ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
+                        NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
+                            .isDetailLink(false)
+                            .padding(.leading, 2)
+                            .padding(.trailing, 2)
+                            .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground") )
                     }
-                    .onDisappear{
-                        
-                        if selectedItem != nil {
-                            plo.previousCategoryID = selectedItem
-                        }
+                    
+                }
+          
+              
+
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitle("Categories")
+            }
+            .padding(.leading, -20)
+            .padding(.trailing, -20)
+            .frame(width: .infinity, alignment: .trailing)
+            .edgesIgnoringSafeArea(.all)
+          
+            .onAppear {
+                AppDelegate.interfaceMask = UIInterfaceOrientationMask.allButUpsideDown
+                
+                if !plo.previousCategoryID.isEmpty && plo.videoController.player?.rate == 1 {
+                    selectedItem = plo.previousCategoryID
+                }
+            }
+            .onDisappear{
+                if let si = selectedItem {
+                    plo.previousCategoryID = si
+                }
             }
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
-
+            
             PlayerView()
         }
-        .edgesIgnoringSafeArea(.all)
+        .onAppear {
+            lgo.showingLogin = true
+        }
         .navigationViewStyle(.automatic)
+        
+            if !lgo.isLoggedIn {
+                Text("")
+                .sheet(isPresented: $lgo.showingLogin) {
+                    LoginSheetView()
+                }
+            }
+           
     }
 }
