@@ -18,79 +18,42 @@ struct PlayerView: View {
         return scene.interfaceOrientation.isPortrait
     }
     
+    var isPad: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
+    }
+    
     @State var orientation = UIDevice.current.orientation
-
-       let orientationChanged = NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
-           .makeConnectable()
-           .autoconnect()
+    
+    let orientationChanged = NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
+        .makeConnectable()
+        .autoconnect()
     
     var body: some View {
-        
-        
-        
-            GeometryReader { geometry in
-                Form{}
+    
+        GeometryReader { geometry in
+            Form{}
+            VStack {
                 
-               
-                VStack {
+                HStack {
                     
-                    HStack {
+                    if isPad {
                         AVPlayerView()
                             .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .center)
                             .background(Color(UIColor.systemBackground))
+                    } else {
+                        AVPlayerView()
+                            .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .center)
+                            .background(Color(UIColor.systemBackground))
                     }
-
+                }
+                
+                
+                if isPortrait {
                     
-                    if isPortrait {
-                        
-                        List {
-                            if !plo.miniEpg.isEmpty {
-                                
-                                Section(header: Text("PROGRAM GUIDE")) {
-                                    ForEach(Array(plo.miniEpg),id: \.id) { epg in
-                                        
-                                        HStack {
-                                            Text(epg.start.toDate()?.userTimeZone().toString() ?? "")
-                                                .fontWeight(.medium)
-                                                .frame(minWidth: 78, alignment: .trailing)
-                                                .multilineTextAlignment(.leading)
-                                            
-                                            Text(epg.title.base64Decoded ?? "")
-                                                .multilineTextAlignment(.leading)
-                                                .padding(.leading, 5)
-                                        }
-                                        .font(.callout)
-                                    }
-                                }
-                            }
+                    List {
+                        if !plo.miniEpg.isEmpty {
                             
-                            if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
-                                Section(header: Text("Description")) {
-                                    Text(desc)
-                                    //.font(.body)
-                                    //.fontWeight(.light)
-                                        .frame(minWidth: 80, alignment: .leading)
-                                        .multilineTextAlignment(.leading)
-                                }
-                            } else {
-                                Section(header: Text("Description")) {
-                                    Text(plo.channelName)
-                                        .font(.body)
-                                        .fontWeight(.light)
-                                        .frame(minWidth: 80, alignment: .leading)
-                                        .multilineTextAlignment(.leading)
-                                }
-                               
-                            }
-                        }
-                        .refreshable {
-                            getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
-                        }
-                        
-                    } else  if !plo.miniEpg.isEmpty {
-                        
-                        List {
-                            Section(header: Text("PROGRAM GUIDE")) {
+                            Section(header: Text("PROGRAM GUIDE").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                                 ForEach(Array(plo.miniEpg),id: \.id) { epg in
                                     
                                     HStack {
@@ -107,42 +70,75 @@ struct PlayerView: View {
                                 }
                             }
                         }
-                     
-                    }
                         
-                }
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        if !isPortrait, let desc = plo.miniEpg.first?.title.base64Decoded, desc.count > 3 {
-                            VStack {
-                                Text("\(plo.channelName)")
-                                    .fontWeight(.bold)
-                                Text("\(desc)")
-                                    .fontWeight(.regular)
+                        if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
+                            Section(header: Text("Description").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                                Text(desc)
+                                //.font(.body)
+                                //.fontWeight(.light)
+                                    .frame(minWidth: 80, alignment: .leading)
+                                    .multilineTextAlignment(.leading)
                             }
-                            .frame(alignment: .center)
-                            .multilineTextAlignment(.center)
-                            .frame(minWidth: 320, alignment: .center)
-                            .font(.body)
+                        } else {
+                            Section(header: Text("Description").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                                Text(plo.channelName)
+                                    .font(.body)
+                                    .fontWeight(.light)
+                                    .frame(minWidth: 80, alignment: .leading)
+                                    .multilineTextAlignment(.leading)
+                            }
+                            
+                        }
+                    }
+                    .refreshable {
+                        getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
+                    }
+                    
+                } else if !plo.miniEpg.isEmpty && isPad {
+                    
+                    List {
+                        Section(header: Text("PROGRAM GUIDE").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                            ForEach(Array(plo.miniEpg),id: \.id) { epg in
+                                
+                                HStack {
+                                    Text(epg.start.toDate()?.userTimeZone().toString() ?? "")
+                                        .fontWeight(.medium)
+                                        .frame(minWidth: 78, alignment: .trailing)
+                                        .multilineTextAlignment(.leading)
+                                    
+                                    Text(epg.title.base64Decoded ?? "")
+                                        .multilineTextAlignment(.leading)
+                                        .padding(.leading, 5)
+                                }
+                                .font(.callout)
+                            }
                         }
                     }
                 }
-              
-
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarTitle(plo.channelName)
-                .onReceive(orientationChanged) { _ in
-                            self.orientation = UIDevice.current.orientation
-                    print(orientation.isPortrait)
-                        }
-               
-                
             }
-           
-        
-       
-        
-        
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    if !isPortrait, let desc = plo.miniEpg.first?.title.base64Decoded, desc.count > 3 {
+                        VStack {
+                            Text("\(plo.channelName)")
+                                .fontWeight(.bold)
+                            Text("\(desc)")
+                                .fontWeight(.regular)
+                        }
+                        .frame(alignment: .center)
+                        .multilineTextAlignment(.center)
+                        .frame(minWidth: 320, alignment: .center)
+                        .font(.body)
+                    }
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitle(plo.channelName)
+            .onReceive(orientationChanged) { _ in
+                self.orientation = UIDevice.current.orientation
+                print(orientation.isPortrait)
+            }
+        }
     }
     
     func performMagicTap() {

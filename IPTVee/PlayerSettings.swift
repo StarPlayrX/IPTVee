@@ -42,7 +42,7 @@ struct PlayerSettings: View {
                 readPlayerSettings()
             }
             .onDisappear{
-                savePlayerSettings()
+               savePlayerSettings()
             }
         }
     }

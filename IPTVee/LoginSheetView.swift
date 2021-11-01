@@ -24,7 +24,7 @@ struct LoginSheetView: View {
     var body: some View {
       
         NavigationView {
-            Form {
+            List {
                 
                 Section(header: Text("Credentials")) {
                     TextField("Username", text: $userName)
@@ -32,11 +32,11 @@ struct LoginSheetView: View {
                     TextField("iptvService.tv", text: $service)
                     TextField("port #", text: $port)
                         .keyboardType(.numberPad)
-                    Button(action: {login(userName, passWord, service, port) }) {
+                    Button(action: localLogin) {
                         Text("Login")
                             .frame(maxWidth: .infinity, alignment: .center)
-                        
                     }
+                    .disabled(awaitDone)
                 }
 
                 Section(header: Text("Status")) {
@@ -61,5 +61,11 @@ struct LoginSheetView: View {
             .navigationBarTitle("IPTVee Login")
         }
        
+    }
+    
+    func localLogin() {
+        DispatchQueue.global().async {
+            login(userName, passWord, service, port)
+        }
     }
 }

@@ -47,11 +47,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         HLSxServe.shared.start_HLSx()
         return true
     }
-    
-    static var interfaceMask = UIDevice.current.userInterfaceIdiom == .phone ? UIInterfaceOrientationMask.portrait : UIInterfaceOrientationMask.landscape
-    
-    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window:UIWindow?) -> UIInterfaceOrientationMask {
-        return AppDelegate.interfaceMask
-    }
+
 }
 
