@@ -9,12 +9,9 @@ struct PlayerView: View {
     
     @ObservedObject var plo = PlayerObservable.plo
     
+    
     var isPortrait: Bool {
         guard let scene =  (UIApplication.shared.connectedScenes.first as? UIWindowScene) else {
-            return true
-        }
-        
-        if orientation.isPortrait {
             return true
         }
         
@@ -24,6 +21,11 @@ struct PlayerView: View {
     var isPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
     }
+    
+    var isMac: Bool {
+        UIDevice.current.userInterfaceIdiom == .mac
+    }
+    
     
     @State var orientation = UIDevice.current.orientation
     
@@ -39,35 +41,25 @@ struct PlayerView: View {
             
             VStack {
                 
-                HStack {
                     
                     if isPad {
                         avPlayerView
                         
                         
-                            .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .topLeading)
+                            .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .top)
                             .background(Color(UIColor.systemBackground))
                     } else {
-                            
-                        if isPortrait {
-                            avPlayerView
-                            .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .topLeading)
-                            .background(Color(UIColor.systemBackground))
-                        } else {
-                            avPlayerView
-                                .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height, alignment: .topLeading)
-                                                     .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height, alignment: .topLeading)
-
-                                .background(Color(UIColor.systemBackground))
-                        }
                         
-                    }
-                        
-                    }
-
-
-
                 
+                            avPlayerView
+                            .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .top)
+                                .background(Color(UIColor.systemBackground))
+                      
+                    }
+                    
+                
+                
+       
                 if isPortrait {
                     
                     List {
@@ -92,7 +84,7 @@ struct PlayerView: View {
                         }
                         
                         if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
-                                Section(header: Text("Description").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold)))  {
+                            Section(header: Text("Description").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold)))  {
                                 Text(desc)
                                 //.font(.body)
                                 //.fontWeight(.light)
@@ -110,38 +102,10 @@ struct PlayerView: View {
                             
                         }
                     }
-                    .animation(.easeIn(duration: 0.3))
-                    .transition(.opacity)
-                    
-#if targetEnvironment(macCatalyst)
-                    .refreshable {
-                        getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
-                    }
-#endif
-                    
-                    
-                } else if !plo.miniEpg.isEmpty && isPad  {
-                    
-                    List {
-                        Section(header: Text("PROGRAM GUIDE").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold)))  {
-                            ForEach(Array(plo.miniEpg),id: \.id) { epg in
-                                
-                                HStack {
-                                    Text(epg.start.toDate()?.userTimeZone().toString() ?? "")
-                                        .fontWeight(.medium)
-                                        .frame(minWidth: 78, alignment: .trailing)
-                                        .multilineTextAlignment(.leading)
-                                    
-                                    Text(epg.title.base64Decoded ?? "")
-                                        .multilineTextAlignment(.leading)
-                                        .padding(.leading, 5)
-                                }
-                                .font(.callout)
-                            }
-                        }
-                    }
-                   
+  
                 }
+                  
+            
             }
             .toolbar {
                 ToolbarItem(placement: .principal) {
@@ -161,14 +125,7 @@ struct PlayerView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle(plo.channelName)
-            .onReceive(orientationChanged) { _ in
-                self.orientation = UIDevice.current.orientation
-                print(orientation.isPortrait)
-            }
-            
-            .onAppear{
-                
-            }
+           
         }
     }
     
@@ -215,3 +172,12 @@ struct PlayerView: View {
         videoController.player?.play()
     }
 }
+
+
+/*
+ 
+ .refreshable {
+     getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
+ }
+ 
+ */

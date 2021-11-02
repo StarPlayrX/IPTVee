@@ -21,11 +21,7 @@ struct IPTVapp: App {
     var body: some Scene {
         
         WindowGroup {
-            
                 CategoriesView()
-                
-            
-    
         }
     }
 }

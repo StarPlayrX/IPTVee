@@ -8,8 +8,8 @@ import SwiftUI
 import iptvKit
 
 
-
-struct CategoriesView: View {
+struct CommonView: View {
+    
     @Environment(\.presentationMode) var presentationMode
     
     @State var searchText: String = ""
@@ -19,6 +19,7 @@ struct CategoriesView: View {
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     
+ 
     // This is our search filter
     var categorySearchResults: Categories {
         cats.filter({"\($0.categoryName)"
@@ -27,73 +28,85 @@ struct CategoriesView: View {
     }
     
     var isMac: Bool {
-        #if targetEnvironment(macCatalyst)
-            true
-        #else
-            false
-        #endif
+#if targetEnvironment(macCatalyst)
+        true
+#else
+        false
+#endif
     }
     
     
-
-    
-    
-
     var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Categories").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                    
+                    EmptyView()
+                        .frame(width: 0, height: 0, alignment: .center)
+                    ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
+                        NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
+                            .isDetailLink(false)
+                            .padding(.leading, 2)
+                            .padding(.trailing, 2)
+                            .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground") )
+                    }
+                }
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitle("Categories")
+            }
+            .transition(.opacity)
+            .padding(.leading, isMac ? -20 : 0)
+            .padding(.trailing, isMac ? -20 : 0)
+            .frame(width: .infinity, alignment: .trailing)
+            .edgesIgnoringSafeArea(.all)
             
-            if !lgo.isLoggedIn {
-                Text("")
-                    .sheet(isPresented: $lgo.showingLogin) {
-                        LoginSheetView()
-                    }
-            }
-
-            NavigationView {
-                    Form {
-                        Section(header: Text("Categories").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
-                            
-                            EmptyView()
-                                .frame(width: 0, height: 0, alignment: .center)
-                            ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
-                                NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
-                                    .isDetailLink(false)
-                                    .padding(.leading, 2)
-                                    .padding(.trailing, 2)
-                                    .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground") )
-                            }
-                        }
-                        .navigationBarTitleDisplayMode(.inline)
-                        .navigationBarTitle("Categories")
-                    }
-                    .transition(.opacity)
-                    .padding(.leading, isMac ? -20 : 0)
-                    .padding(.trailing, isMac ? -20 : 0)
-                    .frame(width: .infinity, alignment: .trailing)
-                    .edgesIgnoringSafeArea(.all)
-                    
-             
-                .onAppear {
-                    
-                    if !plo.previousCategoryID.isEmpty && plo.videoController.player?.rate == 1 {
-                        selectedItem = plo.previousCategoryID
-                    }
-                }
-                .onDisappear{
-                    if let si = selectedItem {
-                        plo.previousCategoryID = si
-                    }
-                }
-                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
-                
-                EmptyView()
-            }
+            
             .onAppear {
-                lgo.showingLogin = true
+                
+                if !plo.previousCategoryID.isEmpty && plo.videoController.player?.rate == 1 {
+                    selectedItem = plo.previousCategoryID
+                }
             }
-            .navigationViewStyle(.automatic)
+            .onDisappear{
+                if let si = selectedItem {
+                    plo.previousCategoryID = si
+                }
+            }
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
             
-            
-           
-            
+            EmptyView()
+        }
+    }
+}
+struct CategoriesView: View {
+    
+    @ObservedObject var lgo = LoginObservable.shared
+    
+    var isPhone: Bool {
+        UIDevice.current.userInterfaceIdiom == .phone
+    }
+    
+    var body: some View {
+        
+        if !lgo.isLoggedIn {
+            Text("")
+                .sheet(isPresented: $lgo.showingLogin) {
+                    LoginSheetView()
+                }
+        }
+        
+        if isPhone {
+            CommonView()
+                .onAppear {
+                    lgo.showingLogin = true
+                }
+                .navigationViewStyle( .stack )
+        } else {
+            CommonView()
+                .onAppear {
+                    lgo.showingLogin = true
+                }
+                .navigationViewStyle( .columns )
+        }
     }
 }

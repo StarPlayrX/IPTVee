@@ -42,15 +42,15 @@ public func setupVideoController() -> AVPlayerViewController {
     let plo = PlayerObservable.plo
 
     let player = plo.videoController.player
+    
+    
     plo.videoController = AVPlayerViewController()
-
     plo.videoController.player = player
-    plo.videoController.player?.replaceCurrentItem(with: nil)
     plo.videoController.showsPlaybackControls = true
     plo.videoController.requiresLinearPlayback = false
     plo.videoController.canStartPictureInPictureAutomaticallyFromInline = true
     //plo.videoController.accessibilityPerformMagicTap()
-    
+    plo.videoController.videoGravity = .resizeAspect
     plo.videoController.player?.externalPlaybackVideoGravity = .resizeAspectFill
     plo.videoController.player?.preventsDisplaySleepDuringVideoPlayback = true
     plo.videoController.player?.usesExternalPlaybackWhileExternalScreenIsActive = true
@@ -62,7 +62,7 @@ public func setupVideoController() -> AVPlayerViewController {
     plo.videoController.player?.currentItem?.appliesPerFrameHDRDisplayMetadata = true
     plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 60
     plo.videoController.player?.currentItem?.automaticallyPreservesTimeOffsetFromLive = true
-    plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = false
+    plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
     plo.videoController.player?.currentItem?.configuredTimeOffsetFromLive = .init(seconds: 60, preferredTimescale: 600)
     plo.videoController.player?.currentItem?.startsOnFirstEligibleVariant = true
     plo.videoController.player?.currentItem?.variantPreferences = .scalabilityToLosslessAudio
