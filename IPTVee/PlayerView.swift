@@ -22,10 +22,17 @@ struct PlayerView: View {
         UIDevice.current.userInterfaceIdiom == .pad
     }
     
-    var isMac: Bool {
-        UIDevice.current.userInterfaceIdiom == .mac
+    var isPhone: Bool {
+        UIDevice.current.userInterfaceIdiom == .phone
     }
     
+    var isMac: Bool {
+        #if targetEnvironment(macCatalyst)
+            true
+        #else
+            false
+        #endif
+    }
     
     @State var orientation = UIDevice.current.orientation
     
@@ -63,10 +70,10 @@ struct PlayerView: View {
                 
                 
        
-                if isPortrait {
+                if isPortrait || isPad {
                     
                     List {
-                        if !plo.miniEpg.isEmpty {
+                        if !plo.miniEpg.isEmpty && (isPortrait || isPhone || isMac) {
                             
                             Section(header: Text("PROGRAM GUIDE").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                                 ForEach(Array(plo.miniEpg),id: \.id) { epg in
@@ -84,15 +91,15 @@ struct PlayerView: View {
                                     .font(.callout)
                                 }
                             }
-                        } else {
+                        } else if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
                             Section(header: Text("PROGRAM GUIDE").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                                 HStack {
-                                    Text("")
+                                    Text(plo.miniEpg.first?.start.toDate()?.userTimeZone().toString() ?? "")
                                         .fontWeight(.medium)
                                         .frame(minWidth: 78, alignment: .trailing)
                                         .multilineTextAlignment(.leading)
                                     
-                                    Text("")
+                                    Text(plo.miniEpg.first?.title.base64Decoded ?? "")
                                         .multilineTextAlignment(.leading)
                                         .padding(.leading, 5)
                                 }
