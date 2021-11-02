@@ -93,10 +93,12 @@ struct ChannelsView: View {
                     }
                 }
                 .onChange(of: selectedItem) { selectionData in
-                    if  plo.previousSelection != self.selectedItem {
+                    if  plo.previousSelection != selectionData {
                         if let elements = selectionData?.components(separatedBy: "^"), elements.count == 3, let sd = selectionData  {
-                            Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
                             plo.previousSelection = sd
+                            PlayerObservable.plo.miniEpg = []
+                            Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
+
                         }
                     }
                 }

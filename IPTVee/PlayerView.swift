@@ -84,6 +84,20 @@ struct PlayerView: View {
                                     .font(.callout)
                                 }
                             }
+                        } else {
+                            Section(header: Text("PROGRAM GUIDE").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                                HStack {
+                                    Text("")
+                                        .fontWeight(.medium)
+                                        .frame(minWidth: 78, alignment: .trailing)
+                                        .multilineTextAlignment(.leading)
+                                    
+                                    Text("")
+                                        .multilineTextAlignment(.leading)
+                                        .padding(.leading, 5)
+                                }
+                                .font(.callout)
+                            }
                         }
                         
                         if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
@@ -105,6 +119,8 @@ struct PlayerView: View {
                             
                         }
                     }
+                    .animation(  .easeInOut(duration: 0.3))
+                    .transition(.opacity)
   
                 }
                   
