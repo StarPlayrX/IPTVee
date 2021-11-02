@@ -19,10 +19,13 @@ public struct AVPlayerView: UIViewControllerRepresentable {
     }
     
     public func makeUIViewController(context: Context) -> AVPlayerViewController {
+        guard let _ = plo.videoController.player else { return plo.videoController }
+
         if plo.streamID != plo.previousStreamID {
             plo.previousStreamID = plo.streamID
             plo.videoController = setupPlayerToPlay()
             plo.videoController = setupVideoController()
+            setupRemoteTransportControls()
             plo.videoController.delegate = context.coordinator
             return plo.videoController
         } else {
@@ -48,13 +51,17 @@ public func runAVSession() {
 
 public func startupAVPlayer() {
     let plo = PlayerObservable.plo
+    
     plo.videoController.player = AVPlayer(playerItem: nil)
     plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
     plo.videoController.view.backgroundColor = UIColor.clear
 }
 
-public func setupVideoController() -> AVPlayerViewController{
+public func setupVideoController() -> AVPlayerViewController {
+    
     let plo = PlayerObservable.plo
+    guard let _ = plo.videoController.player else { return plo.videoController }
+    
     plo.videoController.showsTimecodes = true
     plo.videoController.entersFullScreenWhenPlaybackBegins = false
     plo.videoController.updatesNowPlayingInfoCenter = false
@@ -63,12 +70,15 @@ public func setupVideoController() -> AVPlayerViewController{
     plo.videoController.canStartPictureInPictureAutomaticallyFromInline = true
     plo.videoController.videoGravity = .resizeAspect
     plo.videoController.accessibilityPerformMagicTap()
+    plo.videoController.view.backgroundColor = UIColor.clear
     return plo.videoController
 }
 
 public func setupPlayerToPlay() -> AVPlayerViewController {
-    
+
     let plo = PlayerObservable.plo
+    guard let _ = plo.videoController.player else { return plo.videoController }
+
     let player = plo.videoController.player
     player?.replaceCurrentItem(with: nil)
     plo.videoController = AVPlayerViewController()
@@ -84,7 +94,7 @@ public func setupPlayerToPlay() -> AVPlayerViewController {
     plo.videoController.player?.currentItem?.appliesPerFrameHDRDisplayMetadata = true
     plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 60
     plo.videoController.player?.currentItem?.automaticallyPreservesTimeOffsetFromLive = true
-    plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = false
+    plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
     plo.videoController.player?.currentItem?.configuredTimeOffsetFromLive = .init(seconds: 60, preferredTimescale: 600)
     plo.videoController.player?.currentItem?.startsOnFirstEligibleVariant = true
     plo.videoController.player?.currentItem?.variantPreferences = .scalabilityToLosslessAudio
@@ -110,5 +120,77 @@ public class Coordinator: NSObject, AVPlayerViewControllerDelegate, UINavigation
     
     public func playerViewControllerWillStopPictureInPicture(_ playerViewController: AVPlayerViewController) {
         po.pip = false
+    }
+}
+
+
+
+func setupRemoteTransportControls() {
+    let plo = PlayerObservable.plo
+
+    guard let _ = plo.videoController.player  else { return }
+
+
+    let commandCenter = MPRemoteCommandCenter.shared()
+    let seekDuration: Float64 = 10
+    
+    commandCenter.accessibilityActivate()
+    
+    commandCenter.playCommand.addTarget(handler: { (event) in
+        plo.videoController.player?.play()
+        return MPRemoteCommandHandlerStatus.success}
+    )
+    
+    commandCenter.pauseCommand.addTarget(handler: { (event) in
+        plo.videoController.player?.pause()
+        return MPRemoteCommandHandlerStatus.success}
+    )
+    
+    commandCenter.skipBackwardCommand.addTarget(handler: { (event) in
+        skipBackward()
+        return MPRemoteCommandHandlerStatus.success}
+    )
+    
+    commandCenter.skipForwardCommand.addTarget(handler: { (event) in
+        skipForward()
+        
+        if let vcp =  plo.videoController.player, let ci = vcp.currentItem, (!ci.isPlaybackLikelyToKeepUp || ci.isPlaybackBufferEmpty) {
+            skipBackward()
+        }
+        
+        return MPRemoteCommandHandlerStatus.success}
+    )
+    
+    commandCenter.togglePlayPauseCommand.addTarget(handler: { (event) in
+        plo.videoController.player?.rate == 1 ?  plo.videoController.player?.pause() :  plo.videoController.player?.play()
+        return MPRemoteCommandHandlerStatus.success}
+    )
+    
+    func skipForward() {
+        guard
+            let player = plo.videoController.player
+        else {
+            return
+        }
+        
+        var playerCurrentTime = CMTimeGetSeconds( player.currentTime() )
+        playerCurrentTime += seekDuration
+        
+        let time: CMTime = CMTimeMake(value: Int64(playerCurrentTime * 1000 as Float64), timescale: 1000)
+        plo.videoController.player?.seek(to: time)
+    }
+    
+    func skipBackward() {
+        guard
+            let player = plo.videoController.player
+        else {
+            return
+        }
+        
+        var playerCurrentTime = CMTimeGetSeconds( player.currentTime() )
+        playerCurrentTime -= seekDuration
+        
+        let time: CMTime = CMTimeMake(value: Int64(playerCurrentTime * 1000 as Float64), timescale: 1000)
+        plo.videoController.player?.seek(to: time)
     }
 }
