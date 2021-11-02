@@ -36,11 +36,13 @@ func loadUserDefaults() {
 class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        setupVideoController(PlayerObservable.plo)
+        startupAVPlayer()
         application.beginReceivingRemoteControlEvents()
         loadUserDefaults()
         runAVSession()
         HLSxServe.shared.start_HLSx()
         return true
     }
+
 }
+

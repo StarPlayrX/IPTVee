@@ -21,7 +21,8 @@ public struct AVPlayerView: UIViewControllerRepresentable {
     public func makeUIViewController(context: Context) -> AVPlayerViewController {
         if plo.streamID != plo.previousStreamID {
             plo.previousStreamID = plo.streamID
-            plo.videoController =  setupVideoController()
+            plo.videoController = setupPlayerToPlay()
+            plo.videoController = setupVideoController()
             plo.videoController.delegate = context.coordinator
             return plo.videoController
         } else {
@@ -43,23 +44,35 @@ public func runAVSession() {
     } catch {
         print(error)
     }
-    
 }
 
-public func setupVideoController() -> AVPlayerViewController {
+public func startupAVPlayer() {
+    let plo = PlayerObservable.plo
+    plo.videoController.player = AVPlayer(playerItem: nil)
+    plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+    plo.videoController.view.backgroundColor = UIColor.clear
+}
+
+public func setupVideoController() -> AVPlayerViewController{
+    let plo = PlayerObservable.plo
+    plo.videoController.showsTimecodes = true
+    plo.videoController.entersFullScreenWhenPlaybackBegins = false
+    plo.videoController.updatesNowPlayingInfoCenter = false
+    plo.videoController.showsPlaybackControls = true
+    plo.videoController.requiresLinearPlayback = false
+    plo.videoController.canStartPictureInPictureAutomaticallyFromInline = true
+    plo.videoController.videoGravity = .resizeAspect
+    plo.videoController.accessibilityPerformMagicTap()
+    return plo.videoController
+}
+
+public func setupPlayerToPlay() -> AVPlayerViewController {
     
     let plo = PlayerObservable.plo
     let player = plo.videoController.player
     player?.replaceCurrentItem(with: nil)
     plo.videoController = AVPlayerViewController()
-    
     plo.videoController.player = player
-
-    plo.videoController.showsPlaybackControls = true
-    plo.videoController.requiresLinearPlayback = false
-    plo.videoController.canStartPictureInPictureAutomaticallyFromInline = true
-    //plo.videoController.accessibilityPerformMagicTap()
-    plo.videoController.videoGravity = .resizeAspect
     plo.videoController.player?.externalPlaybackVideoGravity = .resizeAspectFill
     plo.videoController.player?.preventsDisplaySleepDuringVideoPlayback = true
     plo.videoController.player?.usesExternalPlaybackWhileExternalScreenIsActive = true
@@ -77,8 +90,7 @@ public func setupVideoController() -> AVPlayerViewController {
     plo.videoController.player?.currentItem?.variantPreferences = .scalabilityToLosslessAudio
     plo.videoController.player?.automaticallyWaitsToMinimizeStalling = true
     plo.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-    
-    return  plo.videoController
+    return plo.videoController
 }
 
 public class Coordinator: NSObject, AVPlayerViewControllerDelegate, UINavigationControllerDelegate {

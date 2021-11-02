@@ -19,7 +19,6 @@ struct CommonView: View {
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     
- 
     // This is our search filter
     var categorySearchResults: Categories {
         cats.filter({"\($0.categoryName)"
@@ -28,11 +27,11 @@ struct CommonView: View {
     }
     
     var isMac: Bool {
-    #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         true
-    #else
+#else
         false
-    #endif
+#endif
     }
     
     var body: some View {
@@ -52,7 +51,7 @@ struct CommonView: View {
                 }
                 .onChange(of: selectedItem) { selectionData in
                     if plo.previousCategoryID != selectionData || plo.previousCategoryID != selectedItem, let sd = selectionData {
-                            plo.previousCategoryID = sd
+                        plo.previousCategoryID = sd
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
@@ -69,28 +68,23 @@ struct CommonView: View {
         }
     }
 }
+
 struct CategoriesView: View {
-    
     @ObservedObject var lgo = LoginObservable.shared
     
-    var isPhone: Bool {
-        UIDevice.current.userInterfaceIdiom == .phone
-    }
-    
     var body: some View {
-        
         if !lgo.isLoggedIn {
-            Text("")
+            Text("Auto login")
                 .sheet(isPresented: $lgo.showingLogin) {
                     LoginSheetView()
                 }
         }
         
         
-            CommonView()
-                .onAppear {
-                    lgo.showingLogin = true
-                }
-                .navigationViewStyle( .columns )
+        CommonView()
+            .onAppear {
+                lgo.showingLogin = true
+            }
+            .navigationViewStyle( .columns )
     }
 }

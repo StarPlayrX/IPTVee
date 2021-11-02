@@ -9,11 +9,11 @@ import SwiftUI
 import iptvKit
 import AVKit
 
-   
+
 
 struct ChannelsView: View {
     var playerView = PlayerView()
-
+    
     internal init(categoryID: String, categoryName: String) {
         self.categoryID = categoryID
         self.categoryName = categoryName
@@ -31,7 +31,7 @@ struct ChannelsView: View {
     @ObservedObject var lgo = LoginObservable.shared
     @ObservedObject var cha = ChannelsObservable.shared
     @Environment(\.presentationMode) var presentationMode
-
+    
     //It's a long one line but it works
     var channelSearchResults: [iptvChannel] {
         (cha.chan.filter({ $0.categoryID == categoryID })
@@ -41,7 +41,7 @@ struct ChannelsView: View {
     }
     
     @State var isShowingColumn = true
-     
+    
     @State var isPortrait: Bool = false
     
     var isPortraitFallback: Bool {
@@ -51,7 +51,7 @@ struct ChannelsView: View {
         
         return scene.interfaceOrientation.isPortrait
     }
-
+    
     var isPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
     }
@@ -59,98 +59,99 @@ struct ChannelsView: View {
     var isPhone: Bool {
         UIDevice.current.userInterfaceIdiom == .phone
     }
-
+    
     var isMac: Bool {
-        #if targetEnvironment(macCatalyst)
-            true
-        #else
-            false
-        #endif
+#if targetEnvironment(macCatalyst)
+        true
+#else
+        false
+#endif
     }
     
     func isEven(_ f: Int) -> Bool {
         f % 2 == 0
     }
     
-
+    
     fileprivate func getOrientation() {
         if UIDevice.current.orientation.isPortrait { isPortrait = true; return}
         if UIDevice.current.orientation.isLandscape { isPortrait = false; return}
-
+        
         isPortrait = isPortraitFallback
     }
     
     var body: some View {
-
+        
+        
+        Form {
             
-            Form {
-                
-                Section(header: Text("Channels").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
-                    ForEach(Array(channelSearchResults),id: \.id) { ch in
+            Section(header: Text("Channels").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                ForEach(Array(channelSearchResults),id: \.id) { ch in
+                    
+                    
+                    Group {
                         
-                        
-                        Group {
-                            
-                            NavigationLink(destination: playerView, tag: "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)", selection: self.$selectedItem)  {
-                                HStack {
-                                    Text(String(ch.num))
-                                        .fontWeight(.medium)
-                                        .font(.system(size: 24, design: .monospaced))
-                                        .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
-                                    
-                                }
-                                VStack (alignment: .leading, spacing: 0) {
-                                    Text(ch.name)
-                                        .font(.system(size: 16, design: .default))
-                                        .fontWeight(.regular)
-                                    
-                                    if !ch.nowPlaying.isEmpty {
-                                        Text(ch.nowPlaying)
-                                            .font(.system(size: 14, design: .default))
-                                            .fontWeight(.light)
-                                    }
-                                }
-                                .padding(.leading, 7.5)
-                                .frame(alignment: .center)
+                        NavigationLink(destination: playerView, tag: "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)", selection: self.$selectedItem)  {
+                            HStack {
+                                Text(String(ch.num))
+                                    .fontWeight(.medium)
+                                    .font(.system(size: 24, design: .monospaced))
+                                    .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
                                 
                             }
-                            .isDetailLink(true)
-                            .listRowBackground(self.selectedItem == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" || plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                            VStack (alignment: .leading, spacing: 0) {
+                                Text(ch.name)
+                                    .font(.system(size: 16, design: .default))
+                                    .fontWeight(.regular)
+                                
+                                if !ch.nowPlaying.isEmpty {
+                                    Text(ch.nowPlaying)
+                                        .font(.system(size: 14, design: .default))
+                                        .fontWeight(.light)
+                                }
+                            }
+                            .padding(.leading, 7.5)
+                            .frame(alignment: .center)
+                            
                         }
+                        .isDetailLink(true)
+                        .listRowBackground(self.selectedItem == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" || plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
                     }
                 }
-                .onChange(of: selectedItem) { selectionData in
-                    if plo.previousSelection != selectionData || plo.previousSelection != selectedItem {
-                        if let elements = selectionData?.components(separatedBy: "^"), elements.count == 3, let sd = selectionData  {
-                            plo.previousSelection = sd
-                            PlayerObservable.plo.miniEpg = []
-                            Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
+            }
+            .onChange(of: selectedItem) { selectionData in
+                if plo.previousSelection != selectionData || plo.previousSelection != selectedItem {
+                    if let elements = selectionData?.components(separatedBy: "^"), elements.count == 3, let sd = selectionData  {
+                        plo.previousSelection = sd
+                        PlayerObservable.plo.miniEpg = []
+                        Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
                         
-                            if isPhone && !isPortrait { selectedItem = nil }
-                            if isPad {selectedItem = nil }
+                        if isPhone && !isPortrait { selectedItem = nil }
+                        if isPad {selectedItem = nil }
                     }
                 }
             }
-            .transition(.opacity)
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarTitle("Channels")
-            .padding(.leading, isMac ? -20 : 0)
-            .padding(.trailing,isMac ? -20 : 0)
-            .frame(width: .infinity, alignment: .trailing)
-            .edgesIgnoringSafeArea(.all)
-            .onAppear{getOrientation()}
-            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                getOrientation()
-            }
+        }
+        .transition(.opacity)
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitle("Channels")
+        .padding(.leading, isMac ? -20 : 0)
+        .padding(.trailing,isMac ? -20 : 0)
+        .frame(width: .infinity, alignment: .trailing)
+        .edgesIgnoringSafeArea(.all)
+        .onAppear{getOrientation()}
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            getOrientation()
+        }
         
     }
-        
+    
     
     func performMagicTapStop() {
         plo.videoController.player?.pause()
     }
-
+    
 }
 
 
@@ -201,6 +202,7 @@ public class Player: NSObject {
             DispatchQueue.main.async {
                 let options = [AVURLAssetPreferPreciseDurationAndTimingKey : true, AVURLAssetAllowsCellularAccessKey : true, AVURLAssetAllowsExpensiveNetworkAccessKey : true, AVURLAssetAllowsConstrainedNetworkAccessKey : true, AVURLAssetReferenceRestrictionsKey: true ]
                 
+
                 let playNowUrl = avSession.currentRoute.outputs.first?.portType == .airPlay || self.plo.videoController.player!.isExternalPlaybackActive ? airplayUrl : streamUrl
                 
                 self.plo.streamID = streamId

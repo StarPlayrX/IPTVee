@@ -41,7 +41,6 @@ struct NowPlayingView: View {
                                 .multilineTextAlignment(.leading)
                                 .padding(.leading, 5)
                         }
-                        
                         .font(.callout)
                     }
                 }
@@ -117,19 +116,12 @@ struct PlayerView: View {
     }
     
     var isMac: Bool {
-#if targetEnvironment(macCatalyst)
+    #if targetEnvironment(macCatalyst)
         true
-#else
+    #else
         false
-#endif
+    #endif
     }
-    
-    
-    
-    
-    //  let orientationChanged = NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
-    //      .makeConnectable()
-    //      .autoconnect()
     
     fileprivate func getOrientation() {
         if UIDevice.current.orientation.isPortrait { isPortrait = true; return}
@@ -199,13 +191,11 @@ struct PlayerView: View {
                 }
             }
         }
-    
     }
     
     func performMagicTap() {
         plo.videoController.player?.rate == 1 ? plo.videoController.player?.pause() : plo.videoController.player?.play()
     }
-    
     
     //Back burner
     func skipForward(_ videoController: AVPlayerViewController ) {
