@@ -162,7 +162,7 @@ struct PlayerView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle(plo.channelName)
-            .onAppear{getOrientation(); print(isPad, isMac, isPortrait)}
+            .onAppear{getOrientation()}
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
                 getOrientation()
             }

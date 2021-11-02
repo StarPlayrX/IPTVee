@@ -19,12 +19,15 @@ public struct AVPlayerView: UIViewControllerRepresentable {
     }
     
     public func makeUIViewController(context: Context) -> AVPlayerViewController {
+        print("THIS")
         if plo.streamID != plo.previousStreamID {
             plo.previousStreamID = plo.streamID
             plo.videoController =  setupVideoController()
             plo.videoController.delegate = context.coordinator
             return plo.videoController
         } else {
+            print("THAT")
+
             let player = plo.videoController.player
             plo.videoController = AVPlayerViewController()
             plo.videoController.player = player

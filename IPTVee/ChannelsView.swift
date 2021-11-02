@@ -38,6 +38,17 @@ struct ChannelsView: View {
             .lowercased()
             .contains(searchText.lowercased()) || searchText.isEmpty}))
     }
+    
+    
+    @State var isPortrait: Bool = false
+    
+    var isPad: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
+    }
+    
+    var isPhone: Bool {
+        UIDevice.current.userInterfaceIdiom == .phone
+    }
 
     var isMac: Bool {
         #if targetEnvironment(macCatalyst)
@@ -52,6 +63,12 @@ struct ChannelsView: View {
     }
     
 
+    fileprivate func getOrientation() {
+        if UIDevice.current.orientation.isPortrait { isPortrait = true; return}
+        if UIDevice.current.orientation.isLandscape { isPortrait = false; return}
+
+        isPortrait = false
+    }
     
     var body: some View {
 
@@ -100,8 +117,14 @@ struct ChannelsView: View {
                             Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
 
                         }
+                    } else {
+                        print("TAP")
                     }
                 }
+            }
+            .onDisappear{
+                if isPhone && !isPortrait { selectedItem = nil }
+                if isPad {selectedItem = nil }
             }
             .transition(.opacity)
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
@@ -111,7 +134,10 @@ struct ChannelsView: View {
             .padding(.trailing,isMac ? -20 : 0)
             .frame(width: .infinity, alignment: .trailing)
             .edgesIgnoringSafeArea(.all)
-       
+            .onAppear{getOrientation()}
+            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                getOrientation()
+            }
         
     }
     

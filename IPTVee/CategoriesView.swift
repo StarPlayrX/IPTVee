@@ -19,7 +19,7 @@ struct CommonView: View {
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     
- 
+    
     // This is our search filter
     var categorySearchResults: Categories {
         cats.filter({"\($0.categoryName)"
@@ -28,11 +28,11 @@ struct CommonView: View {
     }
     
     var isMac: Bool {
-    #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         true
-    #else
+#else
         false
-    #endif
+#endif
     }
     
     var body: some View {
@@ -94,18 +94,11 @@ struct CategoriesView: View {
                 }
         }
         
-        if isPhone {
-            CommonView()
-                .onAppear {
-                    lgo.showingLogin = true
-                }
-                .navigationViewStyle( .columns )
-        } else {
-            CommonView()
-                .onAppear {
-                    lgo.showingLogin = true
-                }
-                .navigationViewStyle( .columns )
-        }
+        
+        CommonView()
+            .onAppear {
+                lgo.showingLogin = true
+            }
+            .navigationViewStyle( .columns )
     }
 }
