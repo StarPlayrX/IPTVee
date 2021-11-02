@@ -41,6 +41,7 @@ public func setupVideoController() -> AVPlayerViewController {
     
     let plo = PlayerObservable.plo
     let player = plo.videoController.player
+    player?.replaceCurrentItem(with: nil)
     plo.videoController = AVPlayerViewController()
     
     plo.videoController.player = player

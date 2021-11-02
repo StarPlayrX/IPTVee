@@ -2,7 +2,7 @@ import SwiftUI
 import AVKit
 import iptvKit
 
-
+let avPlayerView = AVPlayerView()
 
 struct PlayerView: View {
     @State private var showDetails = false
@@ -42,7 +42,7 @@ struct PlayerView: View {
                 
                     
                     if isPad {
-                        AVPlayerView()
+                        avPlayerView
                         
                         
                             .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .top)
@@ -52,7 +52,7 @@ struct PlayerView: View {
                     } else {
                         
                 
-                        AVPlayerView()
+                        avPlayerView
                             .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .top)
                                 .background(Color(UIColor.systemBackground))
                                 .opacity(1)

@@ -74,7 +74,7 @@ struct CommonView: View {
             }
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
             
-            EmptyView()
+            playerView
         }
     }
 }

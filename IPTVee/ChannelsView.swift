@@ -9,6 +9,9 @@ import SwiftUI
 import iptvKit
 import AVKit
 
+ var playerView = PlayerView()
+
+
 struct ChannelsView: View {
     
     internal init(categoryID: String, categoryName: String) {
@@ -48,7 +51,6 @@ struct ChannelsView: View {
         f % 2 == 0
     }
     
-    @State var playerView = PlayerView()
 
     
     var body: some View {
@@ -88,21 +90,18 @@ struct ChannelsView: View {
                             .isDetailLink(true)
                             .listRowBackground(self.selectedItem == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" || plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
                         }
-                        
-                        
                     }
                 }
                 .onChange(of: selectedItem) { selectionData in
-                    if let elements = selectionData?.components(separatedBy: "^"), elements.count == 3, let sd = selectionData  {
-                        Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
-                        plo.previousSelection = sd
+                    if  plo.previousSelection != self.selectedItem {
+                        if let elements = selectionData?.components(separatedBy: "^"), elements.count == 3, let sd = selectionData  {
+                            Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
+                            plo.previousSelection = sd
+                        }
                     }
-                 
                 }
-              
             }
             .transition(.opacity)
-
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle("Channels")
