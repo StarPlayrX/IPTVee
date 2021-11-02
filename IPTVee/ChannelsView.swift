@@ -83,20 +83,20 @@ struct ChannelsView: View {
                                 
                             }
                             .isDetailLink(true)
-                            .listRowBackground(self.selectedItem == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                            .listRowBackground(self.selectedItem == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" || plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
                         }
                         
                         
                     }
                 }
-                .onChange(of: selectedItem) { value in
-                    if let elements = value?.components(separatedBy: "^"), elements.count == 3 {
-                        print(elements)
+                .onChange(of: selectedItem) { selectionData in
+                    if let elements = selectionData?.components(separatedBy: "^"), elements.count == 3, let sd = selectionData  {
                         Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
-
+                        plo.previousSelection = sd
                     }
                  
                 }
+              
             }
         }
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
