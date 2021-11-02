@@ -9,11 +9,11 @@ import SwiftUI
 import iptvKit
 import AVKit
 
- var playerView = PlayerView()
-
+   
 
 struct ChannelsView: View {
-    
+    var playerView = PlayerView()
+
     internal init(categoryID: String, categoryName: String) {
         self.categoryID = categoryID
         self.categoryName = categoryName
@@ -30,7 +30,8 @@ struct ChannelsView: View {
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     @ObservedObject var cha = ChannelsObservable.shared
-    
+    @Environment(\.presentationMode) var presentationMode
+
     //It's a long one line but it works
     var channelSearchResults: [iptvChannel] {
         (cha.chan.filter({ $0.categoryID == categoryID })
@@ -39,9 +40,18 @@ struct ChannelsView: View {
             .contains(searchText.lowercased()) || searchText.isEmpty}))
     }
     
-    
+    @State var isShowingColumn = true
+     
     @State var isPortrait: Bool = false
     
+    var isPortraitFallback: Bool {
+        guard let scene =  (UIApplication.shared.connectedScenes.first as? UIWindowScene) else {
+            return true
+        }
+        
+        return scene.interfaceOrientation.isPortrait
+    }
+
     var isPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
     }
@@ -67,7 +77,7 @@ struct ChannelsView: View {
         if UIDevice.current.orientation.isPortrait { isPortrait = true; return}
         if UIDevice.current.orientation.isLandscape { isPortrait = false; return}
 
-        isPortrait = false
+        isPortrait = isPortraitFallback
     }
     
     var body: some View {
@@ -115,16 +125,11 @@ struct ChannelsView: View {
                             plo.previousSelection = sd
                             PlayerObservable.plo.miniEpg = []
                             Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
-
-                        }
-                    } else {
-                        print("TAP")
+                        
+                            if isPhone && !isPortrait { selectedItem = nil }
+                            if isPad {selectedItem = nil }
                     }
                 }
-            }
-            .onDisappear{
-                if isPhone && !isPortrait { selectedItem = nil }
-                if isPad {selectedItem = nil }
             }
             .transition(.opacity)
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
@@ -140,6 +145,7 @@ struct ChannelsView: View {
             }
         
     }
+        
     
     func performMagicTapStop() {
         plo.videoController.player?.pause()

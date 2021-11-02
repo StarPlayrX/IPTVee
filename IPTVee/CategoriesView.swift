@@ -19,7 +19,7 @@ struct CommonView: View {
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     
-    
+ 
     // This is our search filter
     var categorySearchResults: Categories {
         cats.filter({"\($0.categoryName)"
@@ -28,11 +28,11 @@ struct CommonView: View {
     }
     
     var isMac: Bool {
-#if targetEnvironment(macCatalyst)
+    #if targetEnvironment(macCatalyst)
         true
-#else
+    #else
         false
-#endif
+    #endif
     }
     
     var body: some View {
@@ -43,11 +43,16 @@ struct CommonView: View {
                     EmptyView()
                         .frame(width: 0, height: 0, alignment: .center)
                     ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
-                        NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
+                        NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: $selectedItem)
                             .isDetailLink(false)
                             .padding(.leading, 2)
                             .padding(.trailing, 2)
-                            .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground") )
+                            .listRowBackground(plo.previousCategoryID == cat.categoryID ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground") )
+                    }
+                }
+                .onChange(of: selectedItem) { selectionData in
+                    if plo.previousCategoryID != selectionData || plo.previousCategoryID != selectedItem, let sd = selectionData {
+                            plo.previousCategoryID = sd
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
@@ -58,22 +63,9 @@ struct CommonView: View {
             .padding(.trailing, isMac ? -20 : 0)
             .frame(width: .infinity, alignment: .trailing)
             .edgesIgnoringSafeArea(.all)
-            
-            
-            .onAppear {
-                
-                if !plo.previousCategoryID.isEmpty && plo.videoController.player?.rate == 1 {
-                    selectedItem = plo.previousCategoryID
-                }
-            }
-            .onDisappear{
-                if let si = selectedItem {
-                    plo.previousCategoryID = si
-                }
-            }
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
             
-            playerView
+            EmptyView()
         }
     }
 }
@@ -95,10 +87,10 @@ struct CategoriesView: View {
         }
         
         
-        CommonView()
-            .onAppear {
-                lgo.showingLogin = true
-            }
-            .navigationViewStyle( .columns )
+            CommonView()
+                .onAppear {
+                    lgo.showingLogin = true
+                }
+                .navigationViewStyle( .columns )
     }
 }
