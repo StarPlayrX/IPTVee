@@ -21,9 +21,9 @@ struct ChannelsView: View {
     @State var searchText: String = ""
     @State var selectedChannel: String?
     @State var isActive: Bool = false
-    @State var selectedItem: Int?
+    @State var selectedItem: String?
+    @State var runningMan: Bool = false
     @Environment(\.colorScheme) var colorScheme
-    
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     @ObservedObject var cha = ChannelsObservable.shared
@@ -44,8 +44,11 @@ struct ChannelsView: View {
         f % 2 == 0
     }
     
+    @State var playerView = PlayerView()
+
+    
     var body: some View {
-        
+
         GeometryReader { geometry in
             
             Form {
@@ -53,104 +56,67 @@ struct ChannelsView: View {
                 Section(header: Text("Channels").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                     ForEach(Array(channelSearchResults),id: \.id) { ch in
                         
-                        if UIDevice.current.userInterfaceIdiom == .phone {
-                            
-                            Group {
-                                
-                                NavigationLink(destination: PlayerView()) {
-                                    HStack {
-                                        Text(String(ch.num))
-                                            .fontWeight(.medium)
-                                            .font(.system(size: 24, design: .monospaced))
-                                            .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
-                                        
-                                    }
-                                    VStack (alignment: .leading, spacing: 0) {
-                                        Text(ch.name)
-                                            .font(.system(size: 16, design: .default))
-                                            .fontWeight(.regular)
-                                        
-                                        if !ch.nowPlaying.isEmpty {
-                                            Text(ch.nowPlaying)
-                                                .font(.system(size: 14, design: .default))
-                                                .fontWeight(.light)
-                                        }
-                                    }
-                                    .padding(.leading, 7.5)
-                                    .frame(alignment: .center)
-                                    
-                                }.listRowBackground(self.selectedItem == ch.streamID || (plo.previousStreamID == ch.streamID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
-                            }
-                         
- 
                         
-                        } else {
-                            HStack {
-                                
+                        Group {
+                            
+                            NavigationLink(destination: playerView, tag: "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)", selection: self.$selectedItem)  {
                                 HStack {
                                     Text(String(ch.num))
                                         .fontWeight(.medium)
                                         .font(.system(size: 24, design: .monospaced))
-                                        .frame(minWidth: 45, idealWidth: 80, alignment: .trailing)
+                                        .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
+                                    
                                 }
-                                
-                                
                                 VStack (alignment: .leading, spacing: 0) {
                                     Text(ch.name)
                                         .font(.system(size: 16, design: .default))
                                         .fontWeight(.regular)
-                                        .multilineTextAlignment(.leading)
                                     
                                     if !ch.nowPlaying.isEmpty {
                                         Text(ch.nowPlaying)
                                             .font(.system(size: 14, design: .default))
                                             .fontWeight(.light)
-                                            .multilineTextAlignment(.leading)
                                     }
                                 }
-                                
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                
-                                
-                                
+                                .padding(.leading, 7.5)
+                                .frame(alignment: .center)
                                 
                             }
-                            .fixedSize(horizontal: false, vertical: true)
-                            .foregroundColor(Color.primary)
-                            .frame(width:.infinity, height:.infinity)
-                            .contentShape(Rectangle())
-                            .simultaneousGesture(TapGesture().onEnded{
-                                Player.iptv.Action(streamId: ch.streamID, channelName: ch.name, imageURL: ch.streamIcon)
-                            })
-                            .listRowBackground(self.selectedItem == ch.streamID ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                            .isDetailLink(true)
+                            .listRowBackground(self.selectedItem == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
                         }
+                        
                         
                     }
                 }
-            }
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarTitle("Channels")
-            .padding(.leading, isMac ? -20 : 0)
-            .padding(.trailing,isMac ? -20 : 0)
-            .frame(width: .infinity, alignment: .trailing)
-            .edgesIgnoringSafeArea(.all)
-            .onAppear{
-                // if plo.streamID > 0 && plo.videoController.player?.rate == 1 {
-                //     self.selectedItem = plo.streamID
-                // }
+                .onChange(of: selectedItem) { value in
+                    if let elements = value?.components(separatedBy: "^"), elements.count == 3 {
+                        print(elements)
+                        Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
+
+                    }
+                 
+                }
             }
         }
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitle("Channels")
+        .padding(.leading, isMac ? -20 : 0)
+        .padding(.trailing,isMac ? -20 : 0)
+        .frame(width: .infinity, alignment: .trailing)
+        .edgesIgnoringSafeArea(.all)
+        
     }
     
     func performMagicTapStop() {
         plo.videoController.player?.pause()
     }
-    
-   
+
 }
+
+
+
 
 
 
@@ -166,9 +132,9 @@ public class Player: NSObject {
         
         
         
-       
+        
         plo.previousStreamID = streamId
-//   plo.streamID = streamId
+        //   plo.streamID = streamId
         
         // if plo.previousStreamID != streamId {
         nowPlaying(channelName: channelName, streamId: streamId, imageURL: imageURL)

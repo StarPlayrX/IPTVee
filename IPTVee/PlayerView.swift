@@ -2,8 +2,11 @@ import SwiftUI
 import AVKit
 import iptvKit
 
+
+
 struct PlayerView: View {
-    
+    @State private var showDetails = false
+
     @ObservedObject var plo = PlayerObservable.plo
     
     var isPortrait: Bool {
@@ -24,29 +27,36 @@ struct PlayerView: View {
     
     @State var orientation = UIDevice.current.orientation
     
+   @State  var avPlayerView = AVPlayerView()
+
     let orientationChanged = NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
         .makeConnectable()
         .autoconnect()
     
     var body: some View {
-    
+        
         GeometryReader { geometry in
             Form{}
+            
             VStack {
-                
+
                 HStack {
-                    
+
                     if isPad {
                         AVPlayerView()
-                            .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .center)
+
+                   
+                            .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .topLeading)
                             .background(Color(UIColor.systemBackground))
                     } else {
                         AVPlayerView()
-                            .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .center)
-                            .background(Color(UIColor.systemBackground))
+
+                            .frame(width:  isPortrait ? geometry.size.width : .infinity , height: isPortrait ? geometry.size.width * 0.5625 :. infinity, alignment: .topLeading)
+                              .background(Color(UIColor.systemBackground))
+                   
+                        
                     }
                 }
-                
                 
                 if isPortrait {
                     
@@ -137,6 +147,10 @@ struct PlayerView: View {
             .onReceive(orientationChanged) { _ in
                 self.orientation = UIDevice.current.orientation
                 print(orientation.isPortrait)
+            }
+            
+            .onAppear{
+            
             }
         }
     }
