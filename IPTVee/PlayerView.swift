@@ -29,7 +29,6 @@ struct PlayerView: View {
     
     @State var orientation = UIDevice.current.orientation
     
-    @State var avPlayerView = AVPlayerView()
     
     let orientationChanged = NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
         .makeConnectable()
@@ -43,19 +42,23 @@ struct PlayerView: View {
                 
                     
                     if isPad {
-                        avPlayerView
+                        AVPlayerView()
                         
                         
                             .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .top)
                             .background(Color(UIColor.systemBackground))
+                            .opacity(1)
+
                     } else {
                         
                 
-                            avPlayerView
+                        AVPlayerView()
                             .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .top)
                                 .background(Color(UIColor.systemBackground))
+                                .opacity(1)
                       
                     }
+                    
                     
                 
                 

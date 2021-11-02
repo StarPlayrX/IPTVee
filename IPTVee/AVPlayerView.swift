@@ -40,12 +40,12 @@ public func runAVSession() {
 public func setupVideoController() -> AVPlayerViewController {
     
     let plo = PlayerObservable.plo
-
     let player = plo.videoController.player
-    
-    
     plo.videoController = AVPlayerViewController()
+    
     plo.videoController.player = player
+    plo.videoController.parent?.view.alpha = 1
+
     plo.videoController.showsPlaybackControls = true
     plo.videoController.requiresLinearPlayback = false
     plo.videoController.canStartPictureInPictureAutomaticallyFromInline = true
