@@ -93,7 +93,7 @@ struct ChannelsView: View {
                     }
                 }
                 .onChange(of: selectedItem) { selectionData in
-                    if  plo.previousSelection != selectionData {
+                    if plo.previousSelection != selectionData || plo.previousSelection != selectedItem {
                         if let elements = selectionData?.components(separatedBy: "^"), elements.count == 3, let sd = selectionData  {
                             plo.previousSelection = sd
                             PlayerObservable.plo.miniEpg = []
@@ -135,19 +135,9 @@ public class Player: NSObject {
     
     static public let iptv = Player()
     public func Action(streamId: Int, channelName: String, imageURL: String) {
-        
-        
-        
-        
-        plo.previousStreamID = streamId
-        //   plo.streamID = streamId
-        
-        // if plo.previousStreamID != streamId {
+        plo.streamID = streamId
         nowPlaying(channelName: channelName, streamId: streamId, imageURL: imageURL)
         airPlayr(streamId: streamId)
-        // }
-        
-        
     }
     
     func nowPlaying(channelName: String, streamId: Int, imageURL: String) {

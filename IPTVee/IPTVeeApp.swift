@@ -43,6 +43,4 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         HLSxServe.shared.start_HLSx()
         return true
     }
-
 }
-

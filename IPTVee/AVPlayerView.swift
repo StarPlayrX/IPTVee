@@ -16,11 +16,20 @@ public struct AVPlayerView: UIViewControllerRepresentable {
     
     public func updateUIViewController(_ videoController: AVPlayerViewController, context: Context) {
         runAVSession()
-        plo.videoController.delegate = context.coordinator
     }
     
     public func makeUIViewController(context: Context) -> AVPlayerViewController {
-        setupVideoController()
+        if plo.streamID != plo.previousStreamID {
+            plo.previousStreamID = plo.streamID
+            plo.videoController =  setupVideoController()
+            plo.videoController.delegate = context.coordinator
+            return plo.videoController
+        } else {
+            let player = plo.videoController.player
+            plo.videoController = AVPlayerViewController()
+            plo.videoController.player = player
+            return plo.videoController
+        }
     }
 }
 
@@ -45,7 +54,6 @@ public func setupVideoController() -> AVPlayerViewController {
     plo.videoController = AVPlayerViewController()
     
     plo.videoController.player = player
-    plo.videoController.parent?.view.alpha = 1
 
     plo.videoController.showsPlaybackControls = true
     plo.videoController.requiresLinearPlayback = false

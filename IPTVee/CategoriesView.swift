@@ -28,13 +28,12 @@ struct CommonView: View {
     }
     
     var isMac: Bool {
-#if targetEnvironment(macCatalyst)
+    #if targetEnvironment(macCatalyst)
         true
-#else
+    #else
         false
-#endif
+    #endif
     }
-    
     
     var body: some View {
         NavigationView {
@@ -100,7 +99,7 @@ struct CategoriesView: View {
                 .onAppear {
                     lgo.showingLogin = true
                 }
-                .navigationViewStyle( .stack )
+                .navigationViewStyle( .columns )
         } else {
             CommonView()
                 .onAppear {

@@ -4,19 +4,16 @@ import iptvKit
 
 let avPlayerView = AVPlayerView()
 
+
+
 struct PlayerView: View {
     @State private var showDetails = false
+    @State private var orientation = UIDeviceOrientation.unknown
     
     @ObservedObject var plo = PlayerObservable.plo
     
     
-    var isPortrait: Bool {
-        guard let scene =  (UIApplication.shared.connectedScenes.first as? UIWindowScene) else {
-            return true
-        }
-        
-        return scene.interfaceOrientation.isPortrait
-    }
+    @State var isPortrait: Bool = false
     
     var isPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
@@ -27,53 +24,56 @@ struct PlayerView: View {
     }
     
     var isMac: Bool {
-        #if targetEnvironment(macCatalyst)
-            true
-        #else
-            false
-        #endif
+#if targetEnvironment(macCatalyst)
+        true
+#else
+        false
+#endif
     }
     
-    @State var orientation = UIDevice.current.orientation
     
     
-    let orientationChanged = NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
-        .makeConnectable()
-        .autoconnect()
+    
+    //  let orientationChanged = NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
+    //      .makeConnectable()
+    //      .autoconnect()
+    
+    fileprivate func getOrientation() {
+        if UIDevice.current.orientation.isPortrait { isPortrait = true; return}
+        if UIDevice.current.orientation.isLandscape { isPortrait = false; return}
+
+        isPortrait = false
+    }
     
     var body: some View {
-        
+    
+        Group {
+
         GeometryReader { geometry in
+            Form { EmptyView()}
             
             VStack {
-                
-                    
-                    if isPad {
-                        avPlayerView
-                        
-                        
-                            .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .top)
-                            .background(Color(UIColor.systemBackground))
-                            .opacity(1)
 
-                    } else {
-                        
-                
-                        avPlayerView
-                            .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .top)
-                                .background(Color(UIColor.systemBackground))
-                                .opacity(1)
-                      
-                    }
+                if isPad {
+                    avPlayerView
                     
                     
-                
-                
-       
+                        .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .top)
+                        .opacity(1)
+                    
+                } else {
+                    
+                    
+                    avPlayerView
+                        .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .top)
+                        .opacity(1)
+                    
+                }
+                     
                 if isPortrait || isPad {
                     
-                    List {
-                        if !plo.miniEpg.isEmpty && (isPortrait || isPhone || isMac) {
+                    Form {
+                        if !plo.miniEpg.isEmpty && (isPortrait || isMac ) {
                             
                             Section(header: Text("PROGRAM GUIDE").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                                 ForEach(Array(plo.miniEpg),id: \.id) { epg in
@@ -91,47 +91,58 @@ struct PlayerView: View {
                                     .font(.callout)
                                 }
                             }
-                        } else if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
-                            Section(header: Text("PROGRAM GUIDE").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
-                                HStack {
-                                    Text(plo.miniEpg.first?.start.toDate()?.userTimeZone().toString() ?? "")
-                                        .fontWeight(.medium)
-                                        .frame(minWidth: 78, alignment: .trailing)
+                            
+                            if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
+                                Section(header: Text("Description").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold)))  {
+                                    Text(desc)
+                                        .frame(minWidth: 80, alignment: .leading)
                                         .multilineTextAlignment(.leading)
-                                    
-                                    Text(plo.miniEpg.first?.title.base64Decoded ?? "")
-                                        .multilineTextAlignment(.leading)
-                                        .padding(.leading, 5)
                                 }
-                                .font(.callout)
-                            }
-                        }
-                        
-                        if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
-                            Section(header: Text("Description").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold)))  {
-                                Text(desc)
-                                //.font(.body)
-                                //.fontWeight(.light)
-                                    .frame(minWidth: 80, alignment: .leading)
-                                    .multilineTextAlignment(.leading)
-                            }
-                        } else {
-                            Section(header: Text("Description").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
-                                Text(plo.channelName)
-                                    .font(.body)
-                                    .fontWeight(.light)
-                                    .frame(minWidth: 80, alignment: .leading)
-                                    .multilineTextAlignment(.leading)
+                            } else if (isPhone || isMac)  {
+                                Section(header: Text("Description").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                                    Text(plo.channelName)
+                                        .font(.body)
+                                        .fontWeight(.light)
+                                        .frame(minWidth: 80, alignment: .leading)
+                                        .multilineTextAlignment(.leading)
+                                }
                             }
                             
+                        } else if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
+                            
+                            HStack {
+                                Text(plo.miniEpg.first?.start.toDate()?.userTimeZone().toString() ?? "")
+                                    .fontWeight(.medium)
+                                    .frame(minWidth: 78, alignment: .trailing)
+                                    .multilineTextAlignment(.leading)
+                                
+                                Text(plo.miniEpg.first?.title.base64Decoded ?? "")
+                                    .multilineTextAlignment(.leading)
+                                    .padding(.leading, 5)
+                            }
+                            .font(.callout)
+                            
+                            if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
+                                    Text(desc)
+                                        .frame(minWidth: 80, alignment: .leading)
+                                        .multilineTextAlignment(.leading)
+                            } else if (isPhone || isMac)  {
+                                    Text(plo.channelName)
+                                        .font(.body)
+                                        .fontWeight(.light)
+                                        .frame(minWidth: 80, alignment: .leading)
+                                        .multilineTextAlignment(.leading)
+                            }
+                            
+                            
+                          
                         }
                     }
+                    
                     .animation(  .easeInOut(duration: 0.3))
                     .transition(.opacity)
-  
+                    
                 }
-                  
-            
             }
             .toolbar {
                 ToolbarItem(placement: .principal) {
@@ -151,7 +162,11 @@ struct PlayerView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle(plo.channelName)
-           
+            .onAppear{getOrientation(); print(isPad, isMac, isPortrait)}
+            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                getOrientation()
+            }
+        }
         }
     }
     
@@ -203,7 +218,7 @@ struct PlayerView: View {
 /*
  
  .refreshable {
-     getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
+ getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
  }
  
  */
