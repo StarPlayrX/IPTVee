@@ -27,14 +27,19 @@ struct CategoriesView: View {
     }
     
     var isMac: Bool {
-        UIDevice.current.userInterfaceIdiom == .mac
+        #if targetEnvironment(macCatalyst)
+            true
+        #else
+            false
+        #endif
     }
+    
+    
+
+    
     
 
     var body: some View {
-        
-        
-        
             
             if !lgo.isLoggedIn {
                 Text("")
@@ -44,28 +49,29 @@ struct CategoriesView: View {
             }
 
             NavigationView {
-                
-                Form {
-                    Section(header: Text("Categories").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
-                        
-                        EmptyView()
-                            .frame(width: 0, height: 0, alignment: .center)
-                        ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
-                            NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
-                                .isDetailLink(false)
-                                .padding(.leading, 2)
-                                .padding(.trailing, 2)
-                                .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground") )
+                    Form {
+                        Section(header: Text("Categories").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                            
+                            EmptyView()
+                                .frame(width: 0, height: 0, alignment: .center)
+                            ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
+                                NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: self.$selectedItem)
+                                    .isDetailLink(false)
+                                    .padding(.leading, 2)
+                                    .padding(.trailing, 2)
+                                    .listRowBackground(self.selectedItem == cat.categoryID || (plo.previousCategoryID == cat.categoryID && self.selectedItem == nil) ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground") )
+                            }
                         }
+                        .navigationBarTitleDisplayMode(.inline)
+                        .navigationBarTitle("Categories")
                     }
-                    .navigationBarTitleDisplayMode(.inline)
-                    .navigationBarTitle("Categories")
-                }
-                .padding(.leading, isMac ? -20 : 0)
-                .padding(.trailing, isMac ? -20 : 0)
-                .frame(width: .infinity, alignment: .trailing)
-                .edgesIgnoringSafeArea(.all)
-                
+                    .transition(.opacity)
+                    .padding(.leading, isMac ? -20 : 0)
+                    .padding(.trailing, isMac ? -20 : 0)
+                    .frame(width: .infinity, alignment: .trailing)
+                    .edgesIgnoringSafeArea(.all)
+                    
+             
                 .onAppear {
                     
                     if !plo.previousCategoryID.isEmpty && plo.videoController.player?.rate == 1 {

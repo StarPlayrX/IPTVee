@@ -35,9 +35,13 @@ struct ChannelsView: View {
             .lowercased()
             .contains(searchText.lowercased()) || searchText.isEmpty}))
     }
-    
+
     var isMac: Bool {
-        UIDevice.current.userInterfaceIdiom == .mac
+        #if targetEnvironment(macCatalyst)
+            true
+        #else
+            false
+        #endif
     }
     
     func isEven(_ f: Int) -> Bool {
@@ -49,7 +53,6 @@ struct ChannelsView: View {
     
     var body: some View {
 
-        GeometryReader { geometry in
             
             Form {
                 
@@ -98,14 +101,16 @@ struct ChannelsView: View {
                 }
               
             }
-        }
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarTitle("Channels")
-        .padding(.leading, isMac ? -20 : 0)
-        .padding(.trailing,isMac ? -20 : 0)
-        .frame(width: .infinity, alignment: .trailing)
-        .edgesIgnoringSafeArea(.all)
+            .transition(.opacity)
+
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitle("Channels")
+            .padding(.leading, isMac ? -20 : 0)
+            .padding(.trailing,isMac ? -20 : 0)
+            .frame(width: .infinity, alignment: .trailing)
+            .edgesIgnoringSafeArea(.all)
+       
         
     }
     

@@ -6,7 +6,7 @@ import iptvKit
 
 struct PlayerView: View {
     @State private var showDetails = false
-
+    
     @ObservedObject var plo = PlayerObservable.plo
     
     var isPortrait: Bool {
@@ -27,8 +27,8 @@ struct PlayerView: View {
     
     @State var orientation = UIDevice.current.orientation
     
-   @State  var avPlayerView = AVPlayerView()
-
+    @State var avPlayerView = AVPlayerView()
+    
     let orientationChanged = NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
         .makeConnectable()
         .autoconnect()
@@ -36,34 +36,44 @@ struct PlayerView: View {
     var body: some View {
         
         GeometryReader { geometry in
-            Form{}
             
             VStack {
-
+                
                 HStack {
-
+                    
                     if isPad {
-                        AVPlayerView()
-
-                   
+                        avPlayerView
+                        
+                        
                             .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .topLeading)
                             .background(Color(UIColor.systemBackground))
                     } else {
-                        AVPlayerView()
+                            
+                        if isPortrait {
+                            avPlayerView
+                            .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .topLeading)
+                            .background(Color(UIColor.systemBackground))
+                        } else {
+                            avPlayerView
+                                .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height, alignment: .topLeading)
+                                                     .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height, alignment: .topLeading)
 
-                            .frame(width:  isPortrait ? geometry.size.width : .infinity , height: isPortrait ? geometry.size.width * 0.5625 :. infinity, alignment: .topLeading)
-                              .background(Color(UIColor.systemBackground))
-                   
+                                .background(Color(UIColor.systemBackground))
+                        }
                         
                     }
-                }
+                        
+                    }
+
+
+
                 
                 if isPortrait {
                     
                     List {
                         if !plo.miniEpg.isEmpty {
                             
-                            Section(header: Text("PROGRAM GUIDE").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                            Section(header: Text("PROGRAM GUIDE").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                                 ForEach(Array(plo.miniEpg),id: \.id) { epg in
                                     
                                     HStack {
@@ -82,7 +92,7 @@ struct PlayerView: View {
                         }
                         
                         if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
-                            Section(header: Text("Description").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                                Section(header: Text("Description").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold)))  {
                                 Text(desc)
                                 //.font(.body)
                                 //.fontWeight(.light)
@@ -90,7 +100,7 @@ struct PlayerView: View {
                                     .multilineTextAlignment(.leading)
                             }
                         } else {
-                            Section(header: Text("Description").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                            Section(header: Text("Description").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                                 Text(plo.channelName)
                                     .font(.body)
                                     .fontWeight(.light)
@@ -100,14 +110,20 @@ struct PlayerView: View {
                             
                         }
                     }
+                    .animation(.easeIn(duration: 0.3))
+                    .transition(.opacity)
+                    
+#if targetEnvironment(macCatalyst)
                     .refreshable {
                         getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
                     }
+#endif
                     
-                } else if !plo.miniEpg.isEmpty && isPad {
+                    
+                } else if !plo.miniEpg.isEmpty && isPad  {
                     
                     List {
-                        Section(header: Text("PROGRAM GUIDE").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+                        Section(header: Text("PROGRAM GUIDE").frame(height:20).foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold)))  {
                             ForEach(Array(plo.miniEpg),id: \.id) { epg in
                                 
                                 HStack {
@@ -124,6 +140,7 @@ struct PlayerView: View {
                             }
                         }
                     }
+                   
                 }
             }
             .toolbar {
@@ -150,7 +167,7 @@ struct PlayerView: View {
             }
             
             .onAppear{
-            
+                
             }
         }
     }
