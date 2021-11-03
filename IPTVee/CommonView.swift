@@ -81,6 +81,7 @@ struct CommonView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarTitle("Categories")
             }
+
             .listStyle(InsetListStyle())
 
             .padding(.leading, isMac ? -20 : 0)
@@ -96,6 +97,7 @@ struct CommonView: View {
             }
             .padding(.bottom, 45)
         }
+
         
         .transition(.opacity)
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")

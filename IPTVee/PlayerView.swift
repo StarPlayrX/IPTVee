@@ -158,7 +158,7 @@ struct PlayerView: View {
                     }
                     
                     
-                    if isPortrait && isPad {
+                    if isPortrait || isPad {
                         Group {
                             NowPlayingView(isPortrait: isPortrait)
                         }
@@ -195,6 +195,7 @@ struct PlayerView: View {
                 }
             }
         }
+
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarTitle(plo.channelName)
 

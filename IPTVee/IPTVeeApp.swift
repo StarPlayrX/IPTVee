@@ -14,36 +14,57 @@ import UIKit
 @main
 struct IPTVapp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @Environment(\.colorScheme) var colorScheme
     
     let epgTimer = Timer.publish(every: 60, on: .current, in: .default).autoconnect()
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     
     var isMac: Bool {
-    #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         true
-    #else
+#else
         false
-    #endif
+#endif
     }
     
     var body: some Scene {
         
         WindowGroup {
-            CategoriesView()
-                .withHostingWindow { window in
-                    #if targetEnvironment(macCatalyst)
-                    if isMac, let titlebar = window?.windowScene?.titlebar {
-                        titlebar.titleVisibility = .hidden
-                        titlebar.toolbarStyle = .unified
-                        titlebar.separatorStyle = .none
-                        titlebar.toolbar = nil
-                        window?.windowScene?.title = ""
-                        
+            
+            if colorScheme == .light {
+                CategoriesView()
+                    .withHostingWindow { window in
+                        #if targetEnvironment(macCatalyst)
+                        if isMac, let titlebar = window?.windowScene?.titlebar {
+                            titlebar.titleVisibility = .hidden
+                            titlebar.toolbarStyle = .unified
+                            titlebar.separatorStyle = .none
+                            titlebar.toolbar = nil
+                            window?.windowScene?.title = ""
+                            
+                        }
+                        #endif
                     }
-                    #endif
-                }
-                .padding(.top, isMac ? -60 : 0)
+                    .padding(.top, isMac ? -60 : 0)
+                    .background(Color(UIColor.secondarySystemBackground))
+            } else {
+                CategoriesView()
+                    .withHostingWindow { window in
+                        #if targetEnvironment(macCatalyst)
+                        if isMac, let titlebar = window?.windowScene?.titlebar {
+                            titlebar.titleVisibility = .hidden
+                            titlebar.toolbarStyle = .unified
+                            titlebar.separatorStyle = .none
+                            titlebar.toolbar = nil
+                            window?.windowScene?.title = ""
+                            
+                        }
+                        #endif
+                    }
+                    .padding(.top, isMac ? -60 : 0)
+            }
+            
         }
     }
 }
@@ -64,7 +85,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         runAVSession()
         HLSxServe.shared.start_HLSx()
         return true
-    }   
+    }
 }
 
 extension View {

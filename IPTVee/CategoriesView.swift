@@ -26,6 +26,7 @@ struct CategoriesView: View {
                     lgo.showingLogin = true
                 }
             }
+
             .navigationViewStyle( .columns )
         
         }
