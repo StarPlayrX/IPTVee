@@ -23,6 +23,7 @@ struct LoginSheetView: View {
     
     var body: some View {
       
+    
         NavigationView {
             List {
                 
@@ -36,7 +37,7 @@ struct LoginSheetView: View {
                         Text("Login")
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
-                    .disabled(awaitDone)
+                    .disabled(obs.isLoginButtonDisabled)
                 }
 
                 Section(header: Text("Status")) {
@@ -47,25 +48,36 @@ struct LoginSheetView: View {
                 }
                 
                 Button("Done") {
+                    obs.isLoggedIn = true
                     presentationMode.wrappedValue.dismiss()
                 }
                 .disabled(!obs.isLoggedIn)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
             .onAppear {
+                
                 if !obs.isLoggedIn  {
-                   // login(userName, passWord, service, port)
+                    //localLogin()
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle("IPTVee Login")
+            .toolbar {
+                Button(action: {obs.showingLogin = false}) {
+                        Text("Done")
+                }.frame(alignment: .topTrailing)
+                
+            }
         }
+      
        
     }
     
     func localLogin() {
         DispatchQueue.global().async {
-            login(userName, passWord, service, port)
+            if !userName.isEmpty && !passWord.isEmpty && !service.isEmpty && !port.isEmpty {
+                login(userName, passWord, service, port)
+            }
         }
     }
 }

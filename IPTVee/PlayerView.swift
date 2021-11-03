@@ -130,11 +130,12 @@ struct PlayerView: View {
     }
     
     var body: some View {
+        EmptyView()
         
         Group {
             
             GeometryReader { geometry in
-                EmptyView()
+                Form{}
                 
                 VStack {
                     
@@ -183,14 +184,17 @@ struct PlayerView: View {
                         }
                     }
                 }
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarTitle(plo.channelName)
+              
+
                 .onAppear{getOrientation()}
                 .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
                     getOrientation()
                 }
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitle(plo.channelName)
+
     }
     
     func performMagicTap() {
