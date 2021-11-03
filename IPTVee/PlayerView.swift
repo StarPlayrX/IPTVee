@@ -21,8 +21,8 @@ struct NowPlayingView: View {
         false
 #endif
     }
-    
-    let isPortrait: Bool
+     
+   @State var isPortrait: Bool = true
     
     var body: some View {
         List {
@@ -88,6 +88,9 @@ struct NowPlayingView: View {
                 }
             }
         }
+        .refreshable {
+            getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
+        }
     }
 }
 
@@ -97,7 +100,7 @@ struct PlayerView: View {
     @State private var orientation = UIDeviceOrientation.unknown
     
     @ObservedObject var plo = PlayerObservable.plo
-    @State var isPortrait: Bool = false
+    @State var isPortrait: Bool = true
     
     var isPortraitFallback: Bool {
         guard let scene =  (UIApplication.shared.connectedScenes.first as? UIWindowScene) else {
@@ -129,7 +132,6 @@ struct PlayerView: View {
         isPortrait = isPortraitFallback
     }
     
-    @State private var scaledUp = true
 
     var body: some View {
         EmptyView()
@@ -247,8 +249,5 @@ struct PlayerView: View {
 
 /*
  
- .refreshable {
- getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
- }
  
  */

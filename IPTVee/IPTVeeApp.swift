@@ -21,50 +21,62 @@ struct IPTVapp: App {
     @ObservedObject var lgo = LoginObservable.shared
     
     var isMac: Bool {
-#if targetEnvironment(macCatalyst)
+        #if targetEnvironment(macCatalyst)
         true
-#else
+        #else
         false
-#endif
+        #endif
     }
     
+    let calendar = Calendar.current
+
     var body: some Scene {
         
         WindowGroup {
             
-            if colorScheme == .light {
-                CategoriesView()
-                    .withHostingWindow { window in
-                        #if targetEnvironment(macCatalyst)
-                        if isMac, let titlebar = window?.windowScene?.titlebar {
-                            titlebar.titleVisibility = .hidden
-                            titlebar.toolbarStyle = .unified
-                            titlebar.separatorStyle = .none
-                            titlebar.toolbar = nil
-                            window?.windowScene?.title = ""
-                            
+            Group {
+                if colorScheme == .light {
+                    CategoriesView()
+                        .withHostingWindow { window in
+                            #if targetEnvironment(macCatalyst)
+                            if isMac, let titlebar = window?.windowScene?.titlebar {
+                                titlebar.titleVisibility = .hidden
+                                titlebar.toolbarStyle = .unified
+                                titlebar.separatorStyle = .none
+                                titlebar.toolbar = nil
+                                window?.windowScene?.title = ""
+                                
+                            }
+                            #endif
                         }
-                        #endif
-                    }
-                    .padding(.top, isMac ? -60 : 0)
-                    .background(Color(UIColor.secondarySystemBackground))
-            } else {
-                CategoriesView()
-                    .withHostingWindow { window in
-                        #if targetEnvironment(macCatalyst)
-                        if isMac, let titlebar = window?.windowScene?.titlebar {
-                            titlebar.titleVisibility = .hidden
-                            titlebar.toolbarStyle = .unified
-                            titlebar.separatorStyle = .none
-                            titlebar.toolbar = nil
-                            window?.windowScene?.title = ""
-                            
+                        .padding(.top, isMac ? -45 : 0)
+                        .background(Color(UIColor.secondarySystemBackground))
+                } else {
+                    CategoriesView()
+                        .withHostingWindow { window in
+                            #if targetEnvironment(macCatalyst)
+                            if isMac, let titlebar = window?.windowScene?.titlebar {
+                                titlebar.titleVisibility = .hidden
+                                titlebar.toolbarStyle = .unified
+                                titlebar.separatorStyle = .none
+                                titlebar.toolbar = nil
+                                window?.windowScene?.title = ""
+                                
+                            }
+                            #endif
                         }
-                        #endif
+                        .padding(.top, isMac ? -45 : 0)
+                }
+            }.onReceive(epgTimer) { date in
+                let minute = calendar.component(.minute, from: date)
+                
+                if minute == 0 || minute == 15 || minute == 30 || minute == 45 {
+                    DispatchQueue.main.async {
+                        getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
+                        getNowPlayingEpg()
                     }
-                    .padding(.top, isMac ? -60 : 0)
+                }
             }
-            
         }
     }
 }

@@ -82,12 +82,10 @@ struct ChannelsView: View {
     
     var body: some View {
         
-        
         Form {
             
             Section(header: Text("Channels").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                 ForEach(Array(channelSearchResults),id: \.id) { ch in
-                    
                     
                     Group {
                         
@@ -135,6 +133,11 @@ struct ChannelsView: View {
                         if isPad {selectedItem = nil }
                     }
                 }
+            }
+        }
+        .refreshable  {
+            DispatchQueue.main.async {
+                getNowPlayingEpg()
             }
         }
         .listStyle(InsetListStyle())
