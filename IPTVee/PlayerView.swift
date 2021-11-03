@@ -164,9 +164,9 @@ struct PlayerView: View {
                         Group {
                             NowPlayingView(isPortrait: isPortrait)
                         }
-                        .animation(.easeInOut(duration: 0.3))
-                        
                         .transition(.opacity)
+                        .animation(.easeInOut(duration: 0.875))
+                        
                     } else if isPortrait && isPhone {
                         Group {
                             NowPlayingView(isPortrait: isPortrait)

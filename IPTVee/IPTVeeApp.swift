@@ -35,39 +35,21 @@ struct IPTVapp: App {
         WindowGroup {
             
             Group {
-                if colorScheme == .light {
-                    CategoriesView()
-                        .withHostingWindow { window in
-                            #if targetEnvironment(macCatalyst)
-                            if isMac, let titlebar = window?.windowScene?.titlebar {
-                                titlebar.titleVisibility = .hidden
-                                titlebar.toolbarStyle = .unified
-                                titlebar.separatorStyle = .none
-                                titlebar.toolbar = nil
-                                window?.windowScene?.title = ""
-                                
-                            }
-                            #endif
+                CategoriesView()
+                    #if targetEnvironment(macCatalyst)
+                    .withHostingWindow { window in
+                        if isMac, let titlebar = window?.windowScene?.titlebar {
+                            titlebar.titleVisibility = .hidden
+                            titlebar.toolbarStyle = .unified
+                            titlebar.separatorStyle = .none
+                            titlebar.toolbar = nil
+                            window?.windowScene?.title = ""
                         }
-                        .padding(.top, isMac ? -45 : 0)
-                        .background(Color(UIColor.secondarySystemBackground))
-                } else {
-                    CategoriesView()
-                        .withHostingWindow { window in
-                            #if targetEnvironment(macCatalyst)
-                            if isMac, let titlebar = window?.windowScene?.titlebar {
-                                titlebar.titleVisibility = .hidden
-                                titlebar.toolbarStyle = .unified
-                                titlebar.separatorStyle = .none
-                                titlebar.toolbar = nil
-                                window?.windowScene?.title = ""
-                                
-                            }
-                            #endif
-                        }
-                        .padding(.top, isMac ? -45 : 0)
-                }
-            }.onReceive(epgTimer) { date in
+                    }
+                    #endif
+            }
+            .statusBar(hidden: true)
+            .onReceive(epgTimer) { date in
                 let minute = calendar.component(.minute, from: date)
                 
                 if minute == 0 || minute == 15 || minute == 30 || minute == 45 {
@@ -77,7 +59,10 @@ struct IPTVapp: App {
                     }
                 }
             }
+            .padding(.top, isMac ? -20 : -15)
+             .edgesIgnoringSafeArea(.all)
         }
+      
     }
 }
 
