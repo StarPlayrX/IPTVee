@@ -9,6 +9,7 @@ import SwiftUI
 import AVFoundation
 import iptvKit
 import MediaPlayer
+import UIKit
 
 @main
 struct IPTVapp: App {
@@ -18,20 +19,32 @@ struct IPTVapp: App {
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     
+    var isMac: Bool {
+    #if targetEnvironment(macCatalyst)
+        true
+    #else
+        false
+    #endif
+    }
+    
     var body: some Scene {
         
         WindowGroup {
             CategoriesView()
                 .withHostingWindow { window in
-#if targetEnvironment(macCatalyst)
-                    if let titlebar = window?.windowScene?.titlebar {
+                    #if targetEnvironment(macCatalyst)
+                    if isMac, let titlebar = window?.windowScene?.titlebar {
                         titlebar.titleVisibility = .hidden
+                        titlebar.toolbarStyle = .unified
+                        titlebar.separatorStyle = .none
                         titlebar.toolbar = nil
+                        window?.windowScene?.title = ""
+                        
                     }
-#endif
+                    #endif
                 }
+                .padding(.top, isMac ? -60 : 0)
         }
-        
     }
 }
 
@@ -51,10 +64,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         runAVSession()
         HLSxServe.shared.start_HLSx()
         return true
-    }
-    
-    
-    
+    }   
 }
 
 extension View {

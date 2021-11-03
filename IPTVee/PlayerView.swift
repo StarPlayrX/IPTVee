@@ -129,6 +129,8 @@ struct PlayerView: View {
         isPortrait = isPortraitFallback
     }
     
+    @State private var scaledUp = true
+
     var body: some View {
         EmptyView()
         
@@ -161,6 +163,7 @@ struct PlayerView: View {
                             NowPlayingView(isPortrait: isPortrait)
                         }
                         .animation(.easeInOut(duration: 0.3))
+                        
                         .transition(.opacity)
                     } else if isPortrait && isPhone {
                         Group {

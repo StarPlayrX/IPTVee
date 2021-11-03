@@ -51,8 +51,8 @@ public class Player: NSObject {
             DispatchQueue.main.async {
                 let options = [AVURLAssetPreferPreciseDurationAndTimingKey : true, AVURLAssetAllowsCellularAccessKey : true, AVURLAssetAllowsExpensiveNetworkAccessKey : true, AVURLAssetAllowsConstrainedNetworkAccessKey : true, AVURLAssetReferenceRestrictionsKey: true ]
                 
-
-                let playNowUrl = avSession.currentRoute.outputs.first?.portType == .airPlay || self.plo.videoController.player!.isExternalPlaybackActive ? airplayUrl : streamUrl
+                guard let player = self.plo.videoController.player else { return }
+                let playNowUrl = avSession.currentRoute.outputs.first?.portType == .airPlay || player.isExternalPlaybackActive ? airplayUrl : streamUrl
                 
                 self.plo.streamID = streamId
                 

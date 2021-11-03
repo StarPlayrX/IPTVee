@@ -20,7 +20,6 @@ struct CategoriesView: View {
                     LoginSheetView()
                 }
         
-        
         CommonView()
             .onAppear {
                 if !lgo.isLoggedIn {
@@ -32,7 +31,4 @@ struct CategoriesView: View {
         }
  
     }
-    
 }
-
-

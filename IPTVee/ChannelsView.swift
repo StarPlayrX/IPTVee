@@ -118,7 +118,7 @@ struct ChannelsView: View {
                             
                         }
                         .isDetailLink(true)
-                        .listRowBackground(self.selectedItem == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" || plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground"))
+                        .listRowBackground(self.selectedItem == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" || plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : isMac ? Color("clear") : Color("iptvTableViewBackground"))
                     }
                 }
             }
@@ -137,6 +137,7 @@ struct ChannelsView: View {
                 }
             }
         }
+        .listStyle(InsetListStyle())
         .transition(.opacity)
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
         .navigationBarTitleDisplayMode(.inline)

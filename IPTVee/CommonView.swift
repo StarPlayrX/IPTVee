@@ -27,18 +27,14 @@ struct CommonView: View {
     }
     
     var isMac: Bool {
-#if targetEnvironment(macCatalyst)
+        #if targetEnvironment(macCatalyst)
         true
-#else
+        #else
         false
-#endif
-        
-        
+        #endif
     }
     
     var body: some View {
-        
-        
         if !lgo.isLoggedIn {
             
             NavigationView {
@@ -59,10 +55,7 @@ struct CommonView: View {
                     Spacer()
                 }
                 .padding(.bottom, 45)
-            }
-    
-        
-        
+            }  
     } else {
         NavigationView {
             
@@ -77,7 +70,7 @@ struct CommonView: View {
                             .isDetailLink(false)
                             .padding(.leading, 2)
                             .padding(.trailing, 2)
-                            .listRowBackground(plo.previousCategoryID == cat.categoryID ? Color("iptvTableViewSelection") : Color("iptvTableViewBackground") )
+                            .listRowBackground(plo.previousCategoryID == cat.categoryID ? Color("iptvTableViewSelection") : isMac ? Color("clear") : Color("iptvTableViewBackground") )
                     }
                 }
                 .onChange(of: selectedItem) { selectionData in
@@ -88,11 +81,12 @@ struct CommonView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarTitle("Categories")
             }
+            .listStyle(InsetListStyle())
+
             .padding(.leading, isMac ? -20 : 0)
             .padding(.trailing, isMac ? -20 : 0)//
             .frame(width: .infinity, alignment: .trailing)
             .edgesIgnoringSafeArea(.all)
-            
             VStack  {
                 
                 AboutScreenView()
@@ -104,7 +98,6 @@ struct CommonView: View {
         }
         
         .transition(.opacity)
-        
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
     }
 }
