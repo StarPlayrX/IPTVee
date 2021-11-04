@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6F15FE16272A205100F05971 /* PlayerSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F15FE15272A205100F05971 /* PlayerSettings.swift */; };
 		6F307AA9270924FD009A6EF9 /* AVPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F307AA8270924FD009A6EF9 /* AVPlayerView.swift */; };
+		6F31610E273485E300181A32 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F31610D273485E300181A32 /* NowPlayingView.swift */; };
 		6F5A1B622732011B0069BA92 /* AboutScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5A1B612732011A0069BA92 /* AboutScreenView.swift */; };
 		6F5A1B6427320CEE0069BA92 /* CommonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5A1B6327320CEE0069BA92 /* CommonView.swift */; };
 		6F5A1B6627320D2E0069BA92 /* PlayerClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5A1B6527320D2E0069BA92 /* PlayerClass.swift */; };
@@ -28,6 +29,7 @@
 		6F15FE15272A205100F05971 /* PlayerSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSettings.swift; sourceTree = "<group>"; };
 		6F22DB732715F4420077CDA0 /* IPTVee.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IPTVee.entitlements; sourceTree = "<group>"; };
 		6F307AA8270924FD009A6EF9 /* AVPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVPlayerView.swift; sourceTree = "<group>"; };
+		6F31610D273485E300181A32 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		6F512E292711558A0010BE18 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		6F5A1B612732011A0069BA92 /* AboutScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutScreenView.swift; sourceTree = "<group>"; };
 		6F5A1B6327320CEE0069BA92 /* CommonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonView.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 				6FF7E9EA272D991D001B5F22 /* LoginSheetView.swift */,
 				6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */,
 				6F74A0DF2707C38D000171B5 /* PlayerView.swift */,
+				6F31610D273485E300181A32 /* NowPlayingView.swift */,
 				6F5A1B6527320D2E0069BA92 /* PlayerClass.swift */,
 				6F307AA8270924FD009A6EF9 /* AVPlayerView.swift */,
 				6F15FE15272A205100F05971 /* PlayerSettings.swift */,
@@ -195,6 +198,7 @@
 				6F74A0DE2707B5B5000171B5 /* ChannelsView.swift in Sources */,
 				6F856D6A2725EE90001C1A79 /* HLSx.swift in Sources */,
 				6F74A0E02707C38D000171B5 /* PlayerView.swift in Sources */,
+				6F31610E273485E300181A32 /* NowPlayingView.swift in Sources */,
 				6F15FE16272A205100F05971 /* PlayerSettings.swift in Sources */,
 				6F5A1B6627320D2E0069BA92 /* PlayerClass.swift in Sources */,
 				6F5A1B6427320CEE0069BA92 /* CommonView.swift in Sources */,
@@ -355,7 +359,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
 		};
@@ -392,7 +396,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Release;
 		};

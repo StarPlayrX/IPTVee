@@ -4,95 +4,6 @@ import iptvKit
 
 let avPlayerView = AVPlayerView()
 
-struct NowPlayingView: View {
-    @ObservedObject var plo = PlayerObservable.plo
-    var isPad: Bool {
-        UIDevice.current.userInterfaceIdiom == .pad
-    }
-    
-    var isPhone: Bool {
-        UIDevice.current.userInterfaceIdiom == .phone
-    }
-    
-    var isMac: Bool {
-#if targetEnvironment(macCatalyst)
-        true
-#else
-        false
-#endif
-    }
-     
-   @State var isPortrait: Bool = true
-    
-    var body: some View {
-        List {
-            if !plo.miniEpg.isEmpty && (isPortrait || isMac ) {
-                
-                Section(header: Text("Program Guide").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
-                    ForEach(Array(plo.miniEpg),id: \.id) { epg in
-                        
-                        HStack {
-                            Text(epg.start.toDate()?.userTimeZone().toString() ?? "")
-                                .fontWeight(.medium)
-                                .frame(minWidth: 78, alignment: .trailing)
-                                .multilineTextAlignment(.leading)
-                            
-                            Text(epg.title.base64Decoded ?? "")
-                                .multilineTextAlignment(.leading)
-                                .padding(.leading, 5)
-                        }
-                        .font(.callout)
-                    }
-                }
-                
-                if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
-                    Section(header: Text("Description").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold)))  {
-                        Text(desc)
-                            .frame(minWidth: 80, alignment: .leading)
-                            .multilineTextAlignment(.leading)
-                    }
-                } else if (isPhone || isMac)  {
-                    Section(header: Text("Description").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
-                        Text(plo.channelName)
-                            .font(.body)
-                            .fontWeight(.light)
-                            .frame(minWidth: 80, alignment: .leading)
-                            .multilineTextAlignment(.leading)
-                    }
-                }
-                
-            } else if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
-                
-                HStack {
-                    Text(plo.miniEpg.first?.start.toDate()?.userTimeZone().toString() ?? "")
-                        .fontWeight(.medium)
-                        .frame(minWidth: 78, alignment: .trailing)
-                        .multilineTextAlignment(.leading)
-                    
-                    Text(plo.miniEpg.first?.title.base64Decoded ?? "")
-                        .multilineTextAlignment(.leading)
-                        .padding(.leading, 5)
-                }
-                .font(.callout)
-                
-                if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
-                    Text(desc)
-                        .frame(minWidth: 80, alignment: .leading)
-                        .multilineTextAlignment(.leading)
-                } else if (isPhone || isMac)  {
-                    Text(plo.channelName)
-                        .font(.body)
-                        .fontWeight(.light)
-                        .frame(minWidth: 80, alignment: .leading)
-                        .multilineTextAlignment(.leading)
-                }
-            }
-        }
-        .refreshable {
-            getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
-        }
-    }
-}
 
 
 struct PlayerView: View {
@@ -119,11 +30,11 @@ struct PlayerView: View {
     }
     
     var isMac: Bool {
-    #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         true
-    #else
+#else
         false
-    #endif
+#endif
     }
     
     fileprivate func getOrientation() {
@@ -132,11 +43,14 @@ struct PlayerView: View {
         isPortrait = isPortraitFallback
     }
     
-
+    
     var body: some View {
-        EmptyView()
+        
+        
         
         Group {
+            
+            EmptyView()
             
             GeometryReader { geometry in
                 Form{}
@@ -147,16 +61,23 @@ struct PlayerView: View {
                         avPlayerView
                             .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .top)
                             .transition(.opacity)
-
+                        
                     } else {
                         avPlayerView
                             .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .top)
                             .transition(.opacity)
                     }
                     
-                    if (isPortrait && !isPhone) || isPad {
+                    if isMac {
+                        NowPlayingView(isPortrait: isPortrait)
+                        .transition(.opacity)
+                        .animation(.easeInOut(duration: 0.875))
+                    } else if (isPortrait && !isPhone) || isPad {
                         Group {
                             NowPlayingView(isPortrait: isPortrait)
+                                .refreshable {
+                                    getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
+                                }
                         }
                         .transition(.opacity)
                         .animation(.easeInOut(duration: 0.875))
@@ -164,6 +85,9 @@ struct PlayerView: View {
                     } else if isPortrait && isPhone {
                         Group {
                             NowPlayingView(isPortrait: isPortrait)
+                                .refreshable {
+                                    getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
+                                }
                         }
                     }
                 }
@@ -183,8 +107,8 @@ struct PlayerView: View {
                         }
                     }
                 }
-              
-
+                
+                
                 .onAppear{getOrientation()}
                 .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
                     getOrientation()
@@ -193,7 +117,9 @@ struct PlayerView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarTitle(plo.channelName)
-
+        
+        
+        
     }
     
     func performMagicTap() {

@@ -43,15 +43,12 @@ struct IPTVapp: App {
                             titlebar.toolbarStyle = .unified
                             titlebar.separatorStyle = .none
 
-                            titlebar.separatorStyle = .none
                             titlebar.toolbar = nil
                             window?.windowScene?.title = ""
                         }
                     }
                     #endif
             }
-            
-            
             .statusBar(hidden: true)
             .onReceive(epgTimer) { date in
                 let minute = calendar.component(.minute, from: date)
@@ -65,6 +62,7 @@ struct IPTVapp: App {
             }
             .padding(.top, isMac ? -20 : -15)
             .edgesIgnoringSafeArea(.all)
+            
         }
         
         

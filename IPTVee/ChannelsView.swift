@@ -82,9 +82,9 @@ struct ChannelsView: View {
     
     var body: some View {
         
-        List {
+        Form {
             
-            Section(header: Text("Channels").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+            Group {
                 ForEach(Array(channelSearchResults),id: \.id) { ch in
                     
                     Group {
@@ -123,7 +123,6 @@ struct ChannelsView: View {
                             )
                            
                             .fill(plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color.clear)
-                            .padding([.leading,.trailing], isMac ? 10 : 0)
 
                         )
                     
@@ -147,25 +146,27 @@ struct ChannelsView: View {
                 }
             }
         }
+        .padding([.top], isMac ? 0 : -40)
+        .edgesIgnoringSafeArea([.top])
 
+     
+        
+        #if targetEnvironment(macCatalyst)
+        .listStyle(GroupedListStyle())
+        #else
+        .listStyle(InsetGroupedListStyle())
         .refreshable  {
             DispatchQueue.main.async {
                 getNowPlayingEpg()
             }
         }
-        
-        #if targetEnvironment(macCatalyst)
-        .listStyle(GroupedListStyle())
-        .padding([.leading,.trailing], isMac ? -10 : 0)
-        #else
-        .listStyle(InsetGroupedListStyle())
         #endif
         
         .frame(width: .infinity, alignment: .trailing)
         .edgesIgnoringSafeArea([.leading, .trailing])
         .navigationBarTitleDisplayMode(.inline)
 
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search \(categoryName)")
         .navigationTitle(categoryName)
         .onAppear{getOrientation()}
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in

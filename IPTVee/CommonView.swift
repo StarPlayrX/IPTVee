@@ -41,6 +41,7 @@ struct CommonView: View {
                 
                 VStack {
                     AboutScreenView()
+
                    /* Button(action: {lgo.showingLogin = true}) {
                         Text("Login")
                     }*/
@@ -61,8 +62,9 @@ struct CommonView: View {
     } else {
         NavigationView {
            
-            List {
-                Section(header: Text("Categories").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
+          
+            Form {
+                Group {
                     
                     EmptyView()
                         .frame(width: 0, height: 0, alignment: .center)
@@ -72,12 +74,11 @@ struct CommonView: View {
                             .listRowSeparator(.hidden)
                             .listRowBackground(
                                 RoundedRectangle(
-                                    cornerRadius: 7,
+                                    cornerRadius: 10,
                                     style: .continuous
                                 )
                                
                                 .fill(plo.previousCategoryID == cat.categoryID  ? Color("iptvTableViewSelection") : Color.clear)
-                                .padding([.leading,.trailing], isMac ? 10 : 0)
 
                             )
                     }
@@ -89,17 +90,18 @@ struct CommonView: View {
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarTitle("IPTVee")
+
             }
-
-
+            .padding([.top], isMac ? 0 : -40)
+            .edgesIgnoringSafeArea([.top])
             #if targetEnvironment(macCatalyst)
             .listStyle(GroupedListStyle())
-            .padding([.leading,.trailing], isMac ? -10 : 0)
             #else
             .listStyle(InsetGroupedListStyle())
             #endif
-            .frame(width: .infinity, alignment: .trailing)
             .edgesIgnoringSafeArea([.leading, .trailing])
+            
+            
             VStack  {
                 
                 AboutScreenView()
@@ -107,6 +109,7 @@ struct CommonView: View {
                 Spacer()
                 
             }
+
             .padding(.bottom, 45)
         }
 

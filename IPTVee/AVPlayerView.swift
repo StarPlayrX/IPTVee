@@ -92,10 +92,10 @@ public func setupPlayerToPlay() -> AVPlayerViewController {
     plo.videoController.player?.currentItem?.automaticallyHandlesInterstitialEvents = true
     plo.videoController.player?.currentItem?.seekingWaitsForVideoCompositionRendering = true
     plo.videoController.player?.currentItem?.appliesPerFrameHDRDisplayMetadata = true
-    plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 60
+    plo.videoController.player?.currentItem?.preferredForwardBufferDuration = 0
     plo.videoController.player?.currentItem?.automaticallyPreservesTimeOffsetFromLive = true
-    plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = true
-    plo.videoController.player?.currentItem?.configuredTimeOffsetFromLive = .init(seconds: 60, preferredTimescale: 600)
+    plo.videoController.player?.currentItem?.canUseNetworkResourcesForLiveStreamingWhilePaused = false
+    plo.videoController.player?.currentItem?.configuredTimeOffsetFromLive = .init(seconds: 30, preferredTimescale: 1200)
     plo.videoController.player?.currentItem?.startsOnFirstEligibleVariant = true
     plo.videoController.player?.currentItem?.variantPreferences = .scalabilityToLosslessAudio
     plo.videoController.player?.automaticallyWaitsToMinimizeStalling = true
