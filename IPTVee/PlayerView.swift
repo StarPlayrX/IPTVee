@@ -145,22 +145,16 @@ struct PlayerView: View {
                     
                     if isPad {
                         avPlayerView
-                        
-                        
                             .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .top)
-                            .opacity(1)
-                        
+                            .transition(.opacity)
+
                     } else {
-                        
-                        
                         avPlayerView
                             .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .top)
-                            .opacity(1)
-                        
+                            .transition(.opacity)
                     }
                     
-                    
-                    if isPortrait || isPad {
+                    if (isPortrait && !isPhone) || isPad {
                         Group {
                             NowPlayingView(isPortrait: isPortrait)
                         }
@@ -197,7 +191,6 @@ struct PlayerView: View {
                 }
             }
         }
-
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarTitle(plo.channelName)
 
@@ -245,9 +238,3 @@ struct PlayerView: View {
         videoController.player?.play()
     }
 }
-
-
-/*
- 
- 
- */
