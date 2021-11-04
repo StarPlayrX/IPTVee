@@ -69,8 +69,6 @@ struct CommonView: View {
                     ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
                         NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: $selectedItem)
                             .isDetailLink(false)
-                            .padding(.leading, 2)
-                            .padding(.trailing, 2)
                             .listRowSeparator(.hidden)
                             .listRowBackground(
                                 RoundedRectangle(
@@ -79,6 +77,8 @@ struct CommonView: View {
                                 )
                                
                                 .fill(plo.previousCategoryID == cat.categoryID  ? Color("iptvTableViewSelection") : Color.clear)
+                                .padding([.leading,.trailing], isMac ? 10 : 0)
+
                             )
                     }
                 }
@@ -94,6 +94,7 @@ struct CommonView: View {
 
             #if targetEnvironment(macCatalyst)
             .listStyle(GroupedListStyle())
+            .padding([.leading,.trailing], isMac ? -10 : 0)
             #else
             .listStyle(InsetGroupedListStyle())
             #endif

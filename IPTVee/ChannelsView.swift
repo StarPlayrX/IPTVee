@@ -61,11 +61,11 @@ struct ChannelsView: View {
     }
     
     var isMac: Bool {
-#if targetEnvironment(macCatalyst)
+        #if targetEnvironment(macCatalyst)
         true
-#else
+        #else
         false
-#endif
+        #endif
     }
     
     func isEven(_ f: Int) -> Bool {
@@ -123,6 +123,8 @@ struct ChannelsView: View {
                             )
                            
                             .fill(plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color.clear)
+                            .padding([.leading,.trailing], isMac ? 10 : 0)
+
                         )
                     
                     }
@@ -154,6 +156,7 @@ struct ChannelsView: View {
         
         #if targetEnvironment(macCatalyst)
         .listStyle(GroupedListStyle())
+        .padding([.leading,.trailing], isMac ? -10 : 0)
         #else
         .listStyle(InsetGroupedListStyle())
         #endif
