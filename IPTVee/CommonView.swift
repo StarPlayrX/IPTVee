@@ -74,13 +74,11 @@ struct CommonView: View {
                             .listRowSeparator(.hidden)
                             .listRowBackground(
                                 RoundedRectangle(
-                                    cornerRadius: 12,
+                                    cornerRadius: 7,
                                     style: .continuous
                                 )
                                
                                 .fill(plo.previousCategoryID == cat.categoryID  ? Color("iptvTableViewSelection") : Color.clear)
-                                    .padding(.leading, isMac ? 10 : 0)
-                                    .padding(.trailing, isMac ? 10 : 0)
                             )
                     }
                 }
@@ -94,9 +92,11 @@ struct CommonView: View {
             }
 
 
+            #if targetEnvironment(macCatalyst)
             .listStyle(GroupedListStyle())
-            .padding(.leading, isMac ? -20 : 0)
-            .padding(.trailing, isMac ? -20 : 0)//
+            #else
+            .listStyle(InsetGroupedListStyle())
+            #endif
             .frame(width: .infinity, alignment: .trailing)
             .edgesIgnoringSafeArea([.leading, .trailing])
             VStack  {

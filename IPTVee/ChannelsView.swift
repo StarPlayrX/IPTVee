@@ -82,7 +82,7 @@ struct ChannelsView: View {
     
     var body: some View {
         
-        Form {
+        List {
             
             Section(header: Text("Channels").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                 ForEach(Array(channelSearchResults),id: \.id) { ch in
@@ -118,13 +118,11 @@ struct ChannelsView: View {
                         .listRowSeparator(.hidden)
                         .listRowBackground(
                             RoundedRectangle(
-                                cornerRadius: 12,
+                                cornerRadius: 9,
                                 style: .continuous
                             )
                            
                             .fill(plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color.clear)
-                                .padding(.leading, isMac ? 10 : 0)
-                                .padding(.trailing, isMac ? 10 : 0)
                         )
                     
                     }
@@ -153,17 +151,19 @@ struct ChannelsView: View {
                 getNowPlayingEpg()
             }
         }
+        
+        #if targetEnvironment(macCatalyst)
         .listStyle(GroupedListStyle())
-        .listRowSeparator(.hidden)
-        .padding(.leading, isMac ? -20 : 0)
-        .padding(.trailing, isMac ? -20 : 0)//
+        #else
+        .listStyle(InsetGroupedListStyle())
+        #endif
+        
         .frame(width: .infinity, alignment: .trailing)
         .edgesIgnoringSafeArea([.leading, .trailing])
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
         .navigationBarTitleDisplayMode(.inline)
-        .frame(maxWidth: .infinity, alignment: .center)
 
-        .navigationTitle("Channels")
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
+        .navigationTitle(categoryName)
         .onAppear{getOrientation()}
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             getOrientation()
