@@ -27,9 +27,9 @@ struct CommonView: View {
     }
     
     var isMac: Bool {
-        #if targetEnvironment(macCatalyst)
+    #if targetEnvironment(macCatalyst)
         true
-        #else
+    #else
         false
         #endif
     }
@@ -55,12 +55,13 @@ struct CommonView: View {
                     Spacer()
                 }
                 .padding(.bottom, 45)
-            }  
+
+            }
+
     } else {
         NavigationView {
-            
-            Form {
-                
+           
+            List {
                 Section(header: Text("Categories").foregroundColor(Color.secondary).font(.system(size: 17, weight: .bold))) {
                     
                     EmptyView()
@@ -70,7 +71,17 @@ struct CommonView: View {
                             .isDetailLink(false)
                             .padding(.leading, 2)
                             .padding(.trailing, 2)
-                            .listRowBackground(plo.previousCategoryID == cat.categoryID ? Color("iptvTableViewSelection") : isMac ? Color("clear") : Color("iptvTableViewBackground") )
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(
+                                RoundedRectangle(
+                                    cornerRadius: 12,
+                                    style: .continuous
+                                )
+                               
+                                .fill(plo.previousCategoryID == cat.categoryID  ? Color("iptvTableViewSelection") : Color.clear)
+                                    .padding(.leading, isMac ? 10 : 0)
+                                    .padding(.trailing, isMac ? 10 : 0)
+                            )
                     }
                 }
                 .onChange(of: selectedItem) { selectionData in
@@ -79,15 +90,15 @@ struct CommonView: View {
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationBarTitle("Categories")
+                .navigationBarTitle("IPTVee")
             }
 
-            .listStyle(InsetListStyle())
 
+            .listStyle(GroupedListStyle())
             .padding(.leading, isMac ? -20 : 0)
             .padding(.trailing, isMac ? -20 : 0)//
             .frame(width: .infinity, alignment: .trailing)
-            .edgesIgnoringSafeArea(.all)
+            .edgesIgnoringSafeArea([.leading, .trailing])
             VStack  {
                 
                 AboutScreenView()
@@ -97,6 +108,7 @@ struct CommonView: View {
             }
             .padding(.bottom, 45)
         }
+
 
         
         .transition(.opacity)

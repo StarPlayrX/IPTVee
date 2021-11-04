@@ -21,6 +21,7 @@ struct CategoriesView: View {
                 }
         
         CommonView()
+
             .onAppear {
                 if !lgo.isLoggedIn {
                     lgo.showingLogin = true
@@ -28,7 +29,6 @@ struct CategoriesView: View {
             }
 
             .navigationViewStyle( .columns )
-        
         }
  
     }

@@ -111,13 +111,25 @@ struct ChannelsView: View {
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
-                            .padding(.leading, 7.5)
                             .frame(alignment: .center)
                             
                         }
                         .isDetailLink(true)
-                        .listRowBackground(self.selectedItem == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" || plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : isMac ? Color("clear") : Color("iptvTableViewBackground"))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(
+                            RoundedRectangle(
+                                cornerRadius: 12,
+                                style: .continuous
+                            )
+                           
+                            .fill(plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color.clear)
+                                .padding(.leading, isMac ? 10 : 0)
+                                .padding(.trailing, isMac ? 10 : 0)
+                        )
+                    
                     }
+             
+
                 }
             }
             .onChange(of: selectedItem) { selectionData in
@@ -129,26 +141,29 @@ struct ChannelsView: View {
                         PlayerObservable.plo.miniEpg = []
                         Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
                         
-                        if isPhone && !isPortrait { selectedItem = nil }
-                        if isPad {selectedItem = nil }
+                      //  if isPhone && !isPortrait { selectedItem = nil }
+                      //  if isPad {selectedItem = nil }
                     }
                 }
             }
         }
+
         .refreshable  {
             DispatchQueue.main.async {
                 getNowPlayingEpg()
             }
         }
-        .listStyle(InsetListStyle())
-        .transition(.opacity)
+        .listStyle(GroupedListStyle())
+        .listRowSeparator(.hidden)
+        .padding(.leading, isMac ? -20 : 0)
+        .padding(.trailing, isMac ? -20 : 0)//
+        .frame(width: .infinity, alignment: .trailing)
+        .edgesIgnoringSafeArea([.leading, .trailing])
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Channels")
         .navigationBarTitleDisplayMode(.inline)
+        .frame(maxWidth: .infinity, alignment: .center)
+
         .navigationTitle("Channels")
-    .padding(.leading, isMac ? -20 : 0)
-       .padding(.trailing,isMac ? -20 : 0)
-        .frame(width: .infinity, alignment: .trailing)
-       .edgesIgnoringSafeArea(.all)
         .onAppear{getOrientation()}
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             getOrientation()

@@ -21,15 +21,15 @@ struct IPTVapp: App {
     @ObservedObject var lgo = LoginObservable.shared
     
     var isMac: Bool {
-        #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         true
-        #else
+#else
         false
-        #endif
+#endif
     }
     
     let calendar = Calendar.current
-
+    
     var body: some Scene {
         
         WindowGroup {
@@ -42,12 +42,16 @@ struct IPTVapp: App {
                             titlebar.titleVisibility = .hidden
                             titlebar.toolbarStyle = .unified
                             titlebar.separatorStyle = .none
+
+                            titlebar.separatorStyle = .none
                             titlebar.toolbar = nil
                             window?.windowScene?.title = ""
                         }
                     }
                     #endif
             }
+            
+            
             .statusBar(hidden: true)
             .onReceive(epgTimer) { date in
                 let minute = calendar.component(.minute, from: date)
@@ -60,9 +64,11 @@ struct IPTVapp: App {
                 }
             }
             .padding(.top, isMac ? -20 : -15)
-             .edgesIgnoringSafeArea(.all)
+            .edgesIgnoringSafeArea(.all)
         }
-      
+        
+        
+        
     }
 }
 
