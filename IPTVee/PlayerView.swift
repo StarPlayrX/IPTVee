@@ -104,7 +104,7 @@ struct PlayerView: View {
                             .frame(minWidth: 320, alignment: .center)
                             .font(.body)
                         }
-                        .padding(.top, isMac ? -37 : 0)
+                        .padding(.top, isMac ? -5 : 0)
                     }
                 }
                 .onAppear{getOrientation()}
@@ -113,7 +113,7 @@ struct PlayerView: View {
                 }
             }
         }
-        .padding(.top, isMac ? -15 : 0)
+        .padding(.top, isMac ? -3 : 0)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarTitle("")
     }

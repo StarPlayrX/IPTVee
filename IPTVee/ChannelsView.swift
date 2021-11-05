@@ -57,11 +57,11 @@ struct ChannelsView: View {
     }
     
     var isMac: Bool {
-        #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         true
-        #else
+#else
         false
-        #endif
+#endif
     }
     
     func isEven(_ f: Int) -> Bool {
@@ -75,76 +75,80 @@ struct ChannelsView: View {
     }
     
     var body: some View {
-        Form {
-            Group {
-                ForEach(Array(channelSearchResults),id: \.id) { ch in
-                    Group {
-                        NavigationLink(destination: playerView, tag: "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)", selection: self.$selectedItem)  {
-                            HStack {
-                                Text(String(ch.num))
-                                    .fontWeight(.medium)
-                                    .font(.system(size: 24, design: .monospaced))
-                                    .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            VStack (alignment: .leading, spacing: 0) {
-                                Text(ch.name)
-                                    .font(.system(size: 16, design: .default))
-                                    .fontWeight(.regular)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                
-                                if !ch.nowPlaying.isEmpty {
-                                    Text(ch.nowPlaying)
-                                        .font(.system(size: 14, design: .default))
-                                        .fontWeight(.light)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
-                            }
-                            .frame(alignment: .center)
+        
+        Form {}
+        .frame(width: 0, height: 0)
+        
+        List {
+            ForEach(Array(channelSearchResults),id: \.id) { ch in
+                NavigationLink(destination: playerView, tag: "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)", selection: self.$selectedItem)  {
+                    
+                    HStack {
+                        HStack {
+                            Text(String(ch.num))
+                                .fontWeight(.medium)
+                                .font(.system(size: 24, design: .monospaced))
+                                .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
-                        .isDetailLink(true)
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(
-                            RoundedRectangle(
-                                cornerRadius: 9,
-                                style: .continuous
-                            )
-                            .fill(plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color.clear)
-                        )
+                        VStack (alignment: .leading, spacing: 0) {
+                            Text(ch.name)
+                                .font(.system(size: 16, design: .default))
+                                .fontWeight(.regular)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            if !ch.nowPlaying.isEmpty {
+                                Text(ch.nowPlaying)
+                                    .font(.system(size: 14, design: .default))
+                                    .fontWeight(.light)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                        .frame(alignment: .center)
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")                     // << custom !!
+                            .foregroundColor((plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color.white : Color.accentColor))
+                        
                     }
+                    .padding([.top, .bottom], isMac ? 5 : 0)
                 }
+                
+                .isDetailLink(true)
+                .listRowSeparator(.hidden)
+                .listRowBackground(
+                    RoundedRectangle(
+                        cornerRadius: 9,
+                        style: .continuous
+                    )
+                    .fill(plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color.accentColor : Color.clear)
+                )
+                .foregroundColor(plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color.white : Color.primary)
             }
             .onChange(of: selectedItem) { selectionData in
                 if plo.previousSelection != selectionData || plo.previousSelection != selectedItem {
                     if let elements = selectionData?.components(separatedBy: "^"), elements.count == 3, let sd = selectionData {
                         plo.previousSelection = sd
                         plo.channelName =  elements[1]
-
+                        
                         PlayerObservable.plo.miniEpg = []
                         Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
                         
-                       if isPhone && !isPortrait || isPad { selectedItem = nil }
+                        if isPhone && !isPortrait || isPad { selectedItem = nil }
                     }
                 }
             }
         }
+        
         .padding([.top], isMac ? 0 : -40)
-        .edgesIgnoringSafeArea([.top])
- 
-        #if targetEnvironment(macCatalyst)
-        .listStyle(GroupedListStyle())
-        #else
-        .listStyle(InsetGroupedListStyle())
-        .refreshable  {
-            DispatchQueue.main.async {
-                getNowPlayingEpg()
-            }
-        }
-        #endif
+        .edgesIgnoringSafeArea([.all])
+        
         .frame(width: .infinity, alignment: .trailing)
         .edgesIgnoringSafeArea([.leading, .trailing])
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search \(categoryName)")
+        .listStyle(.sidebar)
+        
         .navigationTitle(categoryName)
         .onAppear{getOrientation()}
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in

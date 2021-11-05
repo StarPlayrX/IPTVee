@@ -45,6 +45,7 @@ struct IPTVapp: App {
                             window?.windowScene?.title = ""
                         }
                     }
+                   
                     #endif
             }
             .statusBar(hidden: true)
@@ -61,6 +62,12 @@ struct IPTVapp: App {
             .padding(.top, isMac ? -20 : -15)
             .edgesIgnoringSafeArea(.all)
         }
+        #if !os(iOS)
+        .windowStyle(DefaultWindowStyle())
+            .windowToolbarStyle(UnifiedWindowToolbarStyle(showsTitle: true))
+        #endif
+
+        
     }
 }
 

@@ -27,11 +27,11 @@ struct CategoriesView: View {
     }
     
     var isMac: Bool {
-    #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         true
-    #else
+#else
         false
-        #endif
+#endif
     }
     
     var body: some View {
@@ -58,56 +58,60 @@ struct CategoriesView: View {
                     }
                 }
             }
-    } else {
-        NavigationView {
-            Form {
-                Group {
-                    EmptyView()
-                        .frame(width: 0, height: 0, alignment: .center)
-                    ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
-                        NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: $selectedItem)
-                            .isDetailLink(false)
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(
-                                RoundedRectangle(
-                                    cornerRadius: isMac ? 8 : 10,
-                                    style: .continuous
-                                )
-                                .fill(plo.previousCategoryID == cat.categoryID  ? Color("iptvTableViewSelection") : Color.clear)
-                            )
-                    }
-                }
-                .onChange(of: selectedItem) { selectionData in
-                    if plo.previousCategoryID != selectionData || plo.previousCategoryID != selectedItem, let sd = selectionData {
-                        plo.previousCategoryID = sd
-                    }
-                }
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarTitle("IPTVee")
-            }
-            .padding([.top], isMac ? 0 : -40)
-            .edgesIgnoringSafeArea([.top])
-            #if targetEnvironment(macCatalyst)
-            .listStyle(GroupedListStyle())
-            #else
-            .listStyle(InsetGroupedListStyle())
-            #endif
-            .edgesIgnoringSafeArea([.leading, .trailing])
+        } else {
             
-            VStack {
-                AboutScreenView()
+    
+            
+            NavigationView {
 
-                Button(action: {lgo.showingLogin = true}) {
-                    Text("Login")
+                VStack {
+                    Form {}
+                    .frame(width: 0, height: 0)
+                    List {
+                        ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
+                            NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: $selectedItem)
+                                .isDetailLink(false)
+                                .listRowSeparator(.hidden)
+                                .listRowBackground(
+                                    RoundedRectangle(
+                                        cornerRadius: isMac ? 8 : 10,
+                                        style: .continuous
+                                    )
+                                    .fill(plo.previousCategoryID == cat.categoryID  ? Color.accentColor : Color.clear)
+                                )
+                                .foregroundColor(plo.previousCategoryID == cat.categoryID ? Color.white : Color.primary)
+                            
+                            
+                        }
+                        .onChange(of: selectedItem) { selectionData in
+                            if plo.previousCategoryID != selectionData, let sd = selectionData {
+                                plo.previousCategoryID = sd
+                            }
+                        }
+                        .navigationBarTitleDisplayMode(.inline)
+                        .navigationBarTitle("IPTVee")
+                    }
+                    .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
+                    .listStyle(.sidebar)
+                    .edgesIgnoringSafeArea([.all])
+                  
                 }
+               
                 
-                Spacer()
+                VStack {
+                    AboutScreenView()
+                    
+                    Button(action: {lgo.showingLogin = true}) {
+                        Text("Login")
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.bottom, 45)
             }
-            .padding(.bottom, 45)
+            .padding(.top, -10)
+            
         }
-        .transition(.opacity)
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
     }
-}
 }
 
