@@ -15,7 +15,6 @@ public class Player: NSObject {
     var lgo = LoginObservable.shared
     var cha = ChannelsObservable.shared
     
-    
     static public let iptv = Player()
     public func Action(streamId: Int, channelName: String, imageURL: String) {
         plo.streamID = streamId
@@ -77,8 +76,6 @@ public class Player: NSObject {
                 backupUrl.absoluteString.contains(decodedString) ? playUrl(backupUrl) : playUrl(airplayUrl)
             }
         }
-        
         starPlayrHLSx()
     }
-    
 }

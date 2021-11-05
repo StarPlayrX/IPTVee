@@ -2,10 +2,6 @@ import SwiftUI
 import AVKit
 import iptvKit
 
-let avPlayerView = AVPlayerView()
-
-
-
 struct PlayerView: View {
     @State private var showDetails = false
     @State private var orientation = UIDeviceOrientation.unknown
@@ -14,12 +10,13 @@ struct PlayerView: View {
     @State var isPortrait: Bool = true
     
     var isPortraitFallback: Bool {
-        guard let scene =  (UIApplication.shared.connectedScenes.first as? UIWindowScene) else {
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
             return true
         }
-        
         return scene.interfaceOrientation.isPortrait
     }
+    
+    let avPlayerView = AVPlayerView()
     
     var isPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
@@ -30,11 +27,11 @@ struct PlayerView: View {
     }
     
     var isMac: Bool {
-#if targetEnvironment(macCatalyst)
-        true
-#else
-        false
-#endif
+    #if targetEnvironment(macCatalyst)
+    true
+    #else
+    false
+    #endif
     }
     
     fileprivate func getOrientation() {
@@ -43,35 +40,27 @@ struct PlayerView: View {
         isPortrait = isPortraitFallback
     }
     
-    
     var body: some View {
-        
-        
-        
         Group {
-            
             EmptyView()
             
             GeometryReader { geometry in
                 Form{}
                 
                 VStack {
-                    
                     if isPad {
                         avPlayerView
                             .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .top)
                             .transition(.opacity)
-                        
                     } else {
                         avPlayerView
                             .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .top)
                             .transition(.opacity)
                     }
-                    
                     if isMac {
                         NowPlayingView(isPortrait: isPortrait)
-                        .transition(.opacity)
-                        .animation(.easeInOut(duration: 0.875))
+                            .transition(.opacity)
+                            .animation(.easeInOut(duration: 0.875))
                     } else if (isPortrait && !isPhone) || isPad {
                         Group {
                             NowPlayingView(isPortrait: isPortrait)
@@ -93,33 +82,40 @@ struct PlayerView: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .principal) {
-                        if !isPortrait, let desc = plo.miniEpg.first?.title.base64Decoded, desc.count > 3 {
+                        Group {
                             VStack {
-                                Text("\(plo.channelName)")
-                                    .fontWeight(.bold)
-                                Text("\(desc)")
-                                    .fontWeight(.regular)
+                                if !isPhone, let desc = plo.miniEpg.first?.title.base64Decoded, desc.count > 3 {
+                                        Text("\(plo.channelName)")
+                                            .fontWeight(.bold)
+                                            Text("\(desc)")
+                                                .fontWeight(.regular)
+                                } else {
+                                    Text("\(plo.channelName)")
+                                        .fontWeight(.bold)
+                                    
+                                    if !isPhone {
+                                        Text("")
+                                            .fontWeight(.regular)
+                                    }
+                                }
                             }
-                            .frame(alignment: .center)
+                            .frame(alignment: .leading)
                             .multilineTextAlignment(.center)
                             .frame(minWidth: 320, alignment: .center)
                             .font(.body)
                         }
+                        .padding(.top, isMac ? -37 : 0)
                     }
                 }
-                
-                
                 .onAppear{getOrientation()}
                 .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
                     getOrientation()
                 }
             }
         }
+        .padding(.top, isMac ? -15 : 0)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarTitle(plo.channelName)
-        
-        
-        
+        .navigationBarTitle("")
     }
     
     func performMagicTap() {

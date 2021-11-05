@@ -9,8 +9,6 @@ import SwiftUI
 import iptvKit
 import AVKit
 
-
-
 struct ChannelsView: View {
     var playerView = PlayerView()
     
@@ -41,14 +39,12 @@ struct ChannelsView: View {
     }
     
     @State var isShowingColumn = true
-    
     @State var isPortrait: Bool = false
     
     var isPortraitFallback: Bool {
         guard let scene =  (UIApplication.shared.connectedScenes.first as? UIWindowScene) else {
             return true
         }
-        
         return scene.interfaceOrientation.isPortrait
     }
     
@@ -72,23 +68,17 @@ struct ChannelsView: View {
         f % 2 == 0
     }
     
-    
     fileprivate func getOrientation() {
         if UIDevice.current.orientation.isPortrait { isPortrait = true; return}
         if UIDevice.current.orientation.isLandscape { isPortrait = false; return}
-        
         isPortrait = isPortraitFallback
     }
     
     var body: some View {
-        
         Form {
-            
             Group {
                 ForEach(Array(channelSearchResults),id: \.id) { ch in
-                    
                     Group {
-                        
                         NavigationLink(destination: playerView, tag: "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)", selection: self.$selectedItem)  {
                             HStack {
                                 Text(String(ch.num))
@@ -96,7 +86,6 @@ struct ChannelsView: View {
                                     .font(.system(size: 24, design: .monospaced))
                                     .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
                                     .fixedSize(horizontal: false, vertical: true)
-                                
                             }
                             VStack (alignment: .leading, spacing: 0) {
                                 Text(ch.name)
@@ -112,7 +101,6 @@ struct ChannelsView: View {
                                 }
                             }
                             .frame(alignment: .center)
-                            
                         }
                         .isDetailLink(true)
                         .listRowSeparator(.hidden)
@@ -121,36 +109,28 @@ struct ChannelsView: View {
                                 cornerRadius: 9,
                                 style: .continuous
                             )
-                           
                             .fill(plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color("iptvTableViewSelection") : Color.clear)
-
                         )
-                    
                     }
-             
-
                 }
             }
             .onChange(of: selectedItem) { selectionData in
                 if plo.previousSelection != selectionData || plo.previousSelection != selectedItem {
-                    if let elements = selectionData?.components(separatedBy: "^"), elements.count == 3, let sd = selectionData  {
+                    if let elements = selectionData?.components(separatedBy: "^"), elements.count == 3, let sd = selectionData {
                         plo.previousSelection = sd
                         plo.channelName =  elements[1]
 
                         PlayerObservable.plo.miniEpg = []
                         Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
                         
-                      //  if isPhone && !isPortrait { selectedItem = nil }
-                      //  if isPad {selectedItem = nil }
+                       if isPhone && !isPortrait || isPad { selectedItem = nil }
                     }
                 }
             }
         }
         .padding([.top], isMac ? 0 : -40)
         .edgesIgnoringSafeArea([.top])
-
-     
-        
+ 
         #if targetEnvironment(macCatalyst)
         .listStyle(GroupedListStyle())
         #else
@@ -161,27 +141,18 @@ struct ChannelsView: View {
             }
         }
         #endif
-        
         .frame(width: .infinity, alignment: .trailing)
         .edgesIgnoringSafeArea([.leading, .trailing])
         .navigationBarTitleDisplayMode(.inline)
-
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search \(categoryName)")
         .navigationTitle(categoryName)
         .onAppear{getOrientation()}
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
             getOrientation()
         }
-        
     }
-    
     
     func performMagicTapStop() {
         plo.videoController.player?.pause()
     }
-    
 }
-
-
-
-

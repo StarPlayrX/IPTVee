@@ -21,21 +21,19 @@ struct IPTVapp: App {
     @ObservedObject var lgo = LoginObservable.shared
     
     var isMac: Bool {
-#if targetEnvironment(macCatalyst)
-        true
-#else
-        false
-#endif
+    #if targetEnvironment(macCatalyst)
+    true
+    #else
+    false
+    #endif
     }
     
     let calendar = Calendar.current
     
     var body: some Scene {
-        
         WindowGroup {
-            
             Group {
-                CategoriesView()
+                ContentView()
                     #if targetEnvironment(macCatalyst)
                     .withHostingWindow { window in
                         if isMac, let titlebar = window?.windowScene?.titlebar {
@@ -62,11 +60,7 @@ struct IPTVapp: App {
             }
             .padding(.top, isMac ? -20 : -15)
             .edgesIgnoringSafeArea(.all)
-            
         }
-        
-        
-        
     }
 }
 

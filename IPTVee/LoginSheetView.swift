@@ -23,10 +23,8 @@ struct LoginSheetView: View {
     
     var body: some View {
       
-    
         NavigationView {
             List {
-                
                 Section(header: Text("Credentials")) {
                     TextField("Username", text: $userName)
                     SecureField("Password", text: $passWord)
@@ -39,14 +37,12 @@ struct LoginSheetView: View {
                     }
                     .disabled(obs.isLoginButtonDisabled)
                 }
-
                 Section(header: Text("Status")) {
                     Text(obs.status)
                         .font(.body)
                         .fontWeight(.regular)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
-                
                 Button("Done") {
                     obs.isLoggedIn = true
                     presentationMode.wrappedValue.dismiss()
@@ -55,7 +51,6 @@ struct LoginSheetView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
             }
             .onAppear {
-                
                 if !obs.isLoggedIn  {
                     //localLogin()
                 }
@@ -68,9 +63,7 @@ struct LoginSheetView: View {
                 }.frame(alignment: .topTrailing)
                 
             }
-        }
-      
-       
+        } 
     }
     
     func localLogin() {

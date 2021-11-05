@@ -8,13 +8,10 @@
 import SwiftUI
 import iptvKit
 
-
-
 struct PlayerSettings: View {
 
     @ObservedObject var settings = SettingsObservable.shared
 
-    
     var body: some View {
         GeometryReader { geometry in
         

@@ -8,15 +8,12 @@
 import SwiftUI
 import iptvKit
 
-
 struct AboutScreenView: View {
     let image = "IPTVeeLogo"
     
     @ObservedObject var lgo = LoginObservable.shared
     
     var body: some View {
-      
-        
         Group {
             VStack {
                 Text("IPTVee").fontWeight(.bold).font(.largeTitle).minimumScaleFactor(0.75).padding(.top, 50)
@@ -35,20 +32,13 @@ struct AboutScreenView: View {
                 Text("IPTVee (c) 2021 Todd Bruss").font(.callout).minimumScaleFactor(0.75).padding(.top, 10)
                     .padding(.bottom, 25)
             }
-            
-            
         }
-
-        
         .toolbar {
-            
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Button(action: {lgo.isLoggedIn = false; lgo.showingLogin = true}) {
-                    Text("Login")
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button(action: {lgo.isLoggedIn = false; lgo.showingLogin = true}) {
+                        Text("Login")
+                    }
                 }
             }
-        }
     }
-    
-    
 }

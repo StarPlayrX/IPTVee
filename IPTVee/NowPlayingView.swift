@@ -37,7 +37,6 @@ struct NowPlayingView: View {
    @State var isPortrait: Bool = true
     
     var body: some View {
-        
         VStack {
             Form {
                 if !plo.miniEpg.isEmpty && (isPortrait || isMac ) {
@@ -55,13 +54,11 @@ struct NowPlayingView: View {
                                     .multilineTextAlignment(.leading)
                                     .padding(.leading, 5)
                                     .fixedSize(horizontal: false, vertical: true)
-
                             }
                             .listRowSeparator(isMac ? .hidden : .visible)
                             .font(.callout)
                         }
-                    }
-                    
+                    }  
                     if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
                         Section(header: Text("Description").SectionHeader(isMac))  {
                             Text(desc)
@@ -78,16 +75,8 @@ struct NowPlayingView: View {
                                 .frame(minWidth: 80, alignment: .leading)
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
-
-                            Text(plo.channelName)
-                                .font(.body)
-                                .fontWeight(.light)
-                                .frame(minWidth: 80, alignment: .leading)
-                                .multilineTextAlignment(.leading)
-                                .fixedSize(horizontal: false, vertical: true)
                         }
                     }
-                    
                 } else if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
                     
                     HStack {
@@ -117,6 +106,5 @@ struct NowPlayingView: View {
             }
             .listStyle(InsetGroupedListStyle())
         }
-
     }
 }
