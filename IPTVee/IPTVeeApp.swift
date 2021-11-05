@@ -20,12 +20,8 @@ struct IPTVapp: App {
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     
-    var isMac: Bool {
-    #if targetEnvironment(macCatalyst)
-    true
-    #else
-    false
-    #endif
+    var isPad: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
     }
     
     let calendar = Calendar.current
@@ -34,21 +30,8 @@ struct IPTVapp: App {
         WindowGroup {
             Group {
                 ContentView()
-                    #if targetEnvironment(macCatalyst)
-                    .withHostingWindow { window in
-                        if isMac, let titlebar = window?.windowScene?.titlebar {
-                            titlebar.titleVisibility = .hidden
-                            titlebar.toolbarStyle = .unified
-                            titlebar.separatorStyle = .none
-
-                            titlebar.toolbar = nil
-                            window?.windowScene?.title = ""
-                        }
-                    }
-                   
-                    #endif
             }
-            .statusBar(hidden: true)
+            .statusBar(hidden: isPad)
             .onReceive(epgTimer) { date in
                 let minute = calendar.component(.minute, from: date)
                 
@@ -59,15 +42,9 @@ struct IPTVapp: App {
                     }
                 }
             }
-            .padding(.top, isMac ? -20 : -15)
+            .padding(.top, -5)
             .edgesIgnoringSafeArea(.all)
         }
-        #if !os(iOS)
-        .windowStyle(DefaultWindowStyle())
-            .windowToolbarStyle(UnifiedWindowToolbarStyle(showsTitle: true))
-        #endif
-
-        
     }
 }
 
@@ -87,26 +64,5 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         runAVSession()
         HLSxServe.shared.start_HLSx()
         return true
-    }
-}
-
-extension View {
-    fileprivate func withHostingWindow(_ callback: @escaping (UIWindow?) -> Void) -> some View {
-        self.background(HostingWindowFinder(callback: callback))
-    }
-}
-
-fileprivate struct HostingWindowFinder: UIViewRepresentable {
-    var callback: (UIWindow?) -> ()
-    
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        DispatchQueue.main.async { [weak view] in
-            self.callback(view?.window)
-        }
-        return view
-    }
-    
-    func updateUIView(_ uiView: UIView, context: Context) {
     }
 }

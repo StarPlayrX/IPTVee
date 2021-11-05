@@ -26,12 +26,12 @@ struct CategoriesView: View {
             .contains(searchText.lowercased()) || searchText.isEmpty})
     }
     
-    var isMac: Bool {
-#if targetEnvironment(macCatalyst)
-        true
-#else
-        false
-#endif
+    var isPad: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
+    }
+    
+    var isPhone: Bool {
+        UIDevice.current.userInterfaceIdiom == .phone
     }
     
     var body: some View {
@@ -59,44 +59,45 @@ struct CategoriesView: View {
                 }
             }
         } else {
-            
-    
-            
             NavigationView {
-
-                VStack {
-                    Form {}
-                    .frame(width: 0, height: 0)
-                    List {
-                        ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
-                            NavigationLink(cat.categoryName, destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: $selectedItem)
-                                .isDetailLink(false)
-                                .listRowSeparator(.hidden)
-                                .listRowBackground(
-                                    RoundedRectangle(
-                                        cornerRadius: isMac ? 8 : 10,
-                                        style: .continuous
-                                    )
-                                    .fill(plo.previousCategoryID == cat.categoryID  ? Color.accentColor : Color.clear)
-                                )
-                                .foregroundColor(plo.previousCategoryID == cat.categoryID ? Color.white : Color.primary)
-                            
-                            
-                        }
-                        .onChange(of: selectedItem) { selectionData in
-                            if plo.previousCategoryID != selectionData, let sd = selectionData {
-                                plo.previousCategoryID = sd
+                Form {
+                    ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
+                        NavigationLink(destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: $selectedItem) {
+                            HStack {
+                                Text(cat.categoryName)
+                                
+                                if 1 == 2 {
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")                     // << custom !!
+                                        .foregroundColor((plo.previousCategoryID == cat.categoryID ? Color.white : Color.accentColor))
+                                }
                             }
+                            .padding(0)
+                            .edgesIgnoringSafeArea([.all])
                         }
-                        .navigationBarTitleDisplayMode(.inline)
-                        .navigationBarTitle("IPTVee")
+                        .isDetailLink(false)
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(
+                            RoundedRectangle(
+                                cornerRadius: 9,
+                                style: .continuous
+                            )
+                                .fill(plo.previousCategoryID == cat.categoryID ? Color.accentColor : Color.clear)
+                        )
                     }
-                    .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
-                    .listStyle(.sidebar)
-                    .edgesIgnoringSafeArea([.all])
-                  
                 }
-               
+                .padding(.top, -20)
+                .onChange(of: selectedItem) { selectionData in
+                    if plo.previousCategoryID != selectionData, let sd = selectionData {
+                        plo.previousCategoryID = sd
+                    }
+                }
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitle("IPTVee")
+                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
+                .listStyle(.sidebar)
+                .edgesIgnoringSafeArea([.all])
                 
                 VStack {
                     AboutScreenView()

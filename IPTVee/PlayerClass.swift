@@ -12,6 +12,7 @@ import AVKit
 public class Player: NSObject {
     
     var plo = PlayerObservable.plo
+    var pvc = PlayerViewControllerObservable.pvc
     var lgo = LoginObservable.shared
     var cha = ChannelsObservable.shared
     
@@ -50,15 +51,15 @@ public class Player: NSObject {
             DispatchQueue.main.async {
                 let options = [AVURLAssetPreferPreciseDurationAndTimingKey : true, AVURLAssetAllowsCellularAccessKey : true, AVURLAssetAllowsExpensiveNetworkAccessKey : true, AVURLAssetAllowsConstrainedNetworkAccessKey : true, AVURLAssetReferenceRestrictionsKey: true ]
                 
-                guard let player = self.plo.videoController.player else { return }
+                guard let player = self.pvc.videoController.player else { return }
                 let playNowUrl = avSession.currentRoute.outputs.first?.portType == .airPlay || player.isExternalPlaybackActive ? airplayUrl : streamUrl
                 
                 self.plo.streamID = streamId
                 
                 let asset = AVURLAsset.init(url: playNowUrl, options:options)
                 let playerItem = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: ["duration"])
-                self.plo.videoController.player?.replaceCurrentItem(with: playerItem)
-                self.plo.videoController.player?.playImmediately(atRate: 1.0)
+                self.pvc.videoController.player?.replaceCurrentItem(with: playerItem)
+                self.pvc.videoController.player?.playImmediately(atRate: 1.0)
             }
         }
         

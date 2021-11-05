@@ -9,7 +9,7 @@ import SwiftUI
 import iptvKit
 
 extension Text {
-    func SectionHeader(_ isMac: Bool) -> some View {
+    func SectionHeader(_ isMac: Bool = false) -> some View {
         self.offset(y: isMac ? 12 : 0)
             .foregroundColor(Color.secondary)
             .font(.system(size: isMac ? 14 : 17, weight: .bold))
@@ -26,22 +26,14 @@ struct NowPlayingView: View {
         UIDevice.current.userInterfaceIdiom == .phone
     }
     
-    var isMac: Bool {
-        #if targetEnvironment(macCatalyst)
-        true
-        #else
-        false
-        #endif
-    }
-     
-   @State var isPortrait: Bool = true
+    @State var isPortrait: Bool = true
     
     var body: some View {
         VStack {
             Form {
-                if !plo.miniEpg.isEmpty && (isPortrait || isMac ) {
+                if !plo.miniEpg.isEmpty && isPortrait {
                     
-                    Section(header: Text("Program Guide").SectionHeader(isMac)) {
+                    Section(header: Text("Program Guide").SectionHeader()) {
                         ForEach(Array(plo.miniEpg),id: \.id) { epg in
                             
                             HStack {
@@ -55,20 +47,20 @@ struct NowPlayingView: View {
                                     .padding(.leading, 5)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
-                            .listRowSeparator(isMac ? .hidden : .visible)
+                            .listRowSeparator(.visible)
                             .font(.callout)
                         }
                     }  
                     if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
-                        Section(header: Text("Description").SectionHeader(isMac))  {
+                        Section(header: Text("Description").SectionHeader())  {
                             Text(desc)
                                 .frame(minWidth: 80, alignment: .leading)
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
 
                         }
-                    } else if (isPhone || isMac || isPad)  {
-                        Section(header: Text("Description").SectionHeader(isMac)) {
+                    } else  {
+                        Section(header: Text("Description").SectionHeader()) {
                             Text(plo.channelName)
                                 .font(.body)
                                 .fontWeight(.light)
@@ -95,7 +87,7 @@ struct NowPlayingView: View {
                         Text(desc)
                             .frame(minWidth: 80, alignment: .leading)
                             .multilineTextAlignment(.leading)
-                    } else if (isPhone || isMac)  {
+                    } else if isPhone {
                         Text(plo.channelName)
                             .font(.body)
                             .fontWeight(.light)
@@ -105,6 +97,9 @@ struct NowPlayingView: View {
                 }
             }
             .listStyle(InsetGroupedListStyle())
+        }
+        .onAppear{
+            print(isPortrait)
         }
     }
 }

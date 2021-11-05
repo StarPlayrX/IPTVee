@@ -53,6 +53,7 @@ struct LoginSheetView: View {
             .onAppear {
                 if !obs.isLoggedIn  {
                     //localLogin()
+                    print(passWord)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)

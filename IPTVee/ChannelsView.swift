@@ -28,6 +28,7 @@ struct ChannelsView: View {
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     @ObservedObject var cha = ChannelsObservable.shared
+    @ObservedObject var pvc = PlayerViewControllerObservable.pvc
     @Environment(\.presentationMode) var presentationMode
     
     //It's a long one line but it works
@@ -56,14 +57,6 @@ struct ChannelsView: View {
         UIDevice.current.userInterfaceIdiom == .phone
     }
     
-    var isMac: Bool {
-#if targetEnvironment(macCatalyst)
-        true
-#else
-        false
-#endif
-    }
-    
     func isEven(_ f: Int) -> Bool {
         f % 2 == 0
     }
@@ -75,11 +68,8 @@ struct ChannelsView: View {
     }
     
     var body: some View {
-        
-        Form {}
-        .frame(width: 0, height: 0)
-        
-        List {
+
+        Form {
             ForEach(Array(channelSearchResults),id: \.id) { ch in
                 NavigationLink(destination: playerView, tag: "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)", selection: self.$selectedItem)  {
                     
@@ -105,13 +95,15 @@ struct ChannelsView: View {
                             }
                         }
                         .frame(alignment: .center)
-                        Spacer()
                         
-                        Image(systemName: "chevron.right")                     // << custom !!
-                            .foregroundColor((plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color.white : Color.accentColor))
-                        
+                        if 1 == 2 {
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")                     // << custom !!
+                                .foregroundColor((plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color.white : Color.accentColor))
+                        }
                     }
-                    .padding([.top, .bottom], isMac ? 5 : 0)
+                    .padding([.top, .bottom], 0)
                 }
                 
                 .isDetailLink(true)
@@ -125,13 +117,14 @@ struct ChannelsView: View {
                 )
                 .foregroundColor(plo.previousSelection == "\(ch.streamID)^\(ch.name)^\(ch.streamIcon)" ? Color.white : Color.primary)
             }
+          
             .onChange(of: selectedItem) { selectionData in
                 if plo.previousSelection != selectionData || plo.previousSelection != selectedItem {
                     if let elements = selectionData?.components(separatedBy: "^"), elements.count == 3, let sd = selectionData {
                         plo.previousSelection = sd
                         plo.channelName =  elements[1]
                         
-                        PlayerObservable.plo.miniEpg = []
+                        //PlayerObservable.plo.miniEpg = []
                         Player.iptv.Action(streamId: Int(elements[0]) ?? 0, channelName: elements[1], imageURL:  elements[2])
                         
                         if isPhone && !isPortrait || isPad { selectedItem = nil }
@@ -139,14 +132,18 @@ struct ChannelsView: View {
                 }
             }
         }
-        
-        .padding([.top], isMac ? 0 : -40)
+        .refreshable {
+            DispatchQueue.main.async() {
+                getNowPlayingEpg()
+            }
+        }
+        .padding([.top], -20)
         .edgesIgnoringSafeArea([.all])
         
         .frame(width: .infinity, alignment: .trailing)
-        .edgesIgnoringSafeArea([.leading, .trailing])
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search \(categoryName)")
+
         .listStyle(.sidebar)
         
         .navigationTitle(categoryName)
@@ -157,6 +154,6 @@ struct ChannelsView: View {
     }
     
     func performMagicTapStop() {
-        plo.videoController.player?.pause()
+        pvc.videoController.player?.pause()
     }
 }
