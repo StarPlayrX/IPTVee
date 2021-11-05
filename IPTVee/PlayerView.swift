@@ -104,7 +104,7 @@ struct PlayerView: View {
                             .frame(minWidth: 320, alignment: .center)
                             .font(.body)
                         }
-                        .padding(.top, isMac ? -5 : 0)
+                        .padding(.top, isMac ? -18 : 0)
                     }
                 }
                 .onAppear{getOrientation()}
