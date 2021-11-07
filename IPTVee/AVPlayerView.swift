@@ -101,6 +101,7 @@ public func setupPlayerToPlay() -> AVPlayerViewController {
     pvc.videoController.player?.currentItem?.variantPreferences = .scalabilityToLosslessAudio
     pvc.videoController.player?.automaticallyWaitsToMinimizeStalling = true
     pvc.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+   
     return pvc.videoController
 }
 
