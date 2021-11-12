@@ -8,7 +8,6 @@
 import SwiftUI
 import AVFoundation
 import iptvKit
-import MediaPlayer
 import UIKit
 
 @main
