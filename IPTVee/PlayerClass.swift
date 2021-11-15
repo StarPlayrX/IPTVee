@@ -46,10 +46,7 @@ public class Player: NSObject {
             let airplayUrl = airplayUrl
                 
         else { return }
-        
-        print(primaryUrl)
-        print(airplayUrl)
-
+    
         func playUrl(_ streamUrl: URL) {
             DispatchQueue.main.async {
                 let options = [AVURLAssetPreferPreciseDurationAndTimingKey : true, AVURLAssetAllowsCellularAccessKey : true, AVURLAssetAllowsExpensiveNetworkAccessKey : true, AVURLAssetAllowsConstrainedNetworkAccessKey : true, AVURLAssetReferenceRestrictionsKey: true ]

@@ -50,12 +50,6 @@ struct LoginSheetView: View {
                 .disabled(!obs.isLoggedIn)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
-            .onAppear {
-                if !obs.isLoggedIn  {
-                    //localLogin()
-                    print(passWord)
-                }
-            }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle("IPTVee Login")
             .toolbar {
