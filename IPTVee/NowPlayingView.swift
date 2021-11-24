@@ -99,7 +99,6 @@ struct NowPlayingView: View {
             .listStyle(InsetGroupedListStyle())
         }
         .onAppear{
-            print(isPortrait)
         }
     }
 }

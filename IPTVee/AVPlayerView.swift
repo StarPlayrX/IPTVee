@@ -2,6 +2,7 @@
 import AVKit
 import SwiftUI
 import iptvKit
+import MediaPlayer
 
 public var avSession = AVAudioSession.sharedInstance()
 

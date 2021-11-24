@@ -17,7 +17,7 @@
                BlueprintIdentifier = "6F87E91F2702A31700434C6E"
                BuildableName = "IPTVee.app"
                BlueprintName = "IPTVee"
-               ReferencedContainer = "container:IPTVee.xcodeproj">
+               ReferencedContainer = "container:IPTVee_iOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -28,26 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6F87E92F2702A31800434C6E"
-               BuildableName = "IPTVeeTests.xctest"
-               BlueprintName = "IPTVeeTests"
-               ReferencedContainer = "container:IPTVee.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6F87E9392702A31800434C6E"
-               BuildableName = "IPTVeeUITests.xctest"
-               BlueprintName = "IPTVeeUITests"
-               ReferencedContainer = "container:IPTVee.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -67,16 +47,9 @@
             BlueprintIdentifier = "6F87E91F2702A31700434C6E"
             BuildableName = "IPTVee.app"
             BlueprintName = "IPTVee"
-            ReferencedContainer = "container:IPTVee.xcodeproj">
+            ReferencedContainer = "container:IPTVee_iOS.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "OS_ACTIVITY_MODE"
-            value = "disable"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -91,7 +64,7 @@
             BlueprintIdentifier = "6F87E91F2702A31700434C6E"
             BuildableName = "IPTVee.app"
             BlueprintName = "IPTVee"
-            ReferencedContainer = "container:IPTVee.xcodeproj">
+            ReferencedContainer = "container:IPTVee_iOS.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
