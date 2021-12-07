@@ -8,6 +8,11 @@ public var avSession = AVAudioSession.sharedInstance()
 
 public struct AVPlayerView: UIViewControllerRepresentable {
     
+    
+    let streamID: Int
+    let name: String
+    let streamIcon: String
+    
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var pvc = PlayerViewControllerObservable.pvc
 
@@ -22,8 +27,10 @@ public struct AVPlayerView: UIViewControllerRepresentable {
     public func makeUIViewController(context: Context) -> AVPlayerViewController {
         guard let _ = pvc.videoController.player else { return pvc.videoController }
 
-        if plo.streamID != plo.previousStreamID {
-            plo.previousStreamID = plo.streamID
+        if streamID != plo.previousStreamID {
+            Player.iptv.Action(streamId: streamID, channelName: name, imageURL: streamIcon)
+
+            plo.previousStreamID = streamID
             pvc.videoController = setupPlayerToPlay()
             pvc.videoController = setupVideoController()
             setupRemoteTransportControls()

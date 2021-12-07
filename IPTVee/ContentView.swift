@@ -8,7 +8,7 @@ import iptvKit
 
 struct ContentView: View {
     @ObservedObject var lgo = LoginObservable.shared
-    
+ 
     var body: some View {
         
         Group {
@@ -16,13 +16,27 @@ struct ContentView: View {
                 .sheet(isPresented: $lgo.showingLogin) {
                     LoginSheetView()
                 }
-        CategoriesView()
-            .onAppear {
-                if !lgo.isLoggedIn {
-                    lgo.showingLogin = true
-                }
+            
+            if isPhone {
+                CategoriesView()
+                    .onAppear {
+                        if !lgo.isLoggedIn {
+                            lgo.showingLogin = true
+                        }
+                    }
+                    .navigationViewStyle( .stack )
+            } else {
+                CategoriesView()
+                    .onAppear {
+                        if !lgo.isLoggedIn {
+                            lgo.showingLogin = true
+                        }
+                    }
+                    .padding([.top], isPad ? -5 : 0)
+                    .navigationViewStyle( .columns )
             }
-            .navigationViewStyle( .columns )
         }
+        .statusBar(hidden: isPad)
+
     }
 }

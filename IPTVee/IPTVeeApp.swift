@@ -19,32 +19,59 @@ struct IPTVapp: App {
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     
-    var isPad: Bool {
-        UIDevice.current.userInterfaceIdiom == .pad
-    }
-    
     let calendar = Calendar.current
     
     var body: some Scene {
         WindowGroup {
-            Group {
-                ContentView()
-            }
-            .statusBar(hidden: isPad)
-            .onReceive(epgTimer) { date in
-                let minute = calendar.component(.minute, from: date)
-                
-                if minute == 0 || minute == 15 || minute == 30 || minute == 45 {
-                    DispatchQueue.main.async {
-                        getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
-                        getNowPlayingEpg()
+            
+            
+            Text("")
+                .withHostingWindow { window in
+                    let contentView = ContentView()
+                    window?.rootViewController =
+                    BlendInHomeIndicatorController(rootView: contentView)
+                }
+                .statusBar(hidden: isPad)
+                .onReceive(epgTimer) { date in
+                    let minute = calendar.component(.minute, from: date)
+                    
+                    if minute == 0 || minute == 15 || minute == 30 || minute == 45 {
+                        DispatchQueue.main.async {
+                            getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
+                            getNowPlayingEpg()
+                        }
                     }
                 }
-            }
-            .padding(.top, -5)
-            .edgesIgnoringSafeArea(.all)
         }
     }
+    
+    class BlendInHomeIndicatorController<Content:View>: UIHostingController<Content> {
+        override var shouldAutorotate : Bool {
+            true
+        }
+        
+        override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
+            [.all]
+        }
+        
+        override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+            [.all]
+        }
+        
+        override var prefersHomeIndicatorAutoHidden: Bool {
+            false
+        }
+        
+        override var prefersStatusBarHidden: Bool {
+            isPad
+        }
+        
+        override var preferredStatusBarStyle: UIStatusBarStyle {
+            .default
+        }
+        
+    }
+    
 }
 
 func loadUserDefaults() {
@@ -64,4 +91,48 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         HLSxServe.shared.start_HLSx()
         return true
     }
+}
+
+struct HostingWindowFinder: UIViewRepresentable {
+    var callback: (UIWindow?) -> ()
+    
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        DispatchQueue.main.async { [weak view] in
+            self.callback(view?.window)
+        }
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+    }
+}
+
+extension View {
+    func withHostingWindow(_ callback: @escaping (UIWindow?) -> Void) -> some View {
+        self.background(HostingWindowFinder(callback: callback))
+    }
+}
+
+var isPad: Bool {
+    UIDevice.current.userInterfaceIdiom == .pad
+}
+
+var isPhone: Bool {
+    UIDevice.current.userInterfaceIdiom == .phone
+}
+
+
+func updatePortrait() -> Bool {
+    if UIDevice.current.orientation.isPortrait { return true}
+    if UIDevice.current.orientation.isLandscape { return false}
+    return isPortraitFallback
+}
+
+
+var isPortraitFallback: Bool {
+    guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+        return true
+    }
+    return scene.interfaceOrientation.isPortrait
 }

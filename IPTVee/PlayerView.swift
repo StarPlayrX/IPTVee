@@ -8,8 +8,12 @@ struct PlayerView: View {
     
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var pvc = PlayerViewControllerObservable.pvc
-
-    @State var isPortrait: Bool = true
+    
+    @State var streamID: Int = 0
+    @State var name: String = ""
+    @State var streamIcon: String = ""
+    @State var categoryName: String = ""
+    @State var videoStarted: Bool = false
     
     var isPortraitFallback: Bool {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
@@ -18,94 +22,63 @@ struct PlayerView: View {
         return scene.interfaceOrientation.isPortrait
     }
     
-    let avPlayerView = AVPlayerView()
-    
     var isPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
     }
+    
     
     var isPhone: Bool {
         UIDevice.current.userInterfaceIdiom == .phone
     }
     
-    fileprivate func getOrientation() {
-        if UIDevice.current.orientation.isPortrait { isPortrait = true; return}
-        if UIDevice.current.orientation.isLandscape { isPortrait = false; return}
-        isPortrait = isPortraitFallback
-    }
+    @State var isPortrait: Bool = false
     
     var body: some View {
+        
+        
         Group {
             
             GeometryReader { geometry in
+                Text("")
                 Form{}
-                
                 VStack {
-                    
-                    if isPad {
+                    let avPlayerView = AVPlayerView(streamID: streamID, name: name, streamIcon: streamIcon)
+
+                    if isPad || (isPhone && isPortrait) {
                         avPlayerView
                             .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .top)
-                            .transition(.opacity)
+                            .navigationBarHidden(false)
                     } else {
                         avPlayerView
-                            .frame(width: isPortrait ? geometry.size.width : .infinity, height: isPortrait ? geometry.size.width * 0.5625 : .infinity, alignment: .top)
-                            .transition(.opacity)
-                    }
-                   
-                    if isPortrait {
-                        NowPlayingView(isPortrait: true)
-                            .refreshable {
-                                getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
-                            }
-                    } else if isPad {
-                        NowPlayingView(isPortrait: false)
-                            .refreshable {
-                                getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
-                            }
+                            .ignoresSafeArea(.all)
+                            .edgesIgnoringSafeArea(.all)
+                            .navigationBarHidden(true)
                     }
                     
-                }
-                .toolbar {
-                    ToolbarItem(placement: .principal) {
-                        Group {
-                            VStack {
-                                if !isPhone, let desc = plo.miniEpg.first?.title.base64Decoded, desc.count > 3 {
-                                        Text("\(plo.channelName)")
-                                            .fontWeight(.bold)
-                                            Text("\(desc)")
-                                                .fontWeight(.regular)
-                                } else {
-                                    Text("\(plo.channelName)")
-                                        .fontWeight(.bold)
-                                    
-                                    if !isPhone {
-                                        Text("")
-                                            .fontWeight(.regular)
-                                    }
-                                }
+                    if isPortrait || isPad  {
+                        NowPlayingView(categoryName: categoryName)
+                            .refreshable {
+                                getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
                             }
-                            .frame(alignment: .leading)
-                            .multilineTextAlignment(.center)
-                            .frame(minWidth: 320, alignment: .center)
-                            .font(.body)
-                        }
-                        .padding(.top, 0)
                     }
                 }
-                .onAppear{getOrientation()}
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle(name)
                 .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                    getOrientation()
+                    isPortrait = updatePortrait()
+                }
+                .onAppear{
+                    isPortrait = updatePortrait()
+                    plo.channelName = name
                 }
             }
         }
-        .padding(.top, 0)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarTitle("")
     }
     
     func performMagicTap() {
         pvc.videoController.player?.rate == 1 ? pvc.videoController.player?.pause() : pvc.videoController.player?.play()
     }
+
     
     //Back burner
     func skipForward(_ videoController: AVPlayerViewController ) {

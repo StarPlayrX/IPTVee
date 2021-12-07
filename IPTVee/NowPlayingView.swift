@@ -26,12 +26,12 @@ struct NowPlayingView: View {
         UIDevice.current.userInterfaceIdiom == .phone
     }
     
-    @State var isPortrait: Bool = true
+    @State var categoryName: String = ""
     
     var body: some View {
         VStack {
             Form {
-                if !plo.miniEpg.isEmpty && isPortrait {
+                if !plo.miniEpg.isEmpty {
                     
                     Section(header: Text("Program Guide").SectionHeader()) {
                         ForEach(Array(plo.miniEpg),id: \.id) { epg in
@@ -50,55 +50,37 @@ struct NowPlayingView: View {
                             .listRowSeparator(.visible)
                             .font(.callout)
                         }
-                    }  
-                    if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
+                    }
+                    
+                    if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3, updatePortrait() {
                         Section(header: Text("Description").SectionHeader())  {
                             Text(desc)
                                 .frame(minWidth: 80, alignment: .leading)
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
-
+                            
                         }
-                    } else  {
-                        Section(header: Text("Description").SectionHeader()) {
+                    }
+                } else {
+                    Section(header: Text("Description").SectionHeader()) {
+                        HStack {
+                            Text(categoryName + " ")
+                                .font(.body)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
                             Text(plo.channelName)
                                 .font(.body)
                                 .fontWeight(.light)
-                                .frame(minWidth: 80, alignment: .leading)
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
-                    }
-                } else if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
                     
-                    HStack {
-                        Text(plo.miniEpg.first?.start.toDate()?.userTimeZone().toString() ?? "")
-                            .fontWeight(.medium)
-                            .frame(minWidth: 78, alignment: .trailing)
-                            .multilineTextAlignment(.leading)
-                        
-                        Text(plo.miniEpg.first?.title.base64Decoded ?? "")
-                            .multilineTextAlignment(.leading)
-                            .padding(.leading, 5)
-                    }
-                    .font(.callout)
-                    
-                    if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3 {
-                        Text(desc)
-                            .frame(minWidth: 80, alignment: .leading)
-                            .multilineTextAlignment(.leading)
-                    } else if isPhone {
-                        Text(plo.channelName)
-                            .font(.body)
-                            .fontWeight(.light)
-                            .frame(minWidth: 80, alignment: .leading)
-                            .multilineTextAlignment(.leading)
                     }
                 }
+                
             }
             .listStyle(InsetGroupedListStyle())
-        }
-        .onAppear{
         }
     }
 }

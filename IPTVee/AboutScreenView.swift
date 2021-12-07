@@ -12,7 +12,7 @@ struct AboutScreenView: View {
     let image = "IPTVeeLogo"
     
     @ObservedObject var lgo = LoginObservable.shared
-    
+
     var body: some View {
         Group {
             VStack {
@@ -33,6 +33,7 @@ struct AboutScreenView: View {
                     .padding(.bottom, 25)
             }
         }
+        .statusBar(hidden: isPad)
         .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: {lgo.isLoggedIn = false; lgo.showingLogin = true}) {

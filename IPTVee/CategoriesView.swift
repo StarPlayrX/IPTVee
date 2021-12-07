@@ -18,97 +18,87 @@ struct CategoriesView: View {
     @State var toggleBackground: Bool = false
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
+    @Environment(\.colorScheme) var colorScheme
     
     // This is our search filter
     var categorySearchResults: Categories {
-        cats.filter({"\($0.categoryName)"
-                .lowercased()
-            .contains(searchText.lowercased()) || searchText.isEmpty})
+        
+        let main = cats
+            .filter {
+                "\($0.categoryName)".lowercased()
+                    .contains(searchText.lowercased()) || searchText.isEmpty
+            }
+            .sorted {
+                $0.categoryName.lowercased() < $1.categoryName.lowercased()
+            }
+        
+        let usa = main
+            .filter {$0.categoryName.lowercased().starts(with: "usa")}
+        
+        let en = main
+            .filter {$0.categoryName.lowercased().starts(with: "en") }
+        
+        let uk = main
+            .filter {$0.categoryName.lowercased().starts(with: "uk") }
+        
+        let other = main
+            .filter {
+                !$0.categoryName.lowercased().starts(with: "usa") &&
+                !$0.categoryName.lowercased().starts(with: "uk") &&
+                !$0.categoryName.lowercased().starts(with: "en")
+            }
+        
+        return usa + en + uk + other
+        
     }
     
-    var isPad: Bool {
-        UIDevice.current.userInterfaceIdiom == .pad
-    }
-    
-    var isPhone: Bool {
-        UIDevice.current.userInterfaceIdiom == .phone
-    }
+    @State var isPortrait: Bool = false
     
     var body: some View {
         if !lgo.isLoggedIn {
             
-            NavigationView {
-                
-                VStack {
-                    AboutScreenView()
-                    Button(action: {lgo.showingLogin = true}) {
-                        Text("Login")
-                    }
-                    Spacer()
+            VStack {
+                AboutScreenView()
+                Button(action: {lgo.showingLogin = true}) {
+                    Text("Login")
                 }
-                
-                
-                ZStack {
-                    VStack {
-                        AboutScreenView()
-                        Button(action: {lgo.showingLogin = true}) {
-                            Text("Login")
-                        }
-                        Spacer()
-                    }
-                }
+                Spacer()
             }
+            
         } else {
             NavigationView {
                 Form {
                     ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
-                        NavigationLink(destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName), tag: cat.categoryID, selection: $selectedItem) {
+                        NavigationLink(destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName)) {
                             HStack {
                                 Text(cat.categoryName)
-                                
-                                if 1 == 2 {
-                                    Spacer()
-                                    
-                                    Image(systemName: "chevron.right")                     // << custom !!
-                                        .foregroundColor((plo.previousCategoryID == cat.categoryID ? Color.white : Color.accentColor))
-                                }
                             }
+                            .foregroundColor(plo.previousCategoryID == cat.categoryID ? Color.white : Color.primary)
                             .padding(0)
                             .edgesIgnoringSafeArea([.all])
                         }
-                        .isDetailLink(false)
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(
-                            RoundedRectangle(
-                                cornerRadius: 9,
-                                style: .continuous
-                            )
-                                .fill(plo.previousCategoryID == cat.categoryID ? Color.accentColor : Color.clear)
-                        )
+                        .isDetailLink(true)
+                        .listRowSeparator(plo.previousCategoryID == cat.categoryID ? .hidden : .visible)
+                        .listRowBackground(plo.previousCategoryID == cat.categoryID ? Color.accentColor : colorScheme == .dark ? Color(UIColor.systemGray6) : Color.white)
                     }
                 }
-                .padding(.top, -20)
-                .onChange(of: selectedItem) { selectionData in
-                    if plo.previousCategoryID != selectionData, let sd = selectionData {
-                        plo.previousCategoryID = sd
-                    }
-                }
+                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
+                .disableAutocorrection(true)
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarTitle("IPTVee")
-                .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
-                .listStyle(.sidebar)
-                .edgesIgnoringSafeArea([.all])
                 
-                VStack {
-                    AboutScreenView()
-                    
-                    Button(action: {lgo.showingLogin = true}) {
-                        Text("Login")
+                if isPad && isPortrait {
+                    VStack {
+                        
+                        Spacer()
+                        
+                        Text("Press the back button for Categories and Channels.")
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
+                    .padding(.bottom, 45)
                 }
-                .padding(.bottom, 45)
+    
             }
             .padding(.top, -10)
             

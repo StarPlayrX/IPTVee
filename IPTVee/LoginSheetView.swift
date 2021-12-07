@@ -12,15 +12,13 @@ import AVFoundation
 
 struct LoginSheetView: View {
     @Environment(\.presentationMode) var presentationMode
-//http://etv.wstreamzone.com/xmltv.php?username=U0YSV8YOCT&password=FU56KJYJJV
     @ObservedObject var obs = LoginObservable.shared
     
-    //http://primestreams.tv:826/player_api.php?username=Bobby2032&password=r1aBngmoW9&action=
-    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? "U0YSV8YOCT"
-    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? "FU56KJYJJV"
-    @State var service: String = LoginObservable.shared.config?.serverInfo.url ?? "etv.wstreamzone.com"
+    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? ""
+    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? ""
+    @State var service: String = LoginObservable.shared.config?.serverInfo.url ?? ""
     @State var https: Bool = false
-    @State var port: String = LoginObservable.shared.config?.serverInfo.port ?? "80"
+    @State var port: String = LoginObservable.shared.config?.serverInfo.port ?? ""
     @State var title: String = "IPTVee"
     
     var body: some View {

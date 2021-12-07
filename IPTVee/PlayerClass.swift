@@ -15,6 +15,7 @@ public class Player: NSObject {
     var pvc = PlayerViewControllerObservable.pvc
     var lgo = LoginObservable.shared
     var cha = ChannelsObservable.shared
+
     
     static public let iptv = Player()
     public func Action(streamId: Int, channelName: String, imageURL: String) {
