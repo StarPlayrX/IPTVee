@@ -12,7 +12,6 @@ struct CategoriesView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-    @State var searchText: String = ""
     @State var isActive: Bool = false
     @State var selectedItem: String?
     @State var toggleBackground: Bool = false
@@ -20,36 +19,18 @@ struct CategoriesView: View {
     @ObservedObject var lgo = LoginObservable.shared
     @Environment(\.colorScheme) var colorScheme
     
-    // This is our search filter
+    let usaKey = "usa"
+    @State var searchText: String = ""
+
     var categorySearchResults: Categories {
-        
         let main = cats
-            .filter {
-                "\($0.categoryName)".lowercased()
-                    .contains(searchText.lowercased()) || searchText.isEmpty
-            }
-            .sorted {
-                $0.categoryName.lowercased() < $1.categoryName.lowercased()
-            }
-        
+            .filter { $0.categoryName.lowercased().contains(searchText.lowercased() ) || searchText.isEmpty }
+            .sorted { $0.categoryName.lowercased() < $1.categoryName.lowercased() }
         let usa = main
-            .filter {$0.categoryName.lowercased().starts(with: "usa")}
-        
-        let en = main
-            .filter {$0.categoryName.lowercased().starts(with: "en") }
-        
-        let uk = main
-            .filter {$0.categoryName.lowercased().starts(with: "uk") }
-        
+            .filter { $0.categoryName.lowercased().starts(with: usaKey) }
         let other = main
-            .filter {
-                !$0.categoryName.lowercased().starts(with: "usa") &&
-                !$0.categoryName.lowercased().starts(with: "uk") &&
-                !$0.categoryName.lowercased().starts(with: "en")
-            }
-        
-        return usa + en + uk + other
-        
+            .filter { !$0.categoryName.lowercased().starts(with: usaKey) }
+        return usa + other
     }
     
     @State var isPortrait: Bool = false

@@ -37,7 +37,7 @@ struct ChannelsView: View {
             .filter{"\($0.num)\($0.name)\($0.nowPlaying)"
             .lowercased()
             .contains(searchText.lowercased()) || searchText.isEmpty}
-            .sorted{$0.name.lowercased() < $1.name.lowercased()}
+            .sorted{$0.num < $1.num}
     }
     
     @State var isShowingColumn = true
