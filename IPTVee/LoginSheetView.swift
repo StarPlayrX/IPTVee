@@ -9,16 +9,17 @@ import SwiftUI
 import iptvKit
 import AVFoundation
 
+// http://ky-iptv.com:80/player_api.php?username=iantuc&password=pass8224&action=
 
 struct LoginSheetView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var obs = LoginObservable.shared
     
-    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? ""
-    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? ""
-    @State var service: String = LoginObservable.shared.config?.serverInfo.url ?? ""
+    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? "nicemac65"
+    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? "pass65181"
+    @State var service: String = LoginObservable.shared.config?.serverInfo.url ?? "ky-iptv.com"
     @State var https: Bool = false
-    @State var port: String = LoginObservable.shared.config?.serverInfo.port ?? ""
+    @State var port: String = LoginObservable.shared.config?.serverInfo.port ?? "80"
     @State var title: String = "IPTVee"
     
     var body: some View {
@@ -50,6 +51,8 @@ struct LoginSheetView: View {
                 .disabled(!obs.isLoggedIn)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
+            .disableAutocorrection(true)
+            .autocapitalization(.none)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarTitle("IPTVee Login")
             .toolbar {

@@ -53,6 +53,9 @@ struct CategoriesView: View {
                         NavigationLink(destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName)) {
                             HStack {
                                 Text(cat.categoryName)
+                                    .font(.system(size: 20, design: .default))
+                                    .fontWeight(.semibold)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                             .foregroundColor(plo.previousCategoryID == cat.categoryID ? Color.white : Color.primary)
                             .padding(0)

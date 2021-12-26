@@ -60,24 +60,23 @@ struct ChannelsView: View {
         Form {
             ForEach(Array(channelSearchResults),id: \.id) { ch in
                 
-                NavigationLink(destination: PlayerView(streamID: ch.streamID, name: ch.name, streamIcon: ch.streamIcon, categoryName: categoryName))  {
+                NavigationLink(destination: PlayerView(streamID: ch.streamID, name: ch.name, streamIcon: ch.streamIcon, categoryName: categoryName, epgChannelId: ch.epgChannelID ))  {
                     
                     HStack {
                         Text(String(ch.num))
-                            .fontWeight(.medium)
-                            .font(.system(size: 24, design: .monospaced))
-                            .frame(minWidth: 40, idealWidth: 80, alignment: .trailing)
+                            .fontWeight(.bold)
+                            .font(.system(size: 20, design: .default))
+                            .frame(minWidth: 60, idealWidth: 80, alignment: .trailing)
                             .fixedSize(horizontal: false, vertical: true)
                         VStack (alignment: .leading, spacing: 0) {
                             Text(ch.name)
-                                .font(.system(size: 16, design: .default))
-                                .fontWeight(.regular)
+                                .font(.system(size: 18, design: .default))
+                                .fontWeight(.semibold)
                                 .fixedSize(horizontal: false, vertical: true)
-                            
-                            if !ch.nowPlaying.isEmpty {
+                            if ch.nowPlaying.count > 5 {
                                 Text(ch.nowPlaying)
-                                    .font(.system(size: 14, design: .default))
-                                    .fontWeight(.light)
+                                    .font(.system(size: 18, design: .default))
+                                    .fontWeight(.regular)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
@@ -98,8 +97,11 @@ struct ChannelsView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(categoryName)
-        .onAppear{
+        .onAppear {
             plo.previousCategoryID = categoryID
+            DispatchQueue.main.async() {
+                getNowPlayingEpg()
+            }
         }
     }
     

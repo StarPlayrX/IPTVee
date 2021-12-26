@@ -14,6 +14,7 @@ struct PlayerView: View {
     @State var streamIcon: String = ""
     @State var categoryName: String = ""
     @State var videoStarted: Bool = false
+    let epgChannelId: String?
     
     var isPortraitFallback: Bool {
         guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
@@ -35,7 +36,6 @@ struct PlayerView: View {
     
     var body: some View {
         
-        
         Group {
             
             GeometryReader { geometry in
@@ -43,7 +43,7 @@ struct PlayerView: View {
                 Form{}
                 VStack {
                     let avPlayerView = AVPlayerView(streamID: streamID, name: name, streamIcon: streamIcon)
-
+                    
                     if isPad || (isPhone && isPortrait) {
                         avPlayerView
                             .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .top)
@@ -55,10 +55,12 @@ struct PlayerView: View {
                             .navigationBarHidden(true)
                     }
                     
-                    if isPortrait || isPad  {
-                        NowPlayingView(categoryName: categoryName)
+                    if isPortrait || isPad {
+                        NowPlayingView( epgChannelId: epgChannelId, categoryName: categoryName)
                             .refreshable {
-                                getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
+                                DispatchQueue.main.async() {
+                                    getNowPlayingEpg()
+                                }
                             }
                     }
                 }
@@ -79,7 +81,6 @@ struct PlayerView: View {
         pvc.videoController.player?.rate == 1 ? pvc.videoController.player?.pause() : pvc.videoController.player?.play()
     }
 
-    
     //Back burner
     func skipForward(_ videoController: AVPlayerViewController ) {
         let seekDuration: Double = 10

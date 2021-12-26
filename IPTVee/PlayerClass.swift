@@ -27,7 +27,7 @@ public class Player: NSObject {
     func nowPlaying(channelName: String, streamId: Int, imageURL: String) {
         plo.streamID = streamId
         plo.imageURL = imageURL
-        getShortEpg(streamId: streamId, channelName: channelName, imageURL: imageURL)
+        //getShortEpg(streamId: streamId, channelName: channelName, imageURL: imageURL)
     }
     
     func airPlayr(streamId: Int) {

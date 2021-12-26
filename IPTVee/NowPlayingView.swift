@@ -22,6 +22,8 @@ struct NowPlayingView: View {
         UIDevice.current.userInterfaceIdiom == .pad
     }
     
+    let epgChannelId: String?
+    
     var isPhone: Bool {
         UIDevice.current.userInterfaceIdiom == .phone
     }
@@ -31,18 +33,20 @@ struct NowPlayingView: View {
     var body: some View {
         VStack {
             Form {
-                if !plo.miniEpg.isEmpty {
-                    
+                if let npl = NowPlayingLive[epgChannelId ?? ""] {
                     Section(header: Text("Program Guide").SectionHeader()) {
-                        ForEach(Array(plo.miniEpg),id: \.id) { epg in
-                            
-                            HStack {
-                                Text(epg.start.toDate()?.userTimeZone().toString() ?? "")
-                                    .fontWeight(.medium)
-                                    .frame(minWidth: 78, alignment: .trailing)
-                                    .multilineTextAlignment(.leading)
+                        ForEach(npl,id: \.id) { epg in
                                 
-                                Text(epg.title.base64Decoded ?? "")
+                            HStack {
+                                //epg.start.toDate()?.userTimeZone().toString()
+                                Text(epg.start.toDate()?.toString() ?? "")
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 17.333, design: .default))
+                                    .frame(minWidth: 82, alignment: .trailing)
+                                    .multilineTextAlignment(.leading)
+                                Text(epg.title)
+                                    .fontWeight(.medium)
+                                    .font(.system(size: 17.333, design: .default))
                                     .multilineTextAlignment(.leading)
                                     .padding(.leading, 5)
                                     .fixedSize(horizontal: false, vertical: true)
@@ -52,7 +56,7 @@ struct NowPlayingView: View {
                         }
                     }
                     
-                    if let desc = plo.miniEpg.first?.epgListingDescription.base64Decoded, desc.count > 3, updatePortrait() {
+                    if let desc = npl.first?.desc, desc.count > 3, updatePortrait() {
                         Section(header: Text("Description").SectionHeader())  {
                             Text(desc)
                                 .frame(minWidth: 80, alignment: .leading)
@@ -71,7 +75,7 @@ struct NowPlayingView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                             Text(plo.channelName)
                                 .font(.body)
-                                .fontWeight(.light)
+                                .fontWeight(.medium)
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
                         }

@@ -37,7 +37,7 @@ struct IPTVapp: App {
                     
                     if minute == 0 || minute == 15 || minute == 30 || minute == 45 {
                         DispatchQueue.main.async {
-                            getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
+                            //getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
                             getNowPlayingEpg()
                         }
                     }
@@ -77,6 +77,7 @@ struct IPTVapp: App {
 func loadUserDefaults() {
     if let data = UserDefaults.standard.value(forKey:userSettings) as? Data,
        let disk = try? PropertyListDecoder().decode(Config.self, from: data) {
+        //print(disk)
         LoginObservable.shared.config = disk
     }
 }
