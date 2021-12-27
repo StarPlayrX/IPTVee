@@ -9,6 +9,8 @@ import SwiftUI
 import iptvKit
 import AVKit
 
+let epgTimer = Timer.publish(every: 600, on: .current, in: .default).autoconnect()
+
 struct ChannelsView: View {
     
     internal init(categoryID: String, categoryName: String) {
@@ -36,7 +38,7 @@ struct ChannelsView: View {
             .filter{$0.categoryID == categoryID}
             .filter{"\($0.num)\($0.name)\($0.nowPlaying)"
             .lowercased()
-            .contains(searchText.lowercased()) || searchText.isEmpty}
+                .contains(searchText.lowercased()) || searchText.isEmpty}
             .sorted{$0.num < $1.num}
     }
     
@@ -53,7 +55,7 @@ struct ChannelsView: View {
         }
         return scene.interfaceOrientation.isPortrait
     }
-
+    
     var body: some View {
         
         
@@ -62,6 +64,7 @@ struct ChannelsView: View {
                 
                 NavigationLink(destination: PlayerView(streamID: ch.streamID, name: ch.name, streamIcon: ch.streamIcon, categoryName: categoryName, epgChannelId: ch.epgChannelID ))  {
                     
+
                     HStack {
                         Text(String(ch.num))
                             .fontWeight(.bold)
@@ -73,14 +76,17 @@ struct ChannelsView: View {
                                 .font(.system(size: 18, design: .default))
                                 .fontWeight(.semibold)
                                 .fixedSize(horizontal: false, vertical: true)
-                            if ch.nowPlaying.count > 5 {
-                                Text(ch.nowPlaying)
-                                    .font(.system(size: 18, design: .default))
-                                    .fontWeight(.regular)
-                                    .fixedSize(horizontal: false, vertical: true)
+                            LazyVStack (alignment: .leading, spacing: 0) {
+                                if let npl = NowPlayingLive[ch.epgChannelID ?? ""]?.first,
+                                   let start = npl.start.toDate()?.toString(),
+                                   let stop = npl.stop.toDate()?.toString() {
+                                    Text("\(start) — \(stop)\n\(npl.title)")
+                                        .font(.system(size: 18, design: .default))
+                                        .fontWeight(.regular)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
                             }
                         }
-                        .frame(alignment: .center)
                     }
                     .foregroundColor(plo.previousStreamID == ch.streamID ? Color.white : Color.primary)
                 }
@@ -90,6 +96,18 @@ struct ChannelsView: View {
         }
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search \(categoryName)")
         .disableAutocorrection(true)
+        .autocapitalization(.none)
+        .onReceive(epgTimer) { _ in
+            DispatchQueue.global(qos: .background).async {
+                getNowPlayingEpg()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
+            DispatchQueue.global(qos: .background).async {
+                getNowPlayingEpg()
+
+            }
+        }
         .refreshable {
             DispatchQueue.main.async() {
                 getNowPlayingEpg()
@@ -99,9 +117,6 @@ struct ChannelsView: View {
         .navigationTitle(categoryName)
         .onAppear {
             plo.previousCategoryID = categoryID
-            DispatchQueue.main.async() {
-                getNowPlayingEpg()
-            }
         }
     }
     

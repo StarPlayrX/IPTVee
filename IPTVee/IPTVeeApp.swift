@@ -15,15 +15,12 @@ struct IPTVapp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @Environment(\.colorScheme) var colorScheme
     
-    let epgTimer = Timer.publish(every: 60, on: .current, in: .default).autoconnect()
     @ObservedObject var plo = PlayerObservable.plo
     @ObservedObject var lgo = LoginObservable.shared
     
-    let calendar = Calendar.current
     
     var body: some Scene {
         WindowGroup {
-            
             
             Text("")
                 .withHostingWindow { window in
@@ -32,16 +29,7 @@ struct IPTVapp: App {
                     BlendInHomeIndicatorController(rootView: contentView)
                 }
                 .statusBar(hidden: isPad)
-                .onReceive(epgTimer) { date in
-                    let minute = calendar.component(.minute, from: date)
-                    
-                    if minute == 0 || minute == 15 || minute == 30 || minute == 45 {
-                        DispatchQueue.main.async {
-                            //getShortEpg(streamId: plo.streamID, channelName: plo.channelName, imageURL: plo.imageURL)
-                            getNowPlayingEpg()
-                        }
-                    }
-                }
+                
         }
     }
     

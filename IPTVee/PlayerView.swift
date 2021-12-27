@@ -69,7 +69,7 @@ struct PlayerView: View {
                 .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
                     isPortrait = updatePortrait()
                 }
-                .onAppear{
+                .onAppear {
                     isPortrait = updatePortrait()
                     plo.channelName = name
                 }

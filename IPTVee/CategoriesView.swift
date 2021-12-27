@@ -70,7 +70,6 @@ struct CategoriesView: View {
                 .disableAutocorrection(true)
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarTitle("IPTVee")
-                
                 if isPad && isPortrait {
                     VStack {
                         

@@ -78,8 +78,7 @@ struct NowPlayingView: View {
                                 .fontWeight(.medium)
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
-                        }
-                    
+                        }  
                     }
                 }
                 
