@@ -18,6 +18,8 @@ extension Text {
 
 struct NowPlayingView: View {
     @ObservedObject var plo = PlayerObservable.plo
+    @ObservedObject var cha = ChannelsObservable.shared
+
     var isPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
     }
@@ -33,9 +35,9 @@ struct NowPlayingView: View {
     var body: some View {
         VStack {
             Form {
-                if let npl = NowPlayingLive[epgChannelId ?? ""] {
+                if let npl = cha.nowPlayingLive[epgChannelId ?? ""] {
                     Section(header: Text("Program Guide").SectionHeader()) {
-                        ForEach(npl,id: \.id) { epg in
+                        ForEach(npl.prefix(4),id: \.id) { epg in
                                 
                             HStack {
                                 //epg.start.toDate()?.userTimeZone().toString()

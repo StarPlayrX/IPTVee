@@ -54,7 +54,7 @@ struct CategoriesView: View {
                             HStack {
                                 Text(cat.categoryName)
                                     .font(.system(size: 20, design: .default))
-                                    .fontWeight(.semibold)
+                                    .fontWeight(.medium)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                             .foregroundColor(plo.previousCategoryID == cat.categoryID ? Color.white : Color.primary)

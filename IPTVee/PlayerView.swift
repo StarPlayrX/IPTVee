@@ -32,6 +32,12 @@ struct PlayerView: View {
         UIDevice.current.userInterfaceIdiom == .phone
     }
     
+    func refresher() {
+        DispatchQueue.global(qos: .background).async {
+            antiTimeBubblePopper()
+        }
+    }
+    
     @State var isPortrait: Bool = false
     
     var body: some View {
@@ -58,9 +64,7 @@ struct PlayerView: View {
                     if isPortrait || isPad {
                         NowPlayingView( epgChannelId: epgChannelId, categoryName: categoryName)
                             .refreshable {
-                                DispatchQueue.main.async() {
-                                    getNowPlayingEpg()
-                                }
+                                refresher()
                             }
                     }
                 }
