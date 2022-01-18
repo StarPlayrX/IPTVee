@@ -32,12 +32,6 @@ struct PlayerView: View {
         UIDevice.current.userInterfaceIdiom == .phone
     }
     
-    func refresher() {
-        DispatchQueue.global(qos: .background).async {
-            antiTimeBubblePopper()
-        }
-    }
-    
     @State var isPortrait: Bool = false
     
     var body: some View {
@@ -54,6 +48,7 @@ struct PlayerView: View {
                         avPlayerView
                             .frame(width: geometry.size.width, height: geometry.size.width * 0.5625, alignment: .top)
                             .navigationBarHidden(false)
+                            .padding(.top, isPhone ? 15 : 0)
                     } else {
                         avPlayerView
                             .ignoresSafeArea(.all)
@@ -64,7 +59,7 @@ struct PlayerView: View {
                     if isPortrait || isPad {
                         NowPlayingView( epgChannelId: epgChannelId, categoryName: categoryName)
                             .refreshable {
-                                refresher()
+                                refreshNowPlayingEpgBytes()
                             }
                     }
                 }

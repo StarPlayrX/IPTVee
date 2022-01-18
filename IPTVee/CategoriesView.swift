@@ -52,20 +52,31 @@ struct CategoriesView: View {
                     ForEach(Array(categorySearchResults),id: \.categoryID) { cat in
                         NavigationLink(destination: ChannelsView(categoryID: cat.categoryID, categoryName: cat.categoryName)) {
                             HStack {
-                                Text(cat.categoryName)
-                                    .font(.system(size: 20, design: .default))
-                                    .fontWeight(.medium)
-                                    .fixedSize(horizontal: false, vertical: true)
+                                
+                                //MARK: - To Do, do this elsewhere
+                                if let catName = Optional(cat.categoryName), let cat = Optional("USA Movies Channels"), (catName == cat), let mov = Optional("USA Movie Channels") {
+                                    
+                                    Text(mov)
+                                        .font(.system(size: 20, design: .default))
+                                        .fontWeight(.medium)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                } else {
+                                    Text(cat.categoryName)
+                                        .font(.system(size: 20, design: .default))
+                                        .fontWeight(.medium)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
                             }
                             .foregroundColor(plo.previousCategoryID == cat.categoryID ? Color.white : Color.primary)
                             .padding(0)
-                            .edgesIgnoringSafeArea([.all])
+                            //.edgesIgnoringSafeArea([.all])
                         }
                         .isDetailLink(true)
                         .listRowSeparator(plo.previousCategoryID == cat.categoryID ? .hidden : .visible)
                         .listRowBackground(plo.previousCategoryID == cat.categoryID ? Color.accentColor : colorScheme == .dark ? Color(UIColor.systemGray6) : Color.white)
                     }
                 }
+                .padding(.bottom, 10)
                 .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Categories")
                 .disableAutocorrection(true)
                 .navigationBarTitleDisplayMode(.inline)

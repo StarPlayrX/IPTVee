@@ -70,12 +70,12 @@ struct NowPlayingView: View {
                 } else {
                     Section(header: Text("Description").SectionHeader()) {
                         HStack {
-                            Text(categoryName + " ")
+                            Text(categoryName.deletingPrefix("USA ") + " ")
                                 .font(.body)
                                 .fontWeight(.bold)
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
-                            Text(plo.channelName)
+                            Text(plo.channelName.deletingPrefix("USA "))
                                 .font(.body)
                                 .fontWeight(.medium)
                                 .multilineTextAlignment(.leading)

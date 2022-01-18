@@ -9,7 +9,7 @@ import SwiftUI
 import iptvKit
 import AVKit
 
-let epgShortTimer = Timer.publish(every: 60, on: .current, in: .default).autoconnect()
+let epgLongTimer = Timer.publish(every: 60, on: .current, in: .default).autoconnect()
 
 struct ChannelsView: View {
     
@@ -18,6 +18,7 @@ struct ChannelsView: View {
         self.categoryName = categoryName
     }
     
+    let usa = "USA "
     let categoryID: String
     let categoryName: String
     @State var searchText: String = ""
@@ -55,12 +56,7 @@ struct ChannelsView: View {
         }
         return scene.interfaceOrientation.isPortrait
     }
-    
-    func refresher() {
-        DispatchQueue.global(qos: .background).async {
-            antiTimeBubblePopper()
-        }
-    }
+
     var body: some View {
         
         
@@ -77,7 +73,7 @@ struct ChannelsView: View {
                             .frame(minWidth: 60, idealWidth: 80, alignment: .trailing)
                             .fixedSize(horizontal: false, vertical: true)
                         VStack (alignment: .leading, spacing: 0) {
-                            Text(ch.name)
+                            Text(ch.name.deletingPrefix(usa))
                                 .font(.system(size: 19, design: .default))
                                 .fontWeight(.semibold)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -89,13 +85,12 @@ struct ChannelsView: View {
                                         .font(.system(size: 18, design: .default))
                                         .fontWeight(.regular)
                                         .fixedSize(horizontal: false, vertical: true)
-                                } else {
-                                    if let epgId = ch.epgChannelID {
-                                        Text("\n\(epgId)")
-                                            .font(.system(size: 17, design: .default))
-                                            .fontWeight(.regular)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                    }
+                                } else if let epgId = ch.epgChannelID {
+                                    Text("\(epgId)")
+                                        .foregroundColor(plo.previousStreamID == ch.streamID ? Color.white : Color.orange)
+                                        .font(.system(size: 15, design: .default))
+                                        .fontWeight(.regular)
+                                        .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
                         }
@@ -106,20 +101,18 @@ struct ChannelsView: View {
                 .listRowBackground(plo.previousStreamID == ch.streamID ? Color.accentColor : colorScheme == .dark ? Color(UIColor.systemGray6) : Color.white)
             }
         }
+        .padding(.bottom, 10)
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search \(categoryName)")
         .disableAutocorrection(true)
         .autocapitalization(.none)
-        .onReceive(epgShortTimer) { _ in
-            refresher()
+        .onReceive(epgLongTimer) { _ in
+            refreshNowPlayingEpgBytes()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            refresher()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
-            refresher()
+            refreshNowPlayingEpgBytes()
         }
         .refreshable {
-            refresher()
+            refreshNowPlayingEpgBytes()
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(categoryName)

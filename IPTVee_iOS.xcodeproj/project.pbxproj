@@ -12,7 +12,6 @@
 		6F307AA9270924FD009A6EF9 /* AVPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F307AA8270924FD009A6EF9 /* AVPlayerView.swift */; };
 		6F31610E273485E300181A32 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F31610D273485E300181A32 /* NowPlayingView.swift */; };
 		6F5A1B622732011B0069BA92 /* AboutScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5A1B612732011A0069BA92 /* AboutScreenView.swift */; };
-		6F5A1B6427320CEE0069BA92 /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5A1B6327320CEE0069BA92 /* CategoriesView.swift */; };
 		6F5A1B6627320D2E0069BA92 /* PlayerClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5A1B6527320D2E0069BA92 /* PlayerClass.swift */; };
 		6F74A0DE2707B5B5000171B5 /* ChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */; };
 		6F74A0E02707C38D000171B5 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F74A0DF2707C38D000171B5 /* PlayerView.swift */; };
@@ -25,6 +24,7 @@
 		6FAFD739270416C900D49704 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FAFD738270416C900D49704 /* ContentView.swift */; };
 		6FC456F1275923AB006C39D1 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6FC456F0275923AB006C39D1 /* NukeUI */; };
 		6FC456F727592425006C39D1 /* KSPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = 6FC456F627592425006C39D1 /* KSPlayer */; };
+		6FE92CEB278530B1009F8118 /* CategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE92CEA278530B1009F8118 /* CategoriesView.swift */; };
 		6FF7E9EB272D991D001B5F22 /* LoginSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF7E9EA272D991D001B5F22 /* LoginSheetView.swift */; };
 /* End PBXBuildFile section */
 
@@ -36,7 +36,6 @@
 		6F31610D273485E300181A32 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		6F512E292711558A0010BE18 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		6F5A1B612732011A0069BA92 /* AboutScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutScreenView.swift; sourceTree = "<group>"; };
-		6F5A1B6327320CEE0069BA92 /* CategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesView.swift; sourceTree = "<group>"; };
 		6F5A1B6527320D2E0069BA92 /* PlayerClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerClass.swift; sourceTree = "<group>"; };
 		6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsView.swift; sourceTree = "<group>"; };
 		6F74A0DF2707C38D000171B5 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
@@ -47,6 +46,7 @@
 		6F87E92A2702A31800434C6E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		6F87E9832702AF1100434C6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6FAFD738270416C900D49704 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		6FE92CEA278530B1009F8118 /* CategoriesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoriesView.swift; sourceTree = "<group>"; };
 		6FF7E9EA272D991D001B5F22 /* LoginSheetView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginSheetView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -87,10 +87,10 @@
 			children = (
 				6F22DB732715F4420077CDA0 /* IPTVee.entitlements */,
 				6F87E9832702AF1100434C6E /* Info.plist */,
+				6FE92CEA278530B1009F8118 /* CategoriesView.swift */,
 				6F87E9232702A31700434C6E /* IPTVeeApp.swift */,
 				6F5A1B612732011A0069BA92 /* AboutScreenView.swift */,
 				6FAFD738270416C900D49704 /* ContentView.swift */,
-				6F5A1B6327320CEE0069BA92 /* CategoriesView.swift */,
 				6FF7E9EA272D991D001B5F22 /* LoginSheetView.swift */,
 				6F74A0DD2707B5B5000171B5 /* ChannelsView.swift */,
 				6F74A0DF2707C38D000171B5 /* PlayerView.swift */,
@@ -209,11 +209,11 @@
 				6F74A0DE2707B5B5000171B5 /* ChannelsView.swift in Sources */,
 				6F856D6A2725EE90001C1A79 /* HLSx.swift in Sources */,
 				6F74A0E02707C38D000171B5 /* PlayerView.swift in Sources */,
+				6FE92CEB278530B1009F8118 /* CategoriesView.swift in Sources */,
 				6F31610E273485E300181A32 /* NowPlayingView.swift in Sources */,
 				6F15FE16272A205100F05971 /* PlayerSettings.swift in Sources */,
 				6F0934842735D626007769A0 /* iOS.swift in Sources */,
 				6F5A1B6627320D2E0069BA92 /* PlayerClass.swift in Sources */,
-				6F5A1B6427320CEE0069BA92 /* CategoriesView.swift in Sources */,
 				6FAFD739270416C900D49704 /* ContentView.swift in Sources */,
 				6F87E9242702A31700434C6E /* IPTVeeApp.swift in Sources */,
 			);
@@ -345,7 +345,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = IPTVee/IPTVee.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 109;
+				CURRENT_PROJECT_VERSION = 111;
 				DEVELOPMENT_ASSET_PATHS = "\"IPTVee/Preview Content\"";
 				DEVELOPMENT_TEAM = 469UCUB275;
 				ENABLE_PREVIEWS = YES;
@@ -382,7 +382,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = IPTVee/IPTVee.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 109;
+				CURRENT_PROJECT_VERSION = 111;
 				DEVELOPMENT_ASSET_PATHS = "\"IPTVee/Preview Content\"";
 				DEVELOPMENT_TEAM = 469UCUB275;
 				ENABLE_PREVIEWS = YES;

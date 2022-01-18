@@ -14,10 +14,10 @@ import AVFoundation
 struct LoginSheetView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var obs = LoginObservable.shared
-    
-    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? "nicemac65"
-    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? "pass65181"
-    @State var service: String = LoginObservable.shared.config?.serverInfo.url ?? "ky-iptv.com"
+    // https://primestreams.tv:826/xmltv.php?username=Bobby2032&password=r1aBngmoW9
+    @State var userName: String = LoginObservable.shared.config?.userInfo.username ?? "" //"Bobby2032" //"nicemac65"
+    @State var passWord: String = LoginObservable.shared.config?.userInfo.password ?? "" //"r1aBngmoW9" //"pass65181"
+    @State var service: String = LoginObservable.shared.config?.serverInfo.url ?? "ky-iptv.com" //"primestreams.tv" //
     @State var https: Bool = false
     @State var port: String = LoginObservable.shared.config?.serverInfo.port ?? "80"
     @State var title: String = "IPTVee"
@@ -38,18 +38,30 @@ struct LoginSheetView: View {
                     }
                     .disabled(obs.isLoginButtonDisabled)
                 }
+                
                 Section(header: Text("Status")) {
                     Text(obs.status)
                         .font(.body)
                         .fontWeight(.regular)
                         .frame(maxWidth: .infinity, alignment: .center)
+                    obs.isLoginButtonDisabled ? AnyView(ProgressView().frame(maxWidth: .infinity, alignment: .center)) : AnyView(EmptyView())
                 }
+                
+                
                 Button("Done") {
                     obs.isLoggedIn = true
                     presentationMode.wrappedValue.dismiss()
                 }
                 .disabled(!obs.isLoggedIn)
                 .frame(maxWidth: .infinity, alignment: .center)
+                
+                
+                Section(header: Text("Need IPTV Access?")) {
+                    Link("Get Xtreme HD IPTV", destination: URL(string: "https://xtremehdiptv.org/billing/aff.php?aff=251")!)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+                
+
             }
             .disableAutocorrection(true)
             .autocapitalization(.none)
