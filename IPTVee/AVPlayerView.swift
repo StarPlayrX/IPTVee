@@ -32,7 +32,7 @@ public struct AVPlayerView: UIViewControllerRepresentable {
 
             plo.previousStreamID = streamID
             pvc.videoController = setupPlayerToPlay()
-            pvc.videoController = setupVideoController()
+            //pvc.videoController = setupVideoController()
             setupRemoteTransportControls()
             pvc.videoController.delegate = context.coordinator
             return pvc.videoController
@@ -62,7 +62,7 @@ public func startupAVPlayer() {
 
     pvc.videoController.player = AVPlayer(playerItem: nil)
     pvc.videoController.player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
-    pvc.videoController.view.backgroundColor = UIColor.clear
+    //pvc.videoController.view.backgroundColor = UIColor.clear
 }
 
 public func setupVideoController() -> AVPlayerViewController {
@@ -70,15 +70,15 @@ public func setupVideoController() -> AVPlayerViewController {
     let pvc = PlayerViewControllerObservable.pvc
     guard let _ = pvc.videoController.player else { return pvc.videoController }
     
-    pvc.videoController.showsTimecodes = true
-    pvc.videoController.entersFullScreenWhenPlaybackBegins = false
+    pvc.videoController.showsTimecodes = false
+    pvc.videoController.entersFullScreenWhenPlaybackBegins = true
     pvc.videoController.updatesNowPlayingInfoCenter = false
     pvc.videoController.showsPlaybackControls = true
     pvc.videoController.requiresLinearPlayback = false
     pvc.videoController.canStartPictureInPictureAutomaticallyFromInline = true
     pvc.videoController.videoGravity = .resizeAspect
     pvc.videoController.accessibilityPerformMagicTap()
-    pvc.videoController.view.backgroundColor = UIColor.clear
+    //pvc.videoController.view.backgroundColor = UIColor.clear
     return pvc.videoController
 }
 
@@ -93,7 +93,7 @@ public func setupPlayerToPlay() -> AVPlayerViewController {
     pvc.videoController.player = player
     pvc.videoController.player?.externalPlaybackVideoGravity = .resizeAspectFill
     pvc.videoController.player?.preventsDisplaySleepDuringVideoPlayback = true
-    pvc.videoController.player?.usesExternalPlaybackWhileExternalScreenIsActive = true
+    pvc.videoController.player?.usesExternalPlaybackWhileExternalScreenIsActive = false
     pvc.videoController.player?.appliesMediaSelectionCriteriaAutomatically = true
     pvc.videoController.player?.preventsDisplaySleepDuringVideoPlayback = true
     pvc.videoController.player?.allowsExternalPlayback = true

@@ -106,7 +106,7 @@ struct ChannelsView: View {
         .disableAutocorrection(true)
         .autocapitalization(.none)
         .onReceive(epgLongTimer) { _ in
-            refreshNowPlayingEpgBytes()
+            refreshNowPlayingEpg()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             refreshNowPlayingEpgBytes()

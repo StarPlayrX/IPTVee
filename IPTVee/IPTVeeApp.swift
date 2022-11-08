@@ -65,7 +65,7 @@ struct IPTVapp: App {
 func loadUserDefaults() {
     if let data = UserDefaults.standard.value(forKey:userSettings) as? Data,
        let disk = try? PropertyListDecoder().decode(Config.self, from: data) {
-        //print(disk)
+
         LoginObservable.shared.config = disk
     }
 }
@@ -77,7 +77,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         application.beginReceivingRemoteControlEvents()
         loadUserDefaults()
         runAVSession()
-        HLSxServe.shared.start_HLSx()
+        //HLSxServe.shared.start_HLSx()
         return true
     }
 }

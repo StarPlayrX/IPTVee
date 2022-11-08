@@ -21,7 +21,7 @@ struct LoginSheetView: View {
     @State var https: Bool = false
     @State var port: String = LoginObservable.shared.config?.serverInfo.port ?? "80"
     @State var title: String = "IPTVee"
-    
+    @State var channelCacheText: String = "Channel Cache"
     var body: some View {
       
         NavigationView {
@@ -29,6 +29,7 @@ struct LoginSheetView: View {
                 Section(header: Text("Credentials")) {
                     TextField("Username", text: $userName)
                     SecureField("Password", text: $passWord)
+
                     TextField("iptvService.tv", text: $service)
                     TextField("port #", text: $port)
                         .keyboardType(.numberPad)
@@ -47,7 +48,6 @@ struct LoginSheetView: View {
                     obs.isLoginButtonDisabled ? AnyView(ProgressView().frame(maxWidth: .infinity, alignment: .center)) : AnyView(EmptyView())
                 }
                 
-                
                 Button("Done") {
                     obs.isLoggedIn = true
                     presentationMode.wrappedValue.dismiss()
@@ -55,13 +55,19 @@ struct LoginSheetView: View {
                 .disabled(!obs.isLoggedIn)
                 .frame(maxWidth: .infinity, alignment: .center)
                 
-                
                 Section(header: Text("Need IPTV Access?")) {
-                    Link("Get Xtreme HD IPTV", destination: URL(string: "https://xtremehdiptv.org/billing/aff.php?aff=251")!)
-                        .frame(maxWidth: .infinity, alignment: .center)
+                    if let url = URL(string: "https://xtremehdiptv.org/billing/aff.php?aff=251") {
+                        Link("Get Xtreme HD IPTV", destination: url)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
                 }
                 
-
+                Section(header: Text(channelCacheText)) {
+                    Button(action: clearChannelCache) {
+                        Text("Clear Channel Cache")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                }
             }
             .disableAutocorrection(true)
             .autocapitalization(.none)
@@ -71,7 +77,6 @@ struct LoginSheetView: View {
                 Button(action: {obs.showingLogin = false}) {
                         Text("Done")
                 }.frame(alignment: .topTrailing)
-                
             }
         } 
     }
@@ -83,4 +88,20 @@ struct LoginSheetView: View {
             }
         }
     }
+    
+    func clearChannelCache() {
+        let resetCache = Data()
+        let file = getDocumentsDirectory().appendingPathComponent("channels.dat")
+        try? resetCache.write(to: file)
+        
+        channelCacheText = "Channel Cache Cleared"
+    }
+}
+
+func getDocumentsDirectory() -> URL {
+    // find all possible documents directories for this user
+    let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+
+    // just send back the first one, which ought to be the only one
+    return paths[0]
 }

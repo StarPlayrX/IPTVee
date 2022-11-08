@@ -59,7 +59,7 @@ struct PlayerView: View {
                     if isPortrait || isPad {
                         NowPlayingView( epgChannelId: epgChannelId, categoryName: categoryName)
                             .refreshable {
-                                refreshNowPlayingEpgBytes()
+                                refreshNowPlayingEpg()
                             }
                     }
                 }
