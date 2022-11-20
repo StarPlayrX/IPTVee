@@ -118,6 +118,8 @@ struct ChannelsView: View {
         .navigationTitle(categoryName)
         .onAppear {
             plo.previousCategoryID = categoryID
+            refreshNowPlayingEpgBytes()
+
         }
     }
     

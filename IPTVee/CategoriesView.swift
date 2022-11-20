@@ -94,6 +94,9 @@ struct CategoriesView: View {
                 }
     
             }
+            .onAppear {
+                refreshNowPlayingEpgBytes()
+            }
             .padding(.top, -10)
             
         }
